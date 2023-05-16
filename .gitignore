@@ -2,3 +2,8 @@
 /Logs
 /Temp
 /UserSettings
+
+.vscode/
+.vsconfig
+
+.DS_Store

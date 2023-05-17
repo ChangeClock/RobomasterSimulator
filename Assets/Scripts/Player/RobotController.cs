@@ -14,10 +14,6 @@ public class RobotController : NetworkBehaviour
     // private PlayerInputs _input;
     private float[] _input = new float[6];
 
-    [Header("Referee")]
-    private int group = 0;
-    ArmorController[] armors;
-
     [Header("Chassis")]
     private Transform Base;
 
@@ -57,31 +53,6 @@ public class RobotController : NetworkBehaviour
     public int ShooterType = 0;
     private float _shootTimeoutDelta;
 
-    // public struct PlayerInputs
-    // {
-    //     public float Move_x;
-    //     public float Move_y;
-    //     public float Rotate_yaw;
-    //     public float Rotate_pitch;
-    //     public bool IsShoot;
-    //     public bool IsSpin;
-
-    //     public PlayerInputs(float move_x,
-    //                         float move_y,
-    //                         float rotate_yaw,
-    //                         float rotate_pitch,
-    //                         bool isShoot,
-    //                         bool isSpin)
-    //     {
-    //         Move_x = move_x;
-    //         Move_y = move_y;
-    //         Rotate_yaw = rotate_yaw;
-    //         Rotate_pitch = rotate_pitch;
-    //         IsShoot = isShoot;
-    //         IsSpin = isSpin;
-    //     }
-    // }
-
     public override void OnNetworkSpawn()
     {
         // Debug.Log("Client:" + NetworkManager.Singleton.LocalClientId + "IsOwner?" + IsOwner);
@@ -117,27 +88,6 @@ public class RobotController : NetworkBehaviour
         {
             pitchJoint = pitchComponent.GetComponent<HingeJoint>();
             pitchMotor = pitchJoint.motor;
-        }
-    }
-
-    void OnEnable()
-    {
-        armors = this.gameObject.GetComponentsInChildren<ArmorController>();
-        Debug.Log("Enable Armors: "+ armors.Length);
-        foreach(ArmorController _armor in armors)
-        {
-            _armor.OnHit += Damage;
-            _armor.LightEnbale(group);
-        }
-    }
-
-    void OnDisable()
-    {
-        Debug.Log("Disable Armors: "+ armors.Length);
-        foreach(ArmorController _armor in armors)
-        {
-            _armor.OnHit -= Damage;
-            _armor.LightDisable();
         }
     }
 
@@ -259,13 +209,6 @@ public class RobotController : NetworkBehaviour
             _shootTimeoutDelta -= Time.deltaTime;
             // Debug.Log($"Shoot timeout {_shootTimeoutDelta}, {Time.deltaTime}");
         }
-    }
-
-    private void Damage(int damageType, int armorID)
-    {
-        // Debug.Log("Damage Occur");
-        // Debug.Log("Damage Type: " + damageType);
-        // Debug.Log("Armor ID: " + armorID);
     }
 
     [ServerRpc]

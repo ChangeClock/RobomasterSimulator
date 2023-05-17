@@ -65,7 +65,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 6a1143ee683302f4aa628c052723efc1, type: 2}
+  - {fileID: 2100000, guid: 6a67f762dca5a284e90e86e3f2e866a6, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -104,6 +104,8 @@ MonoBehaviour:
   velocityThreshold42mm: 8
   velocityThresholdMissle: 6
   armorID: 0
+  disabled: 0
+  lightColor: 0
   damageDetection: 01010100
 --- !u!54 &2087589598418905570
 Rigidbody:
@@ -131,7 +133,7 @@ Rigidbody:
   m_IsKinematic: 0
   m_Interpolate: 0
   m_Constraints: 0
-  m_CollisionDetection: 1
+  m_CollisionDetection: 3
 --- !u!64 &4260439120525712104
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -153,7 +155,7 @@ MeshCollider:
   serializedVersion: 5
   m_Convex: 1
   m_CookingOptions: 30
-  m_Mesh: {fileID: -2432090755550338912, guid: ead352256cbd6574b9124055890eb7c7, type: 3}
+  m_Mesh: {fileID: -7877160491211906700, guid: 66091e245224bd14fb1390001db03bd1, type: 3}
 --- !u!1 &6061553835842980662
 GameObject:
   m_ObjectHideFlags: 0
@@ -165,6 +167,7 @@ GameObject:
   - component: {fileID: 5312201350450933435}
   - component: {fileID: 3143174513778369508}
   - component: {fileID: 1674020192503713916}
+  - component: {fileID: 7789811748642896501}
   m_Layer: 0
   m_Name: Light
   m_TagString: Untagged
@@ -215,7 +218,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 5629084884208175553, guid: 426a2785f8a940049aac2c246661cf09, type: 3}
+  - {fileID: 2100000, guid: 70af8a5bc65ee4f46a6b44378d4d8d4f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -237,3 +240,17 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!114 &7789811748642896501
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6061553835842980662}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ae46795748950401e83d50b542612556, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  disabled: 1
+  lightColor: 2

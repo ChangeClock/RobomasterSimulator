@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1001 &5237442135542071291
+--- !u!1001 &7980760450322296798
 PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
@@ -8,33 +8,12 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 3143174513778369508, guid: 689528988214a3645a74d7083dd62c64,
-        type: 3}
-      propertyPath: m_Mesh
-      value: 
-      objectReference: {fileID: -7877160491211906700, guid: c70e7970b8ec1c846b01c32a7561c8e2,
-        type: 3}
     - target: {fileID: 4260439120525712104, guid: 689528988214a3645a74d7083dd62c64,
         type: 3}
       propertyPath: m_Mesh
       value: 
-      objectReference: {fileID: -7877160491211906700, guid: 05a3e103b4d461e4aa5dc40213edcb96,
+      objectReference: {fileID: -7877160491211906700, guid: e9d32746e1fa3b545b0faaed75466046,
         type: 3}
-    - target: {fileID: 5312201350450933435, guid: 689528988214a3645a74d7083dd62c64,
-        type: 3}
-      propertyPath: m_LocalPosition.x
-      value: -0.018
-      objectReference: {fileID: 0}
-    - target: {fileID: 5312201350450933435, guid: 689528988214a3645a74d7083dd62c64,
-        type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0.325
-      objectReference: {fileID: 0}
-    - target: {fileID: 5312201350450933435, guid: 689528988214a3645a74d7083dd62c64,
-        type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 5920901610762163384, guid: 689528988214a3645a74d7083dd62c64,
         type: 3}
       propertyPath: m_RootOrder
@@ -94,12 +73,12 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Mesh
       value: 
-      objectReference: {fileID: -7877160491211906700, guid: 05a3e103b4d461e4aa5dc40213edcb96,
+      objectReference: {fileID: -7877160491211906700, guid: e9d32746e1fa3b545b0faaed75466046,
         type: 3}
     - target: {fileID: 5920901610762163391, guid: 689528988214a3645a74d7083dd62c64,
         type: 3}
       propertyPath: m_Name
-      value: Armor-Large
+      value: Armor-Small (without stand)
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

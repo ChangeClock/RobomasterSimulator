@@ -19,6 +19,38 @@ public class ArmorController : MonoBehaviour
     // damageDetection: 对应上面的damageType，设定此装甲板是否响应对应的伤害
     public bool[] damageDetection = {true,true,true,false};
 
+    private MeshRenderer armorLight;
+
+    void Start() 
+    {
+        armorLight = GetComponentInChildren<MeshRenderer>();
+    }
+
+    public void LightEnbale(int color)
+    {
+        // 0 紫色 1 蓝色 2 红色
+        switch (color)
+        {
+            case 0:
+                armorLight.material.SetColor("_EmissionColor",Color.yellow);
+                return;
+            case 1:
+                armorLight.material.SetColor("_EmissionColor",Color.blue);
+                return;
+            case 2:
+                armorLight.material.SetColor("_EmissionColor",Color.red);
+                return;
+            default:
+                Debug.LogWarning("[ArmorController] Unknown armor light type");
+                return;
+        }
+    }
+
+    public void LightDisable()
+    {
+        armorLight.material.color = Color.white;
+    }
+
     void OnCollisionEnter(Collision collision)
     {
         // Calculate the angle of impact between the collider and the armor
@@ -32,7 +64,7 @@ public class ArmorController : MonoBehaviour
             if (Mathf.Abs(perpendicularVelocity.magnitude - velocityThreshold17mm) >= 0f && OnHit != null)
             {
                 OnHit(1,armorID);
-                // Debug.Log("OnHit");
+
             }
             
         } else if (collision.gameObject.tag == "Bullet-42mm" & damageDetection[2]) {
@@ -54,5 +86,10 @@ public class ArmorController : MonoBehaviour
         }
 
         // Debug.Log("Bullet hit armor" + perpendicularVelocity + " " + perpendicularVelocity.magnitude);
+    }
+
+    void Blink()
+    {
+
     }
 }

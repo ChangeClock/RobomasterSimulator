@@ -391,6 +391,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   rotateSpeed: 1000
   motorTorque: 400
+  followControllerParameters:
+  - 0.02
+  - 0
+  - 0.015
+  yawTargetAngle: 0
+  pitchTargetAngle: 0
   ShootFrequency: 20
   ShootSpeed: 100
   ShootHeight: 1.5
@@ -431,7 +437,7 @@ MonoBehaviour:
   shoot: 0
   spin: 0
   analogMovement: 0
-  cursorLocked: 1
+  cursorLocked: 0
   cursorInputForLook: 1
 --- !u!114 &9100587245660692841
 MonoBehaviour:

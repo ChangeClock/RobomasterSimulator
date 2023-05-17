@@ -14,23 +14,19 @@ public class WheelController : MonoBehaviour
     // OnTriggerEnter is called when this gameobject first enters a collision with another object.
     private void OnCollisionEnter(Collision collision)
     {
-        // Debug.Log("Wheel Collision Enter " + collision.gameObject.tag);
         if (collision.gameObject.tag == "Ground") 
         {
             isColliding = true;
         }
-        Debug.Log(isColliding);
     }
 
     // OnTriggerExit is called when this gameobject exits a collision with another object.
     private void OnCollisionExit(Collision collision)
     {
-        // Debug.Log("Wheel Collision Exit");
         if (collision.gameObject.tag == "Ground") 
         {
             isColliding = false;
         }
-        Debug.Log(isColliding);
     }
 
     // You can call this function externally if you need to know whether this object is currently colliding with something.

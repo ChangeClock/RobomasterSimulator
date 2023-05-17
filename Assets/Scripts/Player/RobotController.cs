@@ -3,22 +3,37 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using Unity.Netcode;
+using UnityEngine.Networking;
+using Cinemachine;
 
 public class RobotController : NetworkBehaviour
 {
     public float rotateSpeed;
     public float motorTorque;
 
-    private StarterAssets.StarterAssetsInputs _input;
+    // private PlayerInputs _input;
+    private float[] _input = new float[6];
 
-    private GameObject[] Armors;
+    [Header("Referee")]
+    private int group = 0;
+    ArmorController[] armors;
 
+    [Header("Chassis")]
     private Transform Base;
 
+    private PIDController followController;
+    [SerializeField] private float[] followControllerParameters = {0.02f, 0f, 0.015f};
+    
+    private bool[] wheelsIsGrounded = new bool[4];
+    private Transform[] wheels = new Transform[4];
+    private float[] wheelForce = new float[4];
+    private Vector3[] wheelForceDirection = new Vector3[4];
+
+    private bool isSpin = false;
+
+    [Header("Gimbal")]
     [SerializeField] private float yawTargetAngle = 0;
     [SerializeField] private float pitchTargetAngle = 0;
-    private PIDController followController;
-    public float[] followControllerParameters = {0.02f, 0f, 0.015f};
     private PIDController yawController;
     private PIDController pitchController;
     private Transform yawComponent;
@@ -27,13 +42,6 @@ public class RobotController : NetworkBehaviour
     private HingeJoint pitchJoint;
     private JointMotor yawMotor;
     private JointMotor pitchMotor;
-
-    private bool[] wheelsIsGrounded = new bool[4];
-    private Transform[] wheels = new Transform[4];
-    private float[] wheelForce = new float[4];
-    private Vector3[] wheelForceDirection = new Vector3[4];
-
-    private bool isSpin = false;
     
     [Tooltip("Shoot Frequency in HZ")]
     public float ShootFrequency = 20f;
@@ -49,22 +57,43 @@ public class RobotController : NetworkBehaviour
     public int ShooterType = 0;
     private float _shootTimeoutDelta;
 
+    // public struct PlayerInputs
+    // {
+    //     public float Move_x;
+    //     public float Move_y;
+    //     public float Rotate_yaw;
+    //     public float Rotate_pitch;
+    //     public bool IsShoot;
+    //     public bool IsSpin;
+
+    //     public PlayerInputs(float move_x,
+    //                         float move_y,
+    //                         float rotate_yaw,
+    //                         float rotate_pitch,
+    //                         bool isShoot,
+    //                         bool isSpin)
+    //     {
+    //         Move_x = move_x;
+    //         Move_y = move_y;
+    //         Rotate_yaw = rotate_yaw;
+    //         Rotate_pitch = rotate_pitch;
+    //         IsShoot = isShoot;
+    //         IsSpin = isSpin;
+    //     }
+    // }
+
     public override void OnNetworkSpawn()
     {
-        if (IsOwner)
-        {
-            Awake();
+        // Debug.Log("Client:" + NetworkManager.Singleton.LocalClientId + "IsOwner?" + IsOwner);
+        if (IsOwner) {
+            this.gameObject.GetComponent<PlayerInput>().enabled = true;
+            this.gameObject.GetComponentInChildren<CinemachineVirtualCamera>().enabled = true;
         }
-    }
-
-    void Awake() 
-    {
-        Armors = GameObject.FindGameObjectsWithTag("Armor");
-        Debug.Log("Armors: "+ Armors.Length);
     }
 
     void Start()
     {
+
         Base = transform.Find("Base");
 
         yawComponent = transform.Find("Yaw");
@@ -79,7 +108,6 @@ public class RobotController : NetworkBehaviour
         wheels[2] = transform.Find("Left-Back-Wheel");
         wheels[3] = transform.Find("Right-Back-Wheel");
 
-        _input = GetComponent<StarterAssets.StarterAssetsInputs>();
         if (yawComponent != null)
         {
             yawJoint = yawComponent.GetComponent<HingeJoint>();
@@ -94,35 +122,45 @@ public class RobotController : NetworkBehaviour
 
     void OnEnable()
     {
-        foreach(GameObject _armor in Armors)
+        armors = this.gameObject.GetComponentsInChildren<ArmorController>();
+        Debug.Log("Enable Armors: "+ armors.Length);
+        foreach(ArmorController _armor in armors)
         {
-            _armor.GetComponent<ArmorController>().OnHit += Damage;
+            _armor.OnHit += Damage;
+            _armor.LightEnbale(group);
         }
     }
 
     void OnDisable()
     {
-        foreach(GameObject _armor in Armors)
+        Debug.Log("Disable Armors: "+ armors.Length);
+        foreach(ArmorController _armor in armors)
         {
-            _armor.GetComponent<ArmorController>().OnHit -= Damage;
+            _armor.OnHit -= Damage;
+            _armor.LightDisable();
         }
     }
 
     void Update()
     {
-        if (_input.spin)
-        {
-            isSpin = !isSpin;
-            _input.spin = false;
-        }
+        if (!IsOwner) return;
 
-        Debug.DrawLine(Base.position, Base.right * 20 + Base.position, Color.blue);
-        Debug.DrawLine(yawComponent.position, yawComponent.right * 20 + yawComponent.position, Color.green);
-        Debug.DrawLine(pitchComponent.position, pitchComponent.right * 20 + pitchComponent.position, Color.yellow);
+        StarterAssets.StarterAssetsInputs _playerInputs = GetComponent<StarterAssets.StarterAssetsInputs>();
 
-        MoveSight();
-        Move();
-        Shoot();
+        _input[0] = _playerInputs.move.x;
+        _input[1] = _playerInputs.move.y;
+        _input[2] = _playerInputs.look.x;
+        _input[3] = _playerInputs.look.y;
+        _input[4] = _playerInputs.shoot ? 1f : 0f;
+        _input[5] = _playerInputs.spin ? 1f : 0f;
+
+        _playerInputs.shoot = false;
+        _playerInputs.spin = false;
+
+        // All input status
+        // Debug.Log(_input[0] + " " + _input[1] + " " + _input[2] + " " + _input[3] + " " + _input[4] + " " + _input[5]);
+
+        ControlRobotServerRpc(_input);
     }
 
     private void MoveSight()
@@ -133,17 +171,17 @@ public class RobotController : NetworkBehaviour
                                     followControllerParameters[1],
                                     followControllerParameters[2]);
 
-        yawTargetAngle += _input.look.x;
+        yawTargetAngle += _input[2];
         if (yawTargetAngle < 0) yawTargetAngle += 360;
         if (yawTargetAngle > 360) yawTargetAngle -= 360;
 
-        pitchTargetAngle += _input.look.y;
+        pitchTargetAngle += _input[3];
         float _yawDifference = yawTargetAngle - yawComponent.eulerAngles.y;
 
         // Debug.Log("difference: " + _yawDifference);
         // Debug.Log("pitch: " + pitchTargetAngle);
 
-        pitchMotor.targetVelocity = -_input.look.y * rotateSpeed;
+        pitchMotor.targetVelocity = -_input[3] * rotateSpeed;
         pitchJoint.motor = pitchMotor;
 
         if (_yawDifference > 180) {
@@ -160,8 +198,8 @@ public class RobotController : NetworkBehaviour
 
     private void Move()
     {
-        float vx = -_input.move.y;
-        float vy = _input.move.x;
+        float vx = -_input[1];
+        float vy = _input[0];
         float vw = 0;
 
         // 小陀螺 or 底盘跟随云台
@@ -189,18 +227,16 @@ public class RobotController : NetworkBehaviour
             // 捕捉每个轮子的碰撞状态，设置是否触底，根据触底与否再施加力
             // Debug.Log("wheel " + i + " is colliding? : " + wheels[i].GetComponent<WheelController>().IsColliding());
             wheels[i].GetComponent<Rigidbody>().AddForce(wheelForce[i] * wheelForceDirection[i] * motorTorque * (wheels[i].GetComponent<WheelController>().IsColliding() ? 1 : 0));
-            Debug.DrawLine(wheels[i].position, wheels[i].position + (wheelForceDirection[i] * wheelForce[i] * (wheels[i].GetComponent<WheelController>().IsColliding() ? 1 : 0) * 25f) , Color.red);
+            // Debug.DrawLine(wheels[i].position, wheels[i].position + (wheelForceDirection[i] * wheelForce[i] * (wheels[i].GetComponent<WheelController>().IsColliding() ? 1 : 0) * 25f) , Color.red);
         }
     }
 
     private void Shoot()
     {
-        if (_input.shoot && _shootTimeoutDelta <= 0.0f && ShooterEnabled) 
+        if (_input[4] > 0 && _shootTimeoutDelta <= 0.0f && ShooterEnabled) 
         {
             // reset the shoot timeout timer
             _shootTimeoutDelta = 1 / ShootFrequency;
-
-            _input.shoot = false;
 
             // Debug.Log("Shoot");
             if (OnShoot != null){
@@ -230,5 +266,25 @@ public class RobotController : NetworkBehaviour
         // Debug.Log("Damage Occur");
         // Debug.Log("Damage Type: " + damageType);
         // Debug.Log("Armor ID: " + armorID);
+    }
+
+    [ServerRpc]
+    public void ControlRobotServerRpc(float[] input, ServerRpcParams serverRpcParams = default)
+    {
+        // Debug.Log("Client uploading user input: " + serverRpcParams.Receive.SenderClientId);
+        _input = input;
+
+        if (_input[5] > 0)
+        {
+            isSpin = !isSpin;
+        }
+
+        Debug.DrawLine(Base.position, Base.right * 20 + Base.position, Color.blue);
+        Debug.DrawLine(yawComponent.position, yawComponent.right * 20 + yawComponent.position, Color.green);
+        Debug.DrawLine(pitchComponent.position, pitchComponent.right * 20 + pitchComponent.position, Color.yellow);
+
+        MoveSight();
+        Move();
+        Shoot();
     }
 }

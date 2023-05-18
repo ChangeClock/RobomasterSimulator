@@ -432,7 +432,7 @@ MonoBehaviour:
   yawTargetAngle: 0
   pitchTargetAngle: 0
   ShootFrequency: 5
-  ShootSpeed: 160
+  ShootSpeed: 60
   ShootHeight: 1.5
   ShooterEnabled: 1
   ShooterType: 1
@@ -455,7 +455,7 @@ MonoBehaviour:
   shoot: 0
   spin: 0
   analogMovement: 0
-  cursorLocked: 0
+  cursorLocked: 1
   cursorInputForLook: 1
 --- !u!114 &9100587245660692841
 MonoBehaviour:

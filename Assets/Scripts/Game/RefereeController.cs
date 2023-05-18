@@ -5,15 +5,18 @@ using Unity.Netcode;
 
 public class RefereeController : NetworkBehaviour
 {
+    public delegate void DamageAction(int damageType, int armorID, int robotID);
+    public event DamageAction OnDamage;
+
+    public DataTransmission.RobotStatus Status = new DataTransmission.RobotStatus();
+
     [Header("Referee")]
     private ArmorController[] Armors;
     public int RobotID;
-    public float[,] Status;
 
-    // Start is called before the first frame update
     void Start()
     {
-
+        Debug.Log("[RefreeController] HP: " + Status.HP);
     }
 
     void OnEnable()
@@ -23,7 +26,7 @@ public class RefereeController : NetworkBehaviour
         foreach(ArmorController _armor in Armors)
         {
             _armor.OnHit += DamageHandler;
-            _armor.lightColor = RobotID < 100 ? 1 : 2;
+            _armor.lightColor = RobotID < 20 ? 1 : 2;
         }
     }
 
@@ -36,21 +39,19 @@ public class RefereeController : NetworkBehaviour
         }
     }
 
-    // Update is called once per frame
     void Update()
     {
-        
+        // Sync Armor related Status
+        foreach(ArmorController _armor in Armors)
+        {
+            if(_armor != null) {
+                _armor.disabled = Status.Disabled;
+            }
+        }
     }
 
     void DamageHandler(int damageType, int armorID)
     {
-        // GameManager.DamageHandlerServerRpc(damageType, armorID, RobotID);
-    }
-
-    [ClientRpc]
-    public void UpdateRobotStatusClientRpc(float[,] status, ClientRpcParams clientRpcParams = default){
-        if (IsOwner) return;
-        
-        Status = status;
+        OnDamage(damageType, armorID, RobotID);
     }
 }

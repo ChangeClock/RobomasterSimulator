@@ -49,6 +49,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c588dc8e7f3394e6ba6dc7fcf0bb7644, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  gameManager: {fileID: 0}
   RobotID: 0
 --- !u!114 &3485877124579255061
 MonoBehaviour:
@@ -300,7 +301,7 @@ Rigidbody:
   m_IsKinematic: 1
   m_Interpolate: 0
   m_Constraints: 0
-  m_CollisionDetection: 0
+  m_CollisionDetection: 3
 --- !u!64 &5414834391480331252
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -322,7 +323,7 @@ MeshCollider:
   serializedVersion: 5
   m_Convex: 0
   m_CookingOptions: 30
-  m_Mesh: {fileID: 532591105809680800, guid: b77da8c0dec2dad4abe8aaac44397153, type: 3}
+  m_Mesh: {fileID: -7877160491211906700, guid: b77da8c0dec2dad4abe8aaac44397153, type: 3}
 --- !u!4 &1866070525710497036 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: b77da8c0dec2dad4abe8aaac44397153,
@@ -800,8 +801,8 @@ HingeJoint:
     targetPosition: 0
   m_UseMotor: 1
   m_Motor:
-    targetVelocity: 30
-    force: 1000
+    targetVelocity: 100
+    force: 10000
     freeSpin: 0
   m_UseLimits: 0
   m_ExtendedLimits: 0

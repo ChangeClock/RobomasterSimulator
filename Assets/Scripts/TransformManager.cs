@@ -8,7 +8,14 @@ public class TransformManager : NetworkBehaviour
     [SerializeField] private GameObject Hero;
     [SerializeField] private GameObject Infantry;
     [SerializeField] private GameObject Sentry;
+
+    [SerializeField] private GameManager gameManager;
+
     private string serverIP;
+
+    void Start()
+    {
+    }
 
     void OnGUI()
     {
@@ -52,37 +59,25 @@ public class TransformManager : NetworkBehaviour
         var mode = NetworkManager.Singleton.IsHost ?
             "Host" : NetworkManager.Singleton.IsServer ? "Server" : "Client";
 
-        GUILayout.Label("Transport: " +
-            NetworkManager.Singleton.NetworkConfig.NetworkTransport.GetType().Name);
+        // GUILayout.Label("Transport: " + NetworkManager.Singleton.NetworkConfig.NetworkTransport.GetType().Name);
         GUILayout.Label("Mode: " + mode);
 
         GUILayout.Label("ClientID: " + NetworkManager.Singleton.LocalClientId);
         // NetworkSpawnManager spawnManager = new NetworkSpawnManager();
-        GUILayout.Label("PlayerObject: " + NetworkManager.SpawnManager.GetPlayerNetworkObject(NetworkManager.Singleton.LocalClientId));
-
+        // GUILayout.Label("PlayerObject: " + NetworkManager.SpawnManager.GetPlayerNetworkObject(NetworkManager.Singleton.LocalClientId));
+        GUILayout.Label("R-Outpost: " + gameManager.RobotStatusList[18].HP);
+        GUILayout.Label("B-Outpost: " + gameManager.RobotStatusList[38].HP);
     }
 
     void SpawnButtons()
     {
         if (GUILayout.Button("Hero"))
         {
-            // if(NetworkManager.Singleton.IsServer)
-            // {
-            //     Spawn(0);
-            // } else {
-            //     SpawnServerRpc(0);  
-            // }
             SpawnServerRpc(0);
         }
 
         if (GUILayout.Button("Infantry"))
         {
-            // if(NetworkManager.Singleton.IsServer)
-            // {
-            //     Spawn(1);
-            // } else {
-            //     SpawnServerRpc(1);
-            // }
             SpawnServerRpc(1);
         }
     }
@@ -106,5 +101,4 @@ public class TransformManager : NetworkBehaviour
         GameObject player = Instantiate(prefabList[model], Vector3.right * -110 + Vector3.up * 5, Quaternion.identity);
         player.GetComponent<NetworkObject>().SpawnAsPlayerObject(clientId);
     }
-
 }

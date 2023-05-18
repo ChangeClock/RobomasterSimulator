@@ -638,7 +638,7 @@ MonoBehaviour:
   shoot: 0
   spin: 0
   analogMovement: 0
-  cursorLocked: 0
+  cursorLocked: 1
   cursorInputForLook: 1
 --- !u!114 &7907609057272362946
 MonoBehaviour:

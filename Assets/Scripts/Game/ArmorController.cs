@@ -67,13 +67,14 @@ public class ArmorController : MonoBehaviour
         Vector3 normal = collision.contacts[0].normal;
         Vector3 perpendicularVelocity = Vector3.ProjectOnPlane(incomingVelocity, normal);
 
-        Debug.Log("[ArmorController] Armor on Hit wth velocity:" + perpendicularVelocity);
+        // Debug.Log("[ArmorController] Armor on Hit wth velocity:" + perpendicularVelocity);
+        if (disabled) return;
 
         if (collision.gameObject.tag == "Bullet-17mm" && damageDetection[1]) {
             // Check if the final velocity is above the minimum required
             if (Mathf.Abs(perpendicularVelocity.magnitude - velocityThreshold17mm) >= 0f)
             {
-                Debug.Log("On Hit with 17mm");
+                // Debug.Log("On Hit with 17mm");
                 if (OnHit != null) OnHit(1,armorID);
                 StartCoroutine(Blink());
             }
@@ -82,7 +83,7 @@ public class ArmorController : MonoBehaviour
 
             if (Mathf.Abs(perpendicularVelocity.magnitude - velocityThreshold42mm) >= 0f)
             {
-                Debug.Log("On Hit with 42mm");
+                // Debug.Log("On Hit with 42mm");
                 if (OnHit != null) OnHit(2,armorID);
                 StartCoroutine(Blink());
             }
@@ -91,8 +92,8 @@ public class ArmorController : MonoBehaviour
 
             if (Mathf.Abs(perpendicularVelocity.magnitude - velocityThresholdMissle) >= 0f)
             {
-                Debug.Log("On Hit with Missle");
-                if(OnHit == null) OnHit(0,armorID);
+                // Debug.Log("On Hit with Missle");
+                if(OnHit != null) OnHit(0,armorID);
                 StartCoroutine(Blink());
             }
 
@@ -100,8 +101,8 @@ public class ArmorController : MonoBehaviour
 
             if (Mathf.Abs(perpendicularVelocity.magnitude - velocityThresholdImpact) >= 0f)
             {
-                Debug.Log("On Hit with Impact");
-                if(OnHit == null) OnHit(0,armorID);
+                // Debug.Log("On Hit with Impact");
+                if(OnHit != null) OnHit(0,armorID);
                 StartCoroutine(Blink());
             }
 
@@ -112,10 +113,10 @@ public class ArmorController : MonoBehaviour
 
     IEnumerator Blink()
     {
-        Debug.Log("Light Off");
+        // Debug.Log("Light Off");
         disabled = true;
         yield return new WaitForSeconds(0.1f);
         disabled = false;
-        Debug.Log("Light On");
+        // Debug.Log("Light On");
     }
 }

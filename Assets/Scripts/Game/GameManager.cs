@@ -5,49 +5,10 @@ using UnityEngine;
 
 public class GameManager : NetworkBehaviour
 {
-    // public struct RobotStatus
-    // {
-    //     // 0: 中立 1: R-Hero 2: R-Engineer 3/4/5: R-Infantry 6: R-Air 7: R-Sentry 9: R-Lidar 98: R-Outpost 99: R-Base 101: B-Hero 102: B-Engineer 103/104/105: B-Infantry 106: B-Air 107: B-Sentry 109: B-Lidar 198: B-Outpost 199: B-Base;
-    //     public int RobotID;
-    //     public int HPLimit;
-    //     public int HP;
-    //     public int[] ShooterEnable;
-    //     public int[] HeatLimit;
-    //     // public int[] Heat;
-    //     public int[] CD;
-    //     public int[] SpeedLimit;
-    //     // public int[] Speed = {0,0};
-    //     public int PowerLimit;
-    //     // public int Power = 0;
-    //     public int Level;
-    //     public bool Disabled;
-    //     public bool Immutable;
+    // 0: 中立 1: R-Hero 2: R-Engineer 3/4/5: R-Infantry 6: R-Air 7: R-Sentry 9: R-Lidar 18: R-Outpost 19: R-Base 21: B-Hero 22: B-Engineer 23/24/25: B-Infantry 26: B-Air 27: B-Sentry 29: B-Lidar 38: B-Outpost 39: B-Base;
 
-    //     public RobotStatus(int robotID){
-    //         RobotID = robotID;
-
-    //         HPLimit = 1500;
-    //         HP = 1500;
-    //         ShooterEnable = new int[] {0,0};
-    //         HeatLimit = new int[] {0,0};
-    //         CD = new int[] {0,0};
-    //         SpeedLimit = new int[] {0,0};
-    //         PowerLimit = -1;
-    //         Level = 0;
-    //         Disabled = true;
-    //         Immutable = true;
-    //     }
-    // }
-
-    private float[,] RobotStatusList = new float[15,16];
-
-    private GameObject[] NPC = new GameObject[2];
-
-    void Start()
-    {
-        NPC[0] = transform.Find("R-Outpost").gameObject;
-        NPC[1] = transform.Find("B-Outpost").gameObject;
-    }
+    public Dictionary<int, DataTransmission.RobotStatus> RobotStatusList = new Dictionary<int, DataTransmission.RobotStatus>();
+    public Dictionary<int, RefereeController> RefereeControllerList = new Dictionary<int, RefereeController>();
 
     private void OnEnable()
     {
@@ -55,18 +16,91 @@ public class GameManager : NetworkBehaviour
 
     private void OnDisable()
     {
+        // TODO: Unsubscribe damage event of every referee controller
+        var enumerator = RefereeControllerList.GetEnumerator();
+        while (enumerator.MoveNext())
+        {
+            enumerator.Current.Value.OnDamage -= DamageUpload;
+        }
+    }
+
+    private void Start() {
+        // TODO: Need to register new referee controller dynamicallyRefereeController[] _list = GameObject.FindObjectsByType<RefereeController>(FindObjectsSortMode.None); 
+        
+        RefereeController[] _list = GameObject.FindObjectsByType<RefereeController>(FindObjectsSortMode.None); 
+        Debug.Log(_list.Length);
+        foreach(RefereeController _refree in _list)
+        {
+            RefereeControllerList.Add(_refree.RobotID, _refree);
+            RobotStatusList.Add(_refree.RobotID, _refree.Status);
+            _refree.OnDamage += DamageUpload;
+            // Initial the default RobotStatusList according to a config file;
+
+            switch(_refree.RobotID){
+                case 18:
+                case 38:
+                    RobotStatusList[_refree.RobotID].SetHP(1500);
+                    break;
+                default:
+                    RobotStatusList[_refree.RobotID].SetHP(500);
+                    break;
+            }
+            
+            Debug.Log("[GameController] _refree: "+_refree.gameObject.name + " " + _refree.RobotID);
+        }
     }
 
     void Update()
     {
-        foreach(GameObject _NPC in NPC){
-            if (_NPC != null) _NPC.GetComponent<RefereeController>().UpdateRobotStatusClientRpc(RobotStatusList);
+        // TODO: Update Status Struct according RobotID to every RefreeController
+        var enumerator = RefereeControllerList.GetEnumerator();
+        while (enumerator.MoveNext())
+        {
+            int _id = enumerator.Current.Key;
+            RefereeControllerList[_id].Status = RobotStatusList[_id];
         }
     }
 
-    [ServerRpc (RequireOwnership = false)]
+    void DamageUpload(int damageType, int armorID, int robotID)
+    {
+        DamageHandlerServerRpc(damageType, armorID, robotID);
+    }
+
+    // [ClientRpc]
+    // public void StatusUpdateClientRpc(float[,] status)
+    // {
+    //     Debug.Log("[GameManager] status: "+ status);
+    //     Debug.Log("[GameManager] RobotStatusList: "+ RobotStatusList);
+    //     // RobotStatusList = status;
+    // }
+
+    [ServerRpc]
     public void DamageHandlerServerRpc(int damageType, int armorID, int robotID, ServerRpcParams serverRpcParams = default)
     {
         Debug.Log("Damage Type: " + damageType + " Armor ID: " + armorID + " Robot ID: " + robotID);
+        // Not Disabled or Immutable
+        if (!RobotStatusList[robotID].Disabled && !RobotStatusList[robotID].Immutable) {
+            int _hp = RobotStatusList[robotID].GetHP();
+            int _damage = 0;
+            // Debug.Log("[GameManager - Damage] HP:"+RobotStatusList[robotID].HP);
+            switch(damageType){
+                case 0:
+                    _damage = 2;
+                    break;
+                case 1:
+                    _damage = 10;
+                    break;
+                case 2:
+                    _damage = 100;
+                    break;
+                case 3:
+                    _damage = 750;
+                    break;
+                default:
+                    Debug.LogWarning("Unknown Damage Type"+damageType);
+                    break;
+            }
+            RobotStatusList[robotID].setHP(_hp - _damage);
+        }
     }
 }

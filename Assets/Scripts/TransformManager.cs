@@ -33,10 +33,20 @@ public class TransformManager : NetworkBehaviour
             StatusLabels();
 
             SpawnButtons();
+
+            if(IsServer)
+            {
+                RefereeButtons();
+            }
         } 
         else 
         {
             StatusLabels();
+
+            if(IsServer)
+            {
+                RefereeButtons();
+            }
         }
 
         GUILayout.EndArea();
@@ -65,8 +75,8 @@ public class TransformManager : NetworkBehaviour
         GUILayout.Label("ClientID: " + NetworkManager.Singleton.LocalClientId);
         // NetworkSpawnManager spawnManager = new NetworkSpawnManager();
         // GUILayout.Label("PlayerObject: " + NetworkManager.SpawnManager.GetPlayerNetworkObject(NetworkManager.Singleton.LocalClientId));
-        GUILayout.Label("R-Outpost: " + gameManager.RobotStatusList[18].GetHP());
-        GUILayout.Label("B-Outpost: " + gameManager.RobotStatusList[38].GetHP());
+        GUILayout.Label("R-Outpost: " + gameManager.RefereeControllerList[18].GetHP());
+        GUILayout.Label("B-Outpost: " + gameManager.RefereeControllerList[38].GetHP());
     }
 
     void SpawnButtons()
@@ -80,6 +90,19 @@ public class TransformManager : NetworkBehaviour
         {
             SpawnServerRpc(1);
         }
+    }
+
+    void RefereeButtons()
+    {
+        if (GUILayout.Button("Reset R-Outpost"))
+        {
+            gameManager.RefereeControllerList[18].SetHP(1500);
+        }
+
+        if (GUILayout.Button("Reset B-Outpost"))
+        {
+            gameManager.RefereeControllerList[38].SetHP(1500);
+        } 
     }
 
     // void Spawn(int model, ulong clientId){

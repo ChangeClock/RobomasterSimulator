@@ -6,8 +6,6 @@ using UnityEngine;
 public class GameManager : NetworkBehaviour
 {
     // 0: 中立 1: R-Hero 2: R-Engineer 3/4/5: R-Infantry 6: R-Air 7: R-Sentry 9: R-Lidar 18: R-Outpost 19: R-Base 21: B-Hero 22: B-Engineer 23/24/25: B-Infantry 26: B-Air 27: B-Sentry 29: B-Lidar 38: B-Outpost 39: B-Base;
-
-    public Dictionary<int, DataTransmission.RobotStatus> RobotStatusList = new Dictionary<int, DataTransmission.RobotStatus>();
     public Dictionary<int, RefereeController> RefereeControllerList = new Dictionary<int, RefereeController>();
 
     private void OnEnable()
@@ -32,21 +30,20 @@ public class GameManager : NetworkBehaviour
         foreach(RefereeController _refree in _list)
         {
             RefereeControllerList.Add(_refree.RobotID, _refree);
-            RobotStatusList.Add(_refree.RobotID, _refree.Status);
             _refree.OnDamage += DamageUpload;
             // Initial the default RobotStatusList according to a config file;
 
             switch(_refree.RobotID){
                 case 18:
                 case 38:
-                    RobotStatusList[_refree.RobotID].SetHP(1500);
+                    RefereeControllerList[_refree.RobotID].SetHP(1500);
                     break;
                 default:
-                    RobotStatusList[_refree.RobotID].SetHP(500);
+                    RefereeControllerList[_refree.RobotID].SetHP(500);
                     break;
             }
-            
-            Debug.Log("[GameController] _refree: "+_refree.gameObject.name + " " + _refree.RobotID);
+            Debug.Log("[GameController] _refree: " + _refree.gameObject.name + " " + _refree.RobotID);
+            Debug.Log("[GameController] _refree: " + RefereeControllerList[_refree.RobotID].GetHP());
         }
     }
 
@@ -57,8 +54,11 @@ public class GameManager : NetworkBehaviour
         while (enumerator.MoveNext())
         {
             int _id = enumerator.Current.Key;
-            RefereeControllerList[_id].Status = RobotStatusList[_id];
+            
+            // update something...
         }
+
+        // Debug.Log("[GameController] HP: "+ RobotStatusList[18].GetHP());
     }
 
     void DamageUpload(int damageType, int armorID, int robotID)
@@ -66,21 +66,13 @@ public class GameManager : NetworkBehaviour
         DamageHandlerServerRpc(damageType, armorID, robotID);
     }
 
-    // [ClientRpc]
-    // public void StatusUpdateClientRpc(float[,] status)
-    // {
-    //     Debug.Log("[GameManager] status: "+ status);
-    //     Debug.Log("[GameManager] RobotStatusList: "+ RobotStatusList);
-    //     // RobotStatusList = status;
-    // }
-
     [ServerRpc]
     public void DamageHandlerServerRpc(int damageType, int armorID, int robotID, ServerRpcParams serverRpcParams = default)
     {
         Debug.Log("Damage Type: " + damageType + " Armor ID: " + armorID + " Robot ID: " + robotID);
         // Not Disabled or Immutable
-        if (!RobotStatusList[robotID].GetDisabled() && !RobotStatusList[robotID].GetImmutable()) {
-            int _hp = RobotStatusList[robotID].GetHP();
+        if (!RefereeControllerList[robotID].GetDisabled() && !RefereeControllerList[robotID].GetImmutable()) {
+            int _hp = RefereeControllerList[robotID].GetHP();
             int _damage = 0;
             // Debug.Log("[GameManager - Damage] HP:"+RobotStatusList[robotID].HP);
             switch(damageType){
@@ -97,10 +89,10 @@ public class GameManager : NetworkBehaviour
                     _damage = 750;
                     break;
                 default:
-                    Debug.LogWarning("Unknown Damage Type"+damageType);
+                    Debug.LogWarning("Unknown Damage Type" + damageType);
                     break;
             }
-            RobotStatusList[robotID].SetHP(_hp - _damage);
+            RefereeControllerList[robotID].SetHP(_hp - _damage);
         }
     }
 }

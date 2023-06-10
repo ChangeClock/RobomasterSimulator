@@ -63,7 +63,13 @@ public class DataTransmission : MonoBehaviour
         //     Disabled = disabled;
         // }
 
-        public void SetHP(int hp) { HP = hp; }
+        public void SetHP(int hp) 
+        {
+            Debug.Log("[RobotStatus] HP: "+ HP);
+            Debug.Log("[RobotStatus] hp: "+ hp);
+            HP = hp; 
+            Debug.Log("[RobotStatus] HP: "+ HP);
+        }
         public int GetHP() { return HP; }
 
         public void SetHPLimit(int hplimit) { HPLimit = hplimit; }

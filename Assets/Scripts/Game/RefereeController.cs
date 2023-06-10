@@ -10,6 +10,19 @@ public class RefereeController : NetworkBehaviour
 
     public DataTransmission.RobotStatus Status = new DataTransmission.RobotStatus();
 
+    [Header("Status")]
+    [SerializeField] private NetworkVariable<int> HPLimit = new NetworkVariable<int>(500, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+    [SerializeField] private NetworkVariable<int> HP = new NetworkVariable<int>(500, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+    [SerializeField] private NetworkVariable<int> Shooter0Enabled = new NetworkVariable<int>(500, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+    [SerializeField] private NetworkVariable<int> Shooter1Enabled = new NetworkVariable<int>(500, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+    [SerializeField] private NetworkVariable<int> Heat1Limit = new NetworkVariable<int>(500, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+    [SerializeField] private NetworkVariable<int> Heat1 = new NetworkVariable<int>(500, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+    [SerializeField] private NetworkVariable<int> Heat2Limit = new NetworkVariable<int>(500, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+    [SerializeField] private NetworkVariable<int> Heat2 = new NetworkVariable<int>(500, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+    [SerializeField] private NetworkVariable<int> Disabled = new NetworkVariable<int>(500, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+    [SerializeField] private NetworkVariable<int> Immutable = new NetworkVariable<int>(500, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+
+
     [Header("Referee")]
     private ArmorController[] Armors;
     public int RobotID;
@@ -53,5 +66,35 @@ public class RefereeController : NetworkBehaviour
     void DamageHandler(int damageType, int armorID)
     {
         OnDamage(damageType, armorID, RobotID);
+    }
+
+    public void SetHP(int hp)
+    {
+        HP.Value = hp;
+    }
+
+    public int GetHP()
+    {
+        return HP.Value;
+    }
+
+    public void SetDisabled(bool disabled)
+    {
+        Disabled.Value = disabled ? 1 : 0;
+    }
+
+    public bool GetDisabled()
+    {
+        return Disabled.Value == 1 ? true : false;
+    }
+
+    public void SetImmutable(bool immutable)
+    {
+        Immutable.Value = immutable ? 1 : 0;
+    }
+
+    public bool GetImmutable()
+    {
+        return Immutable.Value == 1 ? true : false;
     }
 }

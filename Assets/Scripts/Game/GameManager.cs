@@ -79,7 +79,7 @@ public class GameManager : NetworkBehaviour
     {
         Debug.Log("Damage Type: " + damageType + " Armor ID: " + armorID + " Robot ID: " + robotID);
         // Not Disabled or Immutable
-        if (!RobotStatusList[robotID].Disabled && !RobotStatusList[robotID].Immutable) {
+        if (!RobotStatusList[robotID].GetDisabled() && !RobotStatusList[robotID].GetImmutable()) {
             int _hp = RobotStatusList[robotID].GetHP();
             int _damage = 0;
             // Debug.Log("[GameManager - Damage] HP:"+RobotStatusList[robotID].HP);
@@ -100,7 +100,7 @@ public class GameManager : NetworkBehaviour
                     Debug.LogWarning("Unknown Damage Type"+damageType);
                     break;
             }
-            RobotStatusList[robotID].setHP(_hp - _damage);
+            RobotStatusList[robotID].SetHP(_hp - _damage);
         }
     }
 }

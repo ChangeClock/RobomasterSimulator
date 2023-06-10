@@ -16,7 +16,7 @@ public class RefereeController : NetworkBehaviour
 
     void Start()
     {
-        Debug.Log("[RefreeController] HP: " + Status.HP);
+        Debug.Log("[RefreeController] HP: " + Status.GetHP());
     }
 
     void OnEnable()
@@ -45,7 +45,7 @@ public class RefereeController : NetworkBehaviour
         foreach(ArmorController _armor in Armors)
         {
             if(_armor != null) {
-                _armor.disabled = Status.Disabled;
+                _armor.disabled = Status.GetDisabled();
             }
         }
     }

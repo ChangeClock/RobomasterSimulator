@@ -65,8 +65,8 @@ public class TransformManager : NetworkBehaviour
         GUILayout.Label("ClientID: " + NetworkManager.Singleton.LocalClientId);
         // NetworkSpawnManager spawnManager = new NetworkSpawnManager();
         // GUILayout.Label("PlayerObject: " + NetworkManager.SpawnManager.GetPlayerNetworkObject(NetworkManager.Singleton.LocalClientId));
-        GUILayout.Label("R-Outpost: " + gameManager.RobotStatusList[18].HP);
-        GUILayout.Label("B-Outpost: " + gameManager.RobotStatusList[38].HP);
+        GUILayout.Label("R-Outpost: " + gameManager.RobotStatusList[18].GetHP());
+        GUILayout.Label("B-Outpost: " + gameManager.RobotStatusList[38].GetHP());
     }
 
     void SpawnButtons()

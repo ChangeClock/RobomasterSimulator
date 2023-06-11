@@ -2,6 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Unity.Netcode;
+using TMPro;
+using Unity.Collections;
 
 public class RefereeController : NetworkBehaviour
 {
@@ -9,6 +11,8 @@ public class RefereeController : NetworkBehaviour
     public event DamageAction OnDamage;
 
     public DataTransmission.RobotStatus Status = new DataTransmission.RobotStatus();
+
+    [SerializeField] private TextMeshProUGUI ObserverUI;
 
     [Header("Status")]
     [SerializeField] private NetworkVariable<int> HPLimit = new NetworkVariable<int>(500, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
@@ -61,6 +65,9 @@ public class RefereeController : NetworkBehaviour
                 _armor.disabled = Status.GetDisabled();
             }
         }
+
+        // Sync Observer UI
+        ObserverUI.text = "Player: " + (OwnerClientId) + "\n" + "HP: " + (HP.Value.ToString());
     }
 
     void DamageHandler(int damageType, int armorID)

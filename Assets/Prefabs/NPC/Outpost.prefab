@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 6962129610643122747}
   - component: {fileID: 537079560420152804}
   m_Layer: 5
-  m_Name: Text (TMP)
+  m_Name: OberserUI
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -147,7 +147,7 @@ GameObject:
   - component: {fileID: 2252422984838982322}
   - component: {fileID: 2177319953058589917}
   m_Layer: 5
-  m_Name: Image
+  m_Name: BackGround
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -262,6 +262,27 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c588dc8e7f3394e6ba6dc7fcf0bb7644, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ObserverUI: {fileID: 537079560420152804}
+  HPLimit:
+    m_InternalValue: 500
+  HP:
+    m_InternalValue: 500
+  Shooter0Enabled:
+    m_InternalValue: 500
+  Shooter1Enabled:
+    m_InternalValue: 500
+  Heat1Limit:
+    m_InternalValue: 500
+  Heat1:
+    m_InternalValue: 500
+  Heat2Limit:
+    m_InternalValue: 500
+  Heat2:
+    m_InternalValue: 500
+  Disabled:
+    m_InternalValue: 500
+  Immutable:
+    m_InternalValue: 500
   RobotID: 0
 --- !u!114 &3485877124579255061
 MonoBehaviour:

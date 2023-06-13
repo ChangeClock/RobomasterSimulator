@@ -17,15 +17,16 @@ public class RefereeController : NetworkBehaviour
     [Header("Status")]
     [SerializeField] private NetworkVariable<int> HPLimit = new NetworkVariable<int>(500, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
     [SerializeField] private NetworkVariable<int> HP = new NetworkVariable<int>(500, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-    [SerializeField] private NetworkVariable<int> Shooter0Enabled = new NetworkVariable<int>(500, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-    [SerializeField] private NetworkVariable<int> Shooter1Enabled = new NetworkVariable<int>(500, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-    [SerializeField] private NetworkVariable<int> Heat1Limit = new NetworkVariable<int>(500, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-    [SerializeField] private NetworkVariable<int> Heat1 = new NetworkVariable<int>(500, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-    [SerializeField] private NetworkVariable<int> Heat2Limit = new NetworkVariable<int>(500, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-    [SerializeField] private NetworkVariable<int> Heat2 = new NetworkVariable<int>(500, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-    [SerializeField] private NetworkVariable<int> Disabled = new NetworkVariable<int>(500, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-    [SerializeField] private NetworkVariable<int> Immutable = new NetworkVariable<int>(500, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-
+    [SerializeField] private NetworkVariable<int> Shooter0Enabled = new NetworkVariable<int>(1, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+    [SerializeField] private NetworkVariable<int> Shooter1Enabled = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+    [SerializeField] private NetworkVariable<int> Heat1Limit = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+    [SerializeField] private NetworkVariable<int> Heat1 = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+    [SerializeField] private NetworkVariable<int> Heat2Limit = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+    [SerializeField] private NetworkVariable<int> Heat2 = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+    [SerializeField] private NetworkVariable<int> Disabled = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+    [SerializeField] private NetworkVariable<int> Immutable = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+    [SerializeField] private NetworkVariable<int> Level = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+    [SerializeField] private NetworkVariable<int> EXP = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
 
     [Header("Referee")]
     private ArmorController[] Armors;
@@ -34,12 +35,12 @@ public class RefereeController : NetworkBehaviour
     void Start()
     {
         Debug.Log("[RefreeController] HP: " + Status.GetHP());
+        Debug.Log("Enable Armors: "+ Armors.Length);
     }
 
     void OnEnable()
     {
         Armors = this.gameObject.GetComponentsInChildren<ArmorController>();
-        Debug.Log("Enable Armors: "+ Armors.Length);
         foreach(ArmorController _armor in Armors)
         {
             _armor.OnHit += DamageHandler;

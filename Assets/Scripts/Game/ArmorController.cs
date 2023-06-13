@@ -22,41 +22,22 @@ public class ArmorController : MonoBehaviour
     // damageDetection: 对应上面的damageType，设定此装甲板是否响应对应的伤害
     public bool[] damageDetection = {true,true,true,false};
 
-    private MeshRenderer armorLight;
+    private LightController armorLight;
     private Color purple = new Color(0.57f,0.25f,1f,1f);
 
     void Start() 
     {
         Transform light = transform.Find("Light");
         if (light != null){
-            armorLight = light.GetComponent<MeshRenderer>();
+            armorLight = light.GetComponent<LightController>();
         }
     }
 
     void Update()
     {
         if (armorLight != null){
-            if (disabled) {
-                armorLight.material.DisableKeyword("_EMISSION");
-            } else {
-                armorLight.material.EnableKeyword("_EMISSION");
-            }
-
-            switch (lightColor)
-            {
-                case 0:
-                    armorLight.material.SetColor("_EmissionColor", purple);
-                    return;
-                case 1:
-                    armorLight.material.SetColor("_EmissionColor", Color.red);
-                    return;
-                case 2:
-                    armorLight.material.SetColor("_EmissionColor", Color.blue);
-                    return;
-                default:
-                    Debug.LogWarning("[ArmorController] Unknown armor light type");
-                    return;
-            }
+            armorLight.disabled = disabled;
+            armorLight.lightColor = lightColor;
         }
     }
 

@@ -815,7 +815,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Hero: {fileID: 3375936746519120113, guid: 7e4d370908a923d4caba2a85bceb6202, type: 3}
-  Infantry: {fileID: 8732255681391070461, guid: f48f0487c1788a840a282272d240f62f,
+  Infantry: {fileID: 3452892105073773865, guid: f48f0487c1788a840a282272d240f62f,
     type: 3}
   Sentry: {fileID: 3375936746519120113, guid: c25c974e04934954787e2a3290628a4f, type: 3}
   gameManager: {fileID: 405277222}
@@ -865,10 +865,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bee08aeda95aebd47b7fb87ca21eed92, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  NPC:
-  - {fileID: 970447126}
-  - {fileID: 1157591680}
-  UI: {fileID: 360376138}
 --- !u!4 &405277223
 Transform:
   m_ObjectHideFlags: 0
@@ -2255,12 +2251,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 8
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &970447126 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 4769907718567287211, guid: 936e51ca6ceaa2649816feed50cfedb8,
-    type: 3}
-  m_PrefabInstance: {fileID: 543465509}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1028513131
 GameObject:
   m_ObjectHideFlags: 0
@@ -2326,12 +2316,6 @@ Transform:
   m_Father: {fileID: 2114283753834967213}
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &1157591680 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 4769907718567287211, guid: 936e51ca6ceaa2649816feed50cfedb8,
-    type: 3}
-  m_PrefabInstance: {fileID: 405291674}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1171968348
 GameObject:
   m_ObjectHideFlags: 0
@@ -3158,6 +3142,11 @@ PrefabInstance:
         type: 3}
       propertyPath: GlobalObjectIdHash
       value: 3974387795
+      objectReference: {fileID: 0}
+    - target: {fileID: 655094310476382008, guid: 09aade0ecefd01e4b8f7661acf64f5c2,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 53.68
       objectReference: {fileID: 0}
     - target: {fileID: 846030891785061642, guid: 09aade0ecefd01e4b8f7661acf64f5c2,
         type: 3}

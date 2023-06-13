@@ -81,14 +81,54 @@ public class TransformManager : NetworkBehaviour
 
     void SpawnButtons()
     {
-        if (GUILayout.Button("Hero"))
+        if (GUILayout.Button("R1 - Hero"))
         {
-            SpawnServerRpc(0);
+            SpawnServerRpc(0,1);
         }
 
-        if (GUILayout.Button("Infantry"))
+        if (GUILayout.Button("R3 - Infantry"))
         {
-            SpawnServerRpc(1);
+            SpawnServerRpc(1,3);
+        }
+
+        if (GUILayout.Button("R4 - Infantry"))
+        {
+            SpawnServerRpc(1,4);
+        }
+
+        if (GUILayout.Button("R5 - Infantry"))
+        {
+            SpawnServerRpc(1,5);
+        }
+
+        if (GUILayout.Button("R6 - Infantry"))
+        {
+            SpawnServerRpc(1,6);
+        }
+
+        if (GUILayout.Button("B1 - Hero"))
+        {
+            SpawnServerRpc(0,21);
+        }
+
+        if (GUILayout.Button("B3 - Infantry"))
+        {
+            SpawnServerRpc(1,23);
+        }
+
+        if (GUILayout.Button("B4 - Infantry"))
+        {
+            SpawnServerRpc(1,24);
+        }
+
+        if (GUILayout.Button("B5 - Infantry"))
+        {
+            SpawnServerRpc(1,25);
+        }
+
+        if (GUILayout.Button("B6 - Sentry"))
+        {
+            SpawnServerRpc(1,26);
         }
     }
 
@@ -114,7 +154,7 @@ public class TransformManager : NetworkBehaviour
     // }
 
     [ServerRpc(RequireOwnership = false)]
-    public void SpawnServerRpc(int model, ServerRpcParams serverRpcParams = default)
+    public void SpawnServerRpc(int model, int robotID, ServerRpcParams serverRpcParams = default)
     {
         var clientId = serverRpcParams.Receive.SenderClientId;
         Debug.Log("Server Side? " + NetworkManager.Singleton.IsServer);

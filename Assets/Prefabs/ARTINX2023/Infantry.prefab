@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 5435864977008764414}
   - component: {fileID: 1871316451851682385}
   m_Layer: 0
-  m_Name: HP
+  m_Name: ObserverUI
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -614,6 +614,7 @@ GameObject:
   - component: {fileID: 8034232639830557598}
   - component: {fileID: 4910255217677792575}
   - component: {fileID: 7610527325851977632}
+  - component: {fileID: 8336085886961823110}
   m_Layer: 0
   m_Name: Infantry
   m_TagString: Player
@@ -769,6 +770,46 @@ MonoBehaviour:
   ScaleThreshold: 0.01
   InLocalSpace: 0
   Interpolate: 1
+--- !u!114 &8336085886961823110
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3452892105073773865}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c588dc8e7f3394e6ba6dc7fcf0bb7644, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ObserverUI: {fileID: 1871316451851682385}
+  HPLimit:
+    m_InternalValue: 500
+  HP:
+    m_InternalValue: 500
+  Shooter0Enabled:
+    m_InternalValue: 1
+  Shooter1Enabled:
+    m_InternalValue: 0
+  Heat1Limit:
+    m_InternalValue: 0
+  Heat1:
+    m_InternalValue: 0
+  Heat2Limit:
+    m_InternalValue: 0
+  Heat2:
+    m_InternalValue: 0
+  Disabled:
+    m_InternalValue: 0
+  Immutable:
+    m_InternalValue: 0
+  Level:
+    m_InternalValue: 0
+  EXP:
+    m_InternalValue: 0
+  Warning:
+    m_InternalValue: 0
+  RobotID: 0
 --- !u!1 &3938446809222710431
 GameObject:
   m_ObjectHideFlags: 0

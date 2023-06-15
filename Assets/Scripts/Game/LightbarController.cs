@@ -5,25 +5,29 @@ using UnityEngine;
 public class LightbarController : MonoBehaviour
 {
     public bool disabled;
+    public bool warning;
     public int lightColor;
 
-    private LightController armorLight;
+    // TODO: need to control the percentage of light bar
+
+    private LightController barLight;
 
     // Start is called before the first frame update
     void Start()
     {
         Transform light = transform.Find("Light");
         if (light != null){
-            armorLight = light.GetComponent<LightController>();
+            barLight = light.GetComponent<LightController>();
         }
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (armorLight != null){
-            armorLight.disabled = disabled;
-            armorLight.lightColor = lightColor;
+        if (barLight != null){
+            barLight.disabled = disabled;
+            barLight.warning = warning;
+            barLight.lightColor = lightColor;
         }
     }
 }

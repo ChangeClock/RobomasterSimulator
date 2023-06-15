@@ -27,9 +27,11 @@ public class RefereeController : NetworkBehaviour
     [SerializeField] private NetworkVariable<int> Immutable = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
     [SerializeField] private NetworkVariable<int> Level = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
     [SerializeField] private NetworkVariable<int> EXP = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+    [SerializeField] private NetworkVariable<int> Warning = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
 
     [Header("Referee")]
     private ArmorController[] Armors;
+    private LightbarController LightBar;
     public int RobotID;
 
     void Start()
@@ -46,6 +48,8 @@ public class RefereeController : NetworkBehaviour
             _armor.OnHit += DamageHandler;
             _armor.lightColor = RobotID < 20 ? 1 : 2;
         }
+
+        LightBar = this.gameObject.GetComponentInChildren<LightbarController>();
     }
 
     void OnDisable()
@@ -63,8 +67,15 @@ public class RefereeController : NetworkBehaviour
         foreach(ArmorController _armor in Armors)
         {
             if(_armor != null) {
-                _armor.disabled = Status.GetDisabled();
+                _armor.disabled = Disabled.Value != 0;
             }
+        }
+
+        // TODO: Need to sync the HP status
+        if (LightBar != null)
+        {
+            LightBar.disabled = Disabled.Value != 0;
+            LightBar.warning = Warning.Value != 0;
         }
 
         // Sync Observer UI

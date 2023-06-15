@@ -5,6 +5,7 @@ using UnityEngine;
 public class LightController : MonoBehaviour
 {
     public bool disabled = true;
+    public bool warning = false;
     public int lightColor = 0;
     private MeshRenderer meshRenderer;
     private Color purple = new Color(0.57f,0.25f,1f,1f);
@@ -21,6 +22,13 @@ public class LightController : MonoBehaviour
             meshRenderer.material.DisableKeyword("_EMISSION");
         } else {
             meshRenderer.material.EnableKeyword("_EMISSION");
+        }
+
+        // TODO: The warning is only applied to lightbar, which needs to have higher priority to life percentage display but lower than the disabled status.
+        if (warning)
+        {
+            meshRenderer.material.SetColor("_EmissionColor", Color.yellow);
+            return;
         }
 
         switch (lightColor)

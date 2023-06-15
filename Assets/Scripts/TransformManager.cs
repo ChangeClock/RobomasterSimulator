@@ -19,7 +19,7 @@ public class TransformManager : NetworkBehaviour
 
     void OnGUI()
     {
-        GUILayout.BeginArea(new Rect(10, 10, 300, 300));
+        GUILayout.BeginArea(new Rect(Screen.width/100, Screen.width/100, 300, 300));
 
         GUILayout.Label("RoboMaster Simulator");
         GUILayout.Label("Version: " + Application.version);
@@ -91,20 +91,20 @@ public class TransformManager : NetworkBehaviour
             SpawnServerRpc(1,3);
         }
 
-        if (GUILayout.Button("R4 - Infantry"))
-        {
-            SpawnServerRpc(1,4);
-        }
+        // if (GUILayout.Button("R4 - Infantry"))
+        // {
+        //     SpawnServerRpc(1,4);
+        // }
 
-        if (GUILayout.Button("R5 - Infantry"))
-        {
-            SpawnServerRpc(1,5);
-        }
+        // if (GUILayout.Button("R5 - Infantry"))
+        // {
+        //     SpawnServerRpc(1,5);
+        // }
 
-        if (GUILayout.Button("R6 - Infantry"))
-        {
-            SpawnServerRpc(1,6);
-        }
+        // if (GUILayout.Button("R6 - Sentry"))
+        // {
+        //     SpawnServerRpc(1,6);
+        // }
 
         if (GUILayout.Button("B1 - Hero"))
         {
@@ -116,20 +116,20 @@ public class TransformManager : NetworkBehaviour
             SpawnServerRpc(1,23);
         }
 
-        if (GUILayout.Button("B4 - Infantry"))
-        {
-            SpawnServerRpc(1,24);
-        }
+        // if (GUILayout.Button("B4 - Infantry"))
+        // {
+        //     SpawnServerRpc(1,24);
+        // }
 
-        if (GUILayout.Button("B5 - Infantry"))
-        {
-            SpawnServerRpc(1,25);
-        }
+        // if (GUILayout.Button("B5 - Infantry"))
+        // {
+        //     SpawnServerRpc(1,25);
+        // }
 
-        if (GUILayout.Button("B6 - Sentry"))
-        {
-            SpawnServerRpc(1,26);
-        }
+        // if (GUILayout.Button("B6 - Sentry"))
+        // {
+        //     SpawnServerRpc(1,26);
+        // }
     }
 
     void RefereeButtons()
@@ -160,8 +160,15 @@ public class TransformManager : NetworkBehaviour
         Debug.Log("Server Side? " + NetworkManager.Singleton.IsServer);
         Debug.Log("Client ID: " + clientId);
         
+        // TODO: Read these prefab dynamically from prefablists in networkmanager
         GameObject[] prefabList = {Hero, Infantry, Sentry};
+
+        // TODO: Instantiate these players according to their robotID in fixed position
+        // TODO: Instantiate these players according to their choice in a limited area
         GameObject player = Instantiate(prefabList[model], Vector3.right * -110 + Vector3.up * 5, Quaternion.identity);
+        RefereeController refree = player.GetComponent<RefereeController>();
+        refree.RobotID = robotID;
+        
         player.GetComponent<NetworkObject>().SpawnAsPlayerObject(clientId);
     }
 }

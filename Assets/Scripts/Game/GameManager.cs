@@ -42,6 +42,7 @@ public class GameManager : NetworkBehaviour
                     RefereeControllerList[_refree.RobotID].SetHP(500);
                     break;
             }
+            
             Debug.Log("[GameController] _refree: " + _refree.gameObject.name + " " + _refree.RobotID);
             Debug.Log("[GameController] _refree: " + RefereeControllerList[_refree.RobotID].GetHP());
         }
@@ -59,6 +60,8 @@ public class GameManager : NetworkBehaviour
         }
 
         // Debug.Log("[GameController] HP: "+ RobotStatusList[18].GetHP());
+
+        // TODO: Need to subscribe and unsubscribe the damage event when a robot / referee controller was removed from the game.
     }
 
     void DamageUpload(int damageType, int armorID, int robotID)

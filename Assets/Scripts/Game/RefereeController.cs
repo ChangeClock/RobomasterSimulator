@@ -45,8 +45,10 @@ public class RefereeController : NetworkBehaviour
         Armors = this.gameObject.GetComponentsInChildren<ArmorController>();
         foreach(ArmorController _armor in Armors)
         {
-            _armor.OnHit += DamageHandler;
-            _armor.lightColor = RobotID < 20 ? 1 : 2;
+            if(_armor != null) 
+            {
+                _armor.OnHit += DamageHandler;
+            }
         }
 
         LightBar = this.gameObject.GetComponentInChildren<LightbarController>();
@@ -68,6 +70,7 @@ public class RefereeController : NetworkBehaviour
         {
             if(_armor != null) {
                 _armor.disabled = Disabled.Value != 0;
+                _armor.lightColor = RobotID > 20 ? 1 : 2;
             }
         }
 
@@ -76,6 +79,7 @@ public class RefereeController : NetworkBehaviour
         {
             LightBar.disabled = Disabled.Value != 0;
             LightBar.warning = Warning.Value != 0;
+            LightBar.lightColor = RobotID > 20 ? 1 : 2;
         }
 
         // Sync Observer UI
@@ -84,7 +88,10 @@ public class RefereeController : NetworkBehaviour
 
     void DamageHandler(int damageType, int armorID)
     {
-        OnDamage(damageType, armorID, RobotID);
+        if (OnDamage != null)
+        {
+            OnDamage(damageType, armorID, RobotID);
+        }
     }
 
     public void SetHP(int hp)

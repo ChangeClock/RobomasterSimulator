@@ -38,11 +38,15 @@ public class GameManager : NetworkBehaviour
                 case 38:
                     RefereeControllerList[_refree.RobotID].SetHP(1500);
                     break;
+                case 19:
+                case 39:
+                    RefereeControllerList[_refree.RobotID].SetHP(5000);
+                    break;
                 default:
                     RefereeControllerList[_refree.RobotID].SetHP(500);
                     break;
             }
-            
+
             Debug.Log("[GameController] _refree: " + _refree.gameObject.name + " " + _refree.RobotID);
             Debug.Log("[GameController] _refree: " + RefereeControllerList[_refree.RobotID].GetHP());
         }

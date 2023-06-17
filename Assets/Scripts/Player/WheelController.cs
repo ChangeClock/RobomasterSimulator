@@ -9,20 +9,30 @@ public class WheelController : MonoBehaviour
     // A boolean property to store whether the gameobject is currently colliding with anything.
     private bool isColliding = false;
 
-    // OnTriggerEnter is called when this gameobject first enters a collision with another object.
-    private void OnCollisionEnter(Collision collision)
+    // // OnTriggerEnter is called when this gameobject first enters a collision with another object.
+    // private void OnCollisionEnter(Collision collision)
+    // {
+    //     if (collision.gameObject.tag == "Ground") 
+    //     {
+    //         isColliding = true;
+    //     }
+    // }
+
+    // // OnTriggerExit is called when this gameobject exits a collision with another object.
+    // private void OnCollisionExit(Collision collision)
+    // {
+    //     if (collision.gameObject.tag == "Ground") 
+    //     {
+    //         isColliding = false;
+    //     }
+    // }
+
+    private void OnCollisionStay(Collision collision) 
     {
         if (collision.gameObject.tag == "Ground") 
         {
             isColliding = true;
-        }
-    }
-
-    // OnTriggerExit is called when this gameobject exits a collision with another object.
-    private void OnCollisionExit(Collision collision)
-    {
-        if (collision.gameObject.tag == "Ground") 
-        {
+        } else {
             isColliding = false;
         }
     }

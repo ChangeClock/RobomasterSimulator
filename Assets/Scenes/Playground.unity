@@ -3324,6 +3324,11 @@ PrefabInstance:
       propertyPath: GlobalObjectIdHash
       value: 3974387795
       objectReference: {fileID: 0}
+    - target: {fileID: 474557868524927412, guid: 09aade0ecefd01e4b8f7661acf64f5c2,
+        type: 3}
+      propertyPath: m_TagString
+      value: Ground
+      objectReference: {fileID: 0}
     - target: {fileID: 553890795011216367, guid: 09aade0ecefd01e4b8f7661acf64f5c2,
         type: 3}
       propertyPath: m_LocalPosition.z
@@ -3338,6 +3343,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalPosition.z
       value: 53.68
+      objectReference: {fileID: 0}
+    - target: {fileID: 823069072482146566, guid: 09aade0ecefd01e4b8f7661acf64f5c2,
+        type: 3}
+      propertyPath: m_TagString
+      value: Ground
       objectReference: {fileID: 0}
     - target: {fileID: 846030891785061642, guid: 09aade0ecefd01e4b8f7661acf64f5c2,
         type: 3}
@@ -3354,6 +3364,11 @@ PrefabInstance:
       propertyPath: m_LocalPosition.z
       value: -75.5
       objectReference: {fileID: 0}
+    - target: {fileID: 1172648077157687448, guid: 09aade0ecefd01e4b8f7661acf64f5c2,
+        type: 3}
+      propertyPath: m_TagString
+      value: Ground
+      objectReference: {fileID: 0}
     - target: {fileID: 1355492970205816810, guid: 09aade0ecefd01e4b8f7661acf64f5c2,
         type: 3}
       propertyPath: m_LocalPosition.z
@@ -3368,6 +3383,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: B3-HighGround
+      objectReference: {fileID: 0}
+    - target: {fileID: 1848239683886278894, guid: 09aade0ecefd01e4b8f7661acf64f5c2,
+        type: 3}
+      propertyPath: m_TagString
+      value: Ground
       objectReference: {fileID: 0}
     - target: {fileID: 2412833572472942455, guid: 09aade0ecefd01e4b8f7661acf64f5c2,
         type: 3}
@@ -3445,6 +3465,11 @@ PrefabInstance:
       propertyPath: m_LocalPosition.z
       value: 75.5
       objectReference: {fileID: 0}
+    - target: {fileID: 5942691437981021705, guid: 09aade0ecefd01e4b8f7661acf64f5c2,
+        type: 3}
+      propertyPath: m_TagString
+      value: Ground
+      objectReference: {fileID: 0}
     - target: {fileID: 6700499594809873235, guid: 09aade0ecefd01e4b8f7661acf64f5c2,
         type: 3}
       propertyPath: m_LocalPosition.z
@@ -3469,6 +3494,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalPosition.z
       value: 75.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 8000184819331096060, guid: 09aade0ecefd01e4b8f7661acf64f5c2,
+        type: 3}
+      propertyPath: m_TagString
+      value: Ground
       objectReference: {fileID: 0}
     - target: {fileID: 8345070699079395522, guid: 09aade0ecefd01e4b8f7661acf64f5c2,
         type: 3}
@@ -3549,6 +3579,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: R-Supply-Station
+      objectReference: {fileID: 0}
+    - target: {fileID: 9013102084840779236, guid: 09aade0ecefd01e4b8f7661acf64f5c2,
+        type: 3}
+      propertyPath: m_TagString
+      value: Ground
       objectReference: {fileID: 0}
     - target: {fileID: 9166496056335332896, guid: 09aade0ecefd01e4b8f7661acf64f5c2,
         type: 3}

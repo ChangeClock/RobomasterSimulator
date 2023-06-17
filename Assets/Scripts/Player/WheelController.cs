@@ -5,8 +5,6 @@ using UnityEngine;
 public class WheelController : MonoBehaviour
 {
     // 为了使轮子的物理效果更加真实，有以下的改进项
-    
-    // TODO: 检测轮子接触与否，否则停止加力（告知RobotController）
 
     // A boolean property to store whether the gameobject is currently colliding with anything.
     private bool isColliding = false;
@@ -35,7 +33,7 @@ public class WheelController : MonoBehaviour
         return isColliding;
     }
 
-    // TODO：检测压力情况，模拟摩擦力大小变化，影响加力大小
+    // TODO：检测压力情况，模拟摩擦力大小变化，影响加力大小/上限
 
 
     // TODO: 输出接触面切向方向，优化目前在底盘水平面上加力的问题

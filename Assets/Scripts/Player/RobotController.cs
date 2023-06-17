@@ -175,7 +175,7 @@ public class RobotController : NetworkBehaviour
         for (int i=0; i<4; i++)
         {
             // 捕捉每个轮子的碰撞状态，设置是否触底，根据触底与否再施加力
-            // Debug.Log("wheel " + i + " is colliding? : " + wheels[i].GetComponent<WheelController>().IsColliding());
+            Debug.Log("wheel " + i + " is colliding? : " + wheels[i].GetComponent<WheelController>().IsColliding());
             wheels[i].GetComponent<Rigidbody>().AddForce(wheelForce[i] * wheelForceDirection[i] * motorTorque * (wheels[i].GetComponent<WheelController>().IsColliding() ? 1 : 0));
             Debug.DrawLine(wheels[i].position, wheels[i].position + (wheelForceDirection[i] * wheelForce[i] * (wheels[i].GetComponent<WheelController>().IsColliding() ? 1 : 0) * 25f) , Color.red);
         }

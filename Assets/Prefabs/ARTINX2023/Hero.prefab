@@ -435,7 +435,7 @@ MonoBehaviour:
   yawTargetAngle: 0
   pitchTargetAngle: 0
   ShootFrequency: 5
-  ShootSpeed: 60
+  ShootSpeed: 160
   ShootHeight: 1.5
   ShooterEnabled: 1
   ShooterType: 1

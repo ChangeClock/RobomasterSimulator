@@ -815,7 +815,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Hero: {fileID: 3375936746519120113, guid: 7e4d370908a923d4caba2a85bceb6202, type: 3}
-  Infantry: {fileID: 3452892105073773865, guid: f48f0487c1788a840a282272d240f62f,
+  Infantry: {fileID: 7102755298932974349, guid: f48f0487c1788a840a282272d240f62f,
     type: 3}
   Sentry: {fileID: 3375936746519120113, guid: c25c974e04934954787e2a3290628a4f, type: 3}
   gameManager: {fileID: 405277222}

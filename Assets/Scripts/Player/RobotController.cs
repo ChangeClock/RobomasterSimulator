@@ -17,7 +17,9 @@ public class RobotController : NetworkBehaviour
     [Header("Chassis")]
     private Transform Base;
 
+    private PIDController moveController;
     private PIDController followController;
+    [SerializeField] private float[] moveControllerParameters = {0.02f, 0f, 0.015f};
     [SerializeField] private float[] followControllerParameters = {0.02f, 0f, 0.015f};
     
     private bool[] wheelsIsGrounded = new bool[4];
@@ -32,6 +34,8 @@ public class RobotController : NetworkBehaviour
     [SerializeField] private float pitchTargetAngle = 0;
     private PIDController yawController;
     private PIDController pitchController;
+    [SerializeField] private float[] yawControllerParameters = {80f, 0f, 0.015f};
+    [SerializeField] private float[] pitchControllerParameters = {50f, 0f, 0.015f};
     private Transform yawComponent;
     private Transform pitchComponent;
     private HingeJoint yawJoint;
@@ -70,9 +74,21 @@ public class RobotController : NetworkBehaviour
         yawComponent = transform.Find("Yaw");
         pitchComponent = transform.Find("Pitch");
 
+        moveController = new PIDController(moveControllerParameters[0],
+                                            moveControllerParameters[1],
+                                            moveControllerParameters[2]);
+
         followController = new PIDController(followControllerParameters[0],
                                             followControllerParameters[1],
                                             followControllerParameters[2]);
+
+        yawController = new PIDController(yawControllerParameters[0],
+                                            yawControllerParameters[1],
+                                            yawControllerParameters[2]);
+
+        pitchController = new PIDController(pitchControllerParameters[0],
+                                            pitchControllerParameters[1],
+                                            pitchControllerParameters[2]);
 
         wheels[0] = transform.Find("Right-Front-Wheel");
         wheels[1] = transform.Find("Left-Front-Wheel");
@@ -117,37 +133,57 @@ public class RobotController : NetworkBehaviour
     {
         // TODO: YAW和PITCH都得上PID
 
-        followController.updatePara(followControllerParameters[0],
-                                    followControllerParameters[1],
-                                    followControllerParameters[2]);
+        yawController.updatePara(yawControllerParameters[0],
+                                yawControllerParameters[1],
+                                yawControllerParameters[2]);
+
+        pitchController.updatePara(pitchControllerParameters[0],
+                                pitchControllerParameters[1],
+                                pitchControllerParameters[2]);
 
         yawTargetAngle += _input[2];
         if (yawTargetAngle < 0) yawTargetAngle += 360;
         if (yawTargetAngle > 360) yawTargetAngle -= 360;
-
         pitchTargetAngle += _input[3];
+        if (pitchTargetAngle < 170) pitchTargetAngle = 170;
+        if (pitchTargetAngle > 210) pitchTargetAngle = 210;
+
         float _yawDifference = yawTargetAngle - yawComponent.eulerAngles.y;
+        float _pitchDifference = pitchTargetAngle - pitchComponent.eulerAngles.z;
 
-        // Debug.Log("difference: " + _yawDifference);
-        // Debug.Log("pitch: " + pitchTargetAngle);
+        Debug.Log("yaw: " + yawComponent.eulerAngles.y + " yawTargetAngle: " + yawTargetAngle + "_yawDifference: " + _yawDifference);
+        Debug.Log("pitch: " + pitchComponent.eulerAngles.z + " pitchTargetAngle: " + pitchTargetAngle + " _pitchDifference: " + _pitchDifference);
 
-        pitchMotor.targetVelocity = -_input[3] * rotateSpeed;
-        pitchJoint.motor = pitchMotor;
+        
+
+        // pitchMotor.targetVelocity = -_input[3] * rotateSpeed;
 
         if (_yawDifference > 180) {
-            yawMotor.targetVelocity = 10 * (_yawDifference - 360);
+            yawMotor.targetVelocity = yawController.Update(_yawDifference - 360, Time.deltaTime);
         } else if (_yawDifference < -180) {
-            yawMotor.targetVelocity = 10 * (360 + _yawDifference);
+            yawMotor.targetVelocity = yawController.Update(360 + _yawDifference, Time.deltaTime);
         } else {
-            yawMotor.targetVelocity = 10 * _yawDifference;
+            yawMotor.targetVelocity = yawController.Update(_yawDifference, Time.deltaTime);
         }
+
+        pitchMotor.targetVelocity = pitchController.Update(_pitchDifference, Time.deltaTime);
+
         // Debug.Log("Velocity: " + yawMotor.targetVelocity);
         
+        pitchJoint.motor = pitchMotor;
         yawJoint.motor = yawMotor;
     }
 
     private void Move()
     {
+        moveController.updatePara(moveControllerParameters[0],
+                                    moveControllerParameters[1],
+                                    moveControllerParameters[2]);
+
+        followController.updatePara(followControllerParameters[0],
+                                    followControllerParameters[1],
+                                    followControllerParameters[2]);
+
         float vx = -_input[1];
         float vy = _input[0];
         float vw = 0;
@@ -175,7 +211,7 @@ public class RobotController : NetworkBehaviour
         for (int i=0; i<4; i++)
         {
             // 捕捉每个轮子的碰撞状态，设置是否触底，根据触底与否再施加力
-            Debug.Log("wheel " + i + " is colliding? : " + wheels[i].GetComponent<WheelController>().IsColliding());
+            // Debug.Log("wheel " + i + " is colliding? : " + wheels[i].GetComponent<WheelController>().IsColliding());
             wheels[i].GetComponent<Rigidbody>().AddForce(wheelForce[i] * wheelForceDirection[i] * motorTorque * (wheels[i].GetComponent<WheelController>().IsColliding() ? 1 : 0));
             Debug.DrawLine(wheels[i].position, wheels[i].position + (wheelForceDirection[i] * wheelForce[i] * (wheels[i].GetComponent<WheelController>().IsColliding() ? 1 : 0) * 25f) , Color.red);
         }

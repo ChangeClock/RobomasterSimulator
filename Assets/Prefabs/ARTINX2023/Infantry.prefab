@@ -528,7 +528,7 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5361813772449387344}
   serializedVersion: 4
-  m_Mass: 200
+  m_Mass: 500
   m_Drag: 0
   m_AngularDrag: 0
   m_CenterOfMass: {x: 0, y: 0, z: 0}
@@ -852,12 +852,24 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   rotateSpeed: 1000
   motorTorque: 1000
+  moveControllerParameters:
+  - 0.02
+  - 0
+  - 0.015
   followControllerParameters:
   - 0.02
   - 0
   - 0.015
   yawTargetAngle: 0
   pitchTargetAngle: 0
+  yawControllerParameters:
+  - 80
+  - 0
+  - 0.015
+  pitchControllerParameters:
+  - 50
+  - 0
+  - 0.015
   ShootFrequency: 20
   ShootSpeed: 100
   ShootHeight: 1.5
@@ -1104,14 +1116,14 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8960253719368322994}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 1, w: 0}
   m_LocalPosition: {x: 0, y: 2.82, z: 0}
   m_LocalScale: {x: 3, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 5358349743822849104}
   m_RootOrder: 2
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 180}
 --- !u!33 &829163475995268874
 MeshFilter:
   m_ObjectHideFlags: 0

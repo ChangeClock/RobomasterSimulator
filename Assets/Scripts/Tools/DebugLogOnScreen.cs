@@ -5,6 +5,7 @@ using System;
 public class DebugLogOnScreen : MonoBehaviour
 {
     public int fontSize = 2;
+    private int logNo = 0;
     private string debugLog = "";
     private const int maxLines = 10;
     private Queue<string> debugLogQueue = new Queue<string>();
@@ -31,7 +32,8 @@ public class DebugLogOnScreen : MonoBehaviour
         debugLog = "";
         foreach (string s in debugLogQueue)
         {
-            debugLog += s + "\n";
+            debugLog += "[" + logNo + "] " + s + "\n";
+            logNo += 1;
         }
     }
 

@@ -42,6 +42,8 @@ public class RobotController : NetworkBehaviour
     private HingeJoint pitchJoint;
     private JointMotor yawMotor;
     private JointMotor pitchMotor;
+    [SerializeField] private float pitchMax;
+    [SerializeField] private float pitchMin;
     
     [Tooltip("Shoot Frequency in HZ")]
     public float ShootFrequency = 20f;
@@ -145,16 +147,14 @@ public class RobotController : NetworkBehaviour
         if (yawTargetAngle < 0) yawTargetAngle += 360;
         if (yawTargetAngle > 360) yawTargetAngle -= 360;
         pitchTargetAngle += _input[3];
-        if (pitchTargetAngle < 170) pitchTargetAngle = 170;
-        if (pitchTargetAngle > 210) pitchTargetAngle = 210;
+        if (pitchTargetAngle < pitchMin) pitchTargetAngle = pitchMin;
+        if (pitchTargetAngle > pitchMax) pitchTargetAngle = pitchMax;
 
         float _yawDifference = yawTargetAngle - yawComponent.eulerAngles.y;
         float _pitchDifference = pitchTargetAngle - pitchComponent.eulerAngles.z;
 
-        Debug.Log("yaw: " + yawComponent.eulerAngles.y + " yawTargetAngle: " + yawTargetAngle + "_yawDifference: " + _yawDifference);
-        Debug.Log("pitch: " + pitchComponent.eulerAngles.z + " pitchTargetAngle: " + pitchTargetAngle + " _pitchDifference: " + _pitchDifference);
-
-        
+        // Debug.Log("yaw: " + yawComponent.eulerAngles.y + " yawTargetAngle: " + yawTargetAngle + "_yawDifference: " + _yawDifference);
+        // Debug.Log("pitch: " + pitchComponent.eulerAngles.z + " pitchTargetAngle: " + pitchTargetAngle + " _pitchDifference: " + _pitchDifference);
 
         // pitchMotor.targetVelocity = -_input[3] * rotateSpeed;
 
@@ -211,7 +211,7 @@ public class RobotController : NetworkBehaviour
         for (int i=0; i<4; i++)
         {
             // 捕捉每个轮子的碰撞状态，设置是否触底，根据触底与否再施加力
-            // Debug.Log("wheel " + i + " is colliding? : " + wheels[i].GetComponent<WheelController>().IsColliding());
+            Debug.Log("wheel " + i + " is colliding? : " + wheels[i].GetComponent<WheelController>().IsColliding());
             wheels[i].GetComponent<Rigidbody>().AddForce(wheelForce[i] * wheelForceDirection[i] * motorTorque * (wheels[i].GetComponent<WheelController>().IsColliding() ? 1 : 0));
             Debug.DrawLine(wheels[i].position, wheels[i].position + (wheelForceDirection[i] * wheelForce[i] * (wheels[i].GetComponent<WheelController>().IsColliding() ? 1 : 0) * 25f) , Color.red);
         }
@@ -227,7 +227,7 @@ public class RobotController : NetworkBehaviour
             // Debug.Log("Shoot");
             if (OnShoot != null){
                 Vector3 _shootOffset = Vector3.zero;
-                _shootOffset = pitchComponent.right*2;
+                _shootOffset = - pitchComponent.right*2;
 
                 // Debug.Log($"_shootOffset {_shootOffset}");
                 // Debug.Log($"transform.forward {transform.forward}");
@@ -235,7 +235,7 @@ public class RobotController : NetworkBehaviour
                 // Debug.Log($"transform.rotation {transform.rotation}");
                 // Debug.Log($"ShootSpeed {ShootSpeed}");
 
-                OnShoot(pitchComponent.position + _shootOffset, pitchComponent.rotation, pitchComponent.right * ShootSpeed, ShooterType);
+                OnShoot(pitchComponent.position + _shootOffset, pitchComponent.rotation, - pitchComponent.right * ShootSpeed, ShooterType);
             }
         }
 
@@ -260,7 +260,7 @@ public class RobotController : NetworkBehaviour
 
         Debug.DrawLine(Base.position, Base.right * 20 + Base.position, Color.blue);
         Debug.DrawLine(yawComponent.position, yawComponent.right * 20 + yawComponent.position, Color.green);
-        Debug.DrawLine(pitchComponent.position, pitchComponent.right * 20 + pitchComponent.position, Color.yellow);
+        Debug.DrawLine(pitchComponent.position, - pitchComponent.right * 20 + pitchComponent.position, Color.yellow);
 
         MoveSight();
         Move();

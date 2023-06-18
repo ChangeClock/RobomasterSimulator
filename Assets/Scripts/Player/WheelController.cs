@@ -8,12 +8,23 @@ public class WheelController : MonoBehaviour
 
     // A boolean property to store whether the gameobject is currently colliding with anything.
     private bool isColliding = false;
+    private int isCollidingCounter = 10;
 
     private void OnCollisionStay(Collision collision) 
     {
+        // Debug.Log("Tag: " + collision.gameObject.tag);
+
         if (collision.gameObject.tag == "Ground") 
         {
             isColliding = true;
+            isCollidingCounter = 10;
+        }
+    }
+
+    private void Update() {
+        if (isCollidingCounter > 0)
+        {
+            isCollidingCounter --;
         } else {
             isColliding = false;
         }

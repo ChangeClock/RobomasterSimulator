@@ -12,8 +12,8 @@ GameObject:
   - component: {fileID: 8954102352953454732}
   - component: {fileID: 161770638222149243}
   - component: {fileID: 7928067455506963183}
-  - component: {fileID: 7761820924987834069}
   - component: {fileID: -5817844055581765899}
+  - component: {fileID: 7632493293988452945}
   m_Layer: 0
   m_Name: MacNameeWheel
   m_TagString: Wheel
@@ -113,8 +113,20 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 1
---- !u!135 &7761820924987834069
-SphereCollider:
+--- !u!114 &-5817844055581765899
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7833624495626438280}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 55efad91b8c998e4584a5d380bca44fc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!64 &7632493293988452945
+MeshCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -131,18 +143,7 @@ SphereCollider:
   m_IsTrigger: 0
   m_ProvidesContacts: 0
   m_Enabled: 1
-  serializedVersion: 3
-  m_Radius: 0.78
-  m_Center: {x: 0.00003796816, y: 0.00047183037, z: -0.02444058}
---- !u!114 &-5817844055581765899
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7833624495626438280}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 55efad91b8c998e4584a5d380bca44fc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
+  serializedVersion: 5
+  m_Convex: 1
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 4394420077881190621, guid: 8104a847122d37e408e095c9ae91b579, type: 3}

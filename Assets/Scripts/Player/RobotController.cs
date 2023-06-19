@@ -184,8 +184,12 @@ public class RobotController : NetworkBehaviour
                                     followControllerParameters[1],
                                     followControllerParameters[2]);
 
-        float vx = -_input[1];
-        float vy = _input[0];
+        // Compute the vx & vy according to the YAW direction, and project these vector on base direction to calculate the force should apply to vx and vy on basement.
+        Vector3 _inputX = _input[1] * Vector3.Project(yawComponent.right, Base.right) + _input[0] * Vector3.Project(-yawComponent.forward, Base.right);
+        Vector3 _inputY = _input[1] * Vector3.Project(yawComponent.right, -Base.forward) + _input[0] * Vector3.Project(-yawComponent.forward, -Base.forward);
+
+        float vx = Vector3.Dot(_inputX.normalized, Base.right) * (_inputX).magnitude;
+        float vy = Vector3.Dot(_inputY.normalized, -Base.forward) * (_inputY).magnitude;
         float vw = 0;
 
         // 小陀螺 or 底盘跟随云台
@@ -198,10 +202,10 @@ public class RobotController : NetworkBehaviour
             // Debug.Log("vw: " + Mathf.Clamp(_vw, -1f, 1f));
         }
 
-        wheelForce[0] = -vx-vy-vw;
-        wheelForce[1] = vx-vy-vw;
-        wheelForce[2] = vx+vy-vw;
-        wheelForce[3] = -vx+vy-vw;
+        wheelForce[0] = vx-vy-vw;
+        wheelForce[1] = -vx-vy-vw;
+        wheelForce[2] = -vx+vy-vw;
+        wheelForce[3] = vx+vy-vw;
 
         wheelForceDirection[0] = Base.right + Base.forward; // (-1,0,1)
         wheelForceDirection[1] = -Base.right + Base.forward; // (-1,0,-1)

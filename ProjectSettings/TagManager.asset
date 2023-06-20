@@ -11,6 +11,7 @@ TagManager:
   - Bullet-42mm
   - Bullet-17mm
   - Ground
+  - Aera
   layers:
   - Default
   - TransparentFX

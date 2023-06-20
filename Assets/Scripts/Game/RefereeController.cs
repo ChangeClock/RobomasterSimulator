@@ -13,6 +13,9 @@ public class RefereeController : NetworkBehaviour
     public delegate void ShootAction(int shooterID, int shooterType, int robotID, Vector3 userPosition, Vector3 shootVelocity);
     public static event ShootAction OnShoot;
 
+    public delegate void OccupyAction(int areaID, int robotID);
+    public static event OccupyAction OnOccupy;
+
     public DataTransmission.RobotStatus Status = new DataTransmission.RobotStatus();
 
     [SerializeField] private TextMeshProUGUI ObserverUI;
@@ -50,6 +53,7 @@ public class RefereeController : NetworkBehaviour
     [Header("Referee")]
     private ArmorController[] Armors;
     private ShooterController[] Shooters;
+    private RFIDController RFID;
     private LightbarController LightBar;
     public int RobotID;
 
@@ -79,6 +83,9 @@ public class RefereeController : NetworkBehaviour
             }
         }
 
+        RFID = this.gameObject.GetComponentInChildren<RFIDController>();
+        if (RFID != null) RFID.OnDetect += DetectHandler;
+
         LightBar = this.gameObject.GetComponentInChildren<LightbarController>();
     }
 
@@ -97,6 +104,8 @@ public class RefereeController : NetworkBehaviour
                 _shooter.OnTrigger -= TriggerHandler;
             }
         }
+        
+        if (RFID != null) RFID.OnDetect -= DetectHandler;
     }
 
     void Update()
@@ -111,6 +120,7 @@ public class RefereeController : NetworkBehaviour
             }
         }
 
+        // TODO: Need to sync the heat
         int _counter = 0;
         foreach(ShooterController _shooter in Shooters)
         {
@@ -129,6 +139,12 @@ public class RefereeController : NetworkBehaviour
                         break;
                 }
             }
+        }
+
+        // TODO: need to sync the disable status to control the light
+        if (RFID != null)
+        {
+
         }
 
         // TODO: Need to sync the HP status
@@ -166,6 +182,13 @@ public class RefereeController : NetworkBehaviour
 
         // Free Fire!
         OnShoot(ID, ID == 0 ? Shooter0Type.Value : Shooter1Type.Value, RobotID, Position, Velocity);
+    }
+
+    void DetectHandler(int areaID)
+    {
+        if (Disabled.Value == 1) return;
+
+        OnOccupy(areaID, RobotID);
     }
 
     public void SetHP(int hp)

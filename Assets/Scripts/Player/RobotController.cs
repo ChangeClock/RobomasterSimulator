@@ -46,8 +46,8 @@ public class RobotController : NetworkBehaviour
     [SerializeField] private float pitchMin;
 
     [Header("Player Shooter")]
-    [Tooltip("0: 17mm; 1: 42mm")]
     [SerializeField]private ShooterController Shooter0;
+    [SerializeField]private ShooterController Shooter1;
 
     [Tooltip("Shoot Frequency in HZ")]
     [SerializeField]private float ShootFrequency = 20f;

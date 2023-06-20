@@ -12,18 +12,14 @@ public class GameManager : NetworkBehaviour
     {
         RefereeController.OnDamage += DamageUpload;
         RefereeController.OnShoot += ShootUpload;
+        RefereeController.OnOccupy += OccupyUpload;
     }
 
     private void OnDisable()
     {
-        // TODO: Unsubscribe damage event of every referee controller
-        // var enumerator = RefereeControllerList.GetEnumerator();
-        // while (enumerator.MoveNext())
-        // {
-        //     enumerator.Current.Value.OnDamage -= DamageUpload;
-        // }
         RefereeController.OnDamage -= DamageUpload;
         RefereeController.OnShoot -= ShootUpload;
+        RefereeController.OnOccupy -= OccupyUpload;
     }
 
     private void Start() {
@@ -121,5 +117,16 @@ public class GameManager : NetworkBehaviour
     public void ShootHandlerServerRpc(int shooterID, int shooterType, int robotID)
     {
         
+    }
+
+    void OccupyUpload(int areaID, int robotID)
+    {
+        OccupyHandlerServerRpc(areaID, robotID);
+    }
+
+    [ServerRpc]
+    public void OccupyHandlerServerRpc(int areaID, int robotID)
+    {
+        Debug.Log($"[GameManager] {robotID} occupied area {areaID}");
     }
 }

@@ -815,7 +815,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Hero: {fileID: 3375936746519120113, guid: 7e4d370908a923d4caba2a85bceb6202, type: 3}
-  Infantry: {fileID: 7102755298932974349, guid: f48f0487c1788a840a282272d240f62f,
+  Infantry: {fileID: 4566135839495928145, guid: f48f0487c1788a840a282272d240f62f,
     type: 3}
   Sentry: {fileID: 3375936746519120113, guid: c25c974e04934954787e2a3290628a4f, type: 3}
   gameManager: {fileID: 405277222}
@@ -3393,6 +3393,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalPosition.z
       value: 75.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 2609771655386867175, guid: 09aade0ecefd01e4b8f7661acf64f5c2,
+        type: 3}
+      propertyPath: m_Name
+      value: Base-Area
       objectReference: {fileID: 0}
     - target: {fileID: 2833952687628767482, guid: 09aade0ecefd01e4b8f7661acf64f5c2,
         type: 3}

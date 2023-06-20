@@ -44,19 +44,15 @@ public class RobotController : NetworkBehaviour
     private JointMotor pitchMotor;
     [SerializeField] private float pitchMax;
     [SerializeField] private float pitchMin;
-    
-    [Tooltip("Shoot Frequency in HZ")]
-    public float ShootFrequency = 20f;
-    public float ShootSpeed = 30f;
-    public float ShootHeight = 1.5f;
-    public delegate void ShootAction(Vector3 userPosition, Quaternion userDirection, Vector3 ShootVelocity, int ShooterType);
-    public static event ShootAction OnShoot;
 
     [Header("Player Shooter")]
-    [Tooltip("If true, the player can shoot")]
-    public bool ShooterEnabled = true;
     [Tooltip("0: 17mm; 1: 42mm")]
-    public int ShooterType = 0;
+    [SerializeField]private ShooterController Shooter0;
+
+    [Tooltip("Shoot Frequency in HZ")]
+    [SerializeField]private float ShootFrequency = 20f;
+    [SerializeField]private float ShootSpeed = 30f;
+
     private float _shootTimeoutDelta;
 
     public override void OnNetworkSpawn()
@@ -70,7 +66,6 @@ public class RobotController : NetworkBehaviour
 
     void Start()
     {
-
         Base = transform.Find("Base");
 
         yawComponent = transform.Find("Yaw");
@@ -215,31 +210,24 @@ public class RobotController : NetworkBehaviour
         for (int i=0; i<4; i++)
         {
             // 捕捉每个轮子的碰撞状态，设置是否触底，根据触底与否再施加力
-            Debug.Log("wheel " + i + " is colliding? : " + wheels[i].GetComponent<WheelController>().IsColliding());
+            // Debug.Log("wheel " + i + " is colliding? : " + wheels[i].GetComponent<WheelController>().IsColliding());
             wheels[i].GetComponent<Rigidbody>().AddForce(wheelForce[i] * wheelForceDirection[i] * motorTorque * (wheels[i].GetComponent<WheelController>().IsColliding() ? 1 : 0));
             Debug.DrawLine(wheels[i].position, wheels[i].position + (wheelForceDirection[i] * wheelForce[i] * (wheels[i].GetComponent<WheelController>().IsColliding() ? 1 : 0) * 25f) , Color.red);
         }
     }
 
-    private void Shoot()
+    private void TriggerShot()
     {
-        if (_input[4] > 0 && _shootTimeoutDelta <= 0.0f && ShooterEnabled) 
+        // TODO: User input to control the shooterController
+
+        if (_input[4] > 0 && _shootTimeoutDelta <= 0.0f) 
         {
             // reset the shoot timeout timer
             _shootTimeoutDelta = 1 / ShootFrequency;
 
-            // Debug.Log("Shoot");
-            if (OnShoot != null){
-                Vector3 _shootOffset = Vector3.zero;
-                _shootOffset = - pitchComponent.right*2;
-
-                // Debug.Log($"_shootOffset {_shootOffset}");
-                // Debug.Log($"transform.forward {transform.forward}");
-                // Debug.Log($"transform.L {transform.up}");
-                // Debug.Log($"transform.rotation {transform.rotation}");
-                // Debug.Log($"ShootSpeed {ShootSpeed}");
-
-                OnShoot(pitchComponent.position + _shootOffset, pitchComponent.rotation, - pitchComponent.right * ShootSpeed, ShooterType);
+            // Debug.Log("[RobotController] TriggerShot");
+            if (Shooter0 != null){
+                Shooter0.PullTrigger(ShootSpeed);
             }
         }
 
@@ -268,6 +256,6 @@ public class RobotController : NetworkBehaviour
 
         MoveSight();
         Move();
-        Shoot();
+        TriggerShot();
     }
 }

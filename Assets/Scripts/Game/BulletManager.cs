@@ -10,9 +10,13 @@ public class BulletManager : MonoBehaviour
     
     private List<GameObject> bullets_17mm = new List<GameObject>();
     private List<GameObject> bullets_42mm = new List<GameObject>();
+    private List<List<GameObject>> bulletsList = new List<List<GameObject>>();
 
     void Start()
     {
+        bulletsList.Add(bullets_17mm);
+        bulletsList.Add(bullets_42mm);
+
         GameObject _bullet = new GameObject();
         for (int i = 0; i < maxBullets; i++)
         {
@@ -23,71 +27,47 @@ public class BulletManager : MonoBehaviour
             _bullet.SetActive(false);
             bullets_42mm.Add(_bullet);
         }
-    }
-
-    public void GetBullet17mm(Vector3 userPosition, Quaternion userDirection, Vector3 ShootVelocity)
-    {
-        foreach (GameObject bullet in bullets_17mm)
-        {
-            if (!bullet.activeInHierarchy)
-            {
-                bullet.transform.position = userPosition;
-                bullet.transform.rotation = userDirection;
-                bullet.GetComponent<Rigidbody>().velocity = ShootVelocity;
-                bullet.SetActive(true);
-                return;
-            }
-        }
-
-        // If all bullets_17mm are in use, return null or create a new one if needed
-        GameObject newBullet = Instantiate(Bullet_17mm, userPosition, userDirection);
-        newBullet.GetComponent<Rigidbody>().velocity = ShootVelocity;
-        bullets_17mm.Add(newBullet);
-        return;
-    }
-
-    public void GetBullet42mm(Vector3 userPosition, Quaternion userDirection, Vector3 ShootVelocity)
-    {
-        foreach (GameObject bullet in bullets_42mm)
-        {
-            if (!bullet.activeInHierarchy)
-            {
-                bullet.transform.position = userPosition;
-                bullet.transform.rotation = userDirection;
-                bullet.GetComponent<Rigidbody>().velocity = ShootVelocity;
-                bullet.SetActive(true);
-                return;
-            }
-        }
-
-        // If all bullets_17mm are in use, return null or create a new one if needed
-        GameObject newBullet = Instantiate(Bullet_17mm, userPosition, userDirection);
-        newBullet.GetComponent<Rigidbody>().velocity = ShootVelocity;
-        bullets_17mm.Add(newBullet);
-        return;
+        
+        GameObject.Destroy(_bullet);
     }
 
     void OnEnable()
     {
-        RobotController.OnShoot += Shoot;
+        RefereeController.OnShoot += Shoot;
     }
 
     void OnDisable()
     {
-        RobotController.OnShoot -= Shoot;
+        RefereeController.OnShoot -= Shoot;
     }
 
-    void Shoot(Vector3 userPosition, Quaternion userDirection, Vector3 ShootVelocity, int ShooterType)
+    void Shoot(int shooterID, int shooterType, int robotID, Vector3 userPosition, Vector3 shootVelocity)
     {
         // 封装过多，需要改
 
-        if (ShooterType == 0){
-            GetBullet17mm(userPosition, userDirection, ShootVelocity);
-        } else if (ShooterType == 1) {
-            GetBullet42mm(userPosition, userDirection, ShootVelocity);
-        } else {
-            Debug.LogError("Unknown Shooter Type");
+        // if (shooterType == 0){
+        //     bulletsList = & bullets_17mm;
+        // } else if (shooterType == 1) {
+        //     bulletsList = & bullets_42mm;
+        // } else {
+        //     Debug.LogError("Unknown Shooter Type");
+        // }
+
+        Quaternion userDirection = Quaternion.Euler(shootVelocity.x, shootVelocity.y, shootVelocity.z);
+        foreach (GameObject bullet in bulletsList[shooterType])
+        {
+            if (!bullet.activeInHierarchy)
+            {
+                bullet.transform.position = userPosition;
+                bullet.transform.rotation = userDirection;
+                bullet.GetComponent<Rigidbody>().velocity = shootVelocity;
+                bullet.SetActive(true);
+                return;
+            }
+
+            // TODO: Reuse the oldest bullets
         }
+
         // Debug.Log($"Shoot {userPosition}, {userDirection}, {ShootVelocity}");
     }
 }

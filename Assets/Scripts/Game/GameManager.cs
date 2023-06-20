@@ -10,16 +10,20 @@ public class GameManager : NetworkBehaviour
 
     private void OnEnable()
     {
+        RefereeController.OnDamage += DamageUpload;
+        RefereeController.OnShoot += ShootUpload;
     }
 
     private void OnDisable()
     {
         // TODO: Unsubscribe damage event of every referee controller
-        var enumerator = RefereeControllerList.GetEnumerator();
-        while (enumerator.MoveNext())
-        {
-            enumerator.Current.Value.OnDamage -= DamageUpload;
-        }
+        // var enumerator = RefereeControllerList.GetEnumerator();
+        // while (enumerator.MoveNext())
+        // {
+        //     enumerator.Current.Value.OnDamage -= DamageUpload;
+        // }
+        RefereeController.OnDamage -= DamageUpload;
+        RefereeController.OnShoot -= ShootUpload;
     }
 
     private void Start() {
@@ -30,10 +34,15 @@ public class GameManager : NetworkBehaviour
         foreach(RefereeController _refree in _list)
         {
             RefereeControllerList.Add(_refree.RobotID, _refree);
-            _refree.OnDamage += DamageUpload;
+            // _refree.OnDamage += DamageUpload;
             // Initial the default RobotStatusList according to a config file;
 
             switch(_refree.RobotID){
+                case 3:
+                case 4:
+                case 5:
+                    RefereeControllerList[_refree.RobotID].SetHP(200);
+                    break;
                 case 18:
                 case 38:
                     RefereeControllerList[_refree.RobotID].SetHP(1500);
@@ -101,5 +110,16 @@ public class GameManager : NetworkBehaviour
             }
             RefereeControllerList[robotID].SetHP(_hp - _damage);
         }
+    }
+
+    void ShootUpload(int shooterID, int shooterType, int robotID, Vector3 userPosition, Vector3 shootVelocity)
+    {
+        ShootHandlerServerRpc(shooterID, shooterType, robotID);
+    }
+
+    [ServerRpc]
+    public void ShootHandlerServerRpc(int shooterID, int shooterType, int robotID)
+    {
+        
     }
 }

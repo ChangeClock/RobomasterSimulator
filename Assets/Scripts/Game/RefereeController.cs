@@ -8,21 +8,39 @@ using Unity.Collections;
 public class RefereeController : NetworkBehaviour
 {
     public delegate void DamageAction(int damageType, int armorID, int robotID);
-    public event DamageAction OnDamage;
+    public static event DamageAction OnDamage;
+
+    public delegate void ShootAction(int shooterID, int shooterType, int robotID, Vector3 userPosition, Vector3 shootVelocity);
+    public static event ShootAction OnShoot;
 
     public DataTransmission.RobotStatus Status = new DataTransmission.RobotStatus();
 
     [SerializeField] private TextMeshProUGUI ObserverUI;
 
     [Header("Status")]
+    // HP
     [SerializeField] private NetworkVariable<int> HPLimit = new NetworkVariable<int>(500, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
     [SerializeField] private NetworkVariable<int> HP = new NetworkVariable<int>(500, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+
+    // Shooter Type: 0 - 17mm 1 - 42mm
+    // Shooter 0
     [SerializeField] private NetworkVariable<int> Shooter0Enabled = new NetworkVariable<int>(1, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+    [SerializeField] private NetworkVariable<int> Shooter0Type = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+    [SerializeField] private NetworkVariable<int> Shooter0Mode = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+    [SerializeField] private NetworkVariable<int> Heat0Limit = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+    [SerializeField] private NetworkVariable<int> Heat0 = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+    [SerializeField] private NetworkVariable<int> CD0 = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+    // Shooter 1
     [SerializeField] private NetworkVariable<int> Shooter1Enabled = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+    [SerializeField] private NetworkVariable<int> Shooter1Type = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+    [SerializeField] private NetworkVariable<int> Shooter1Mode = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
     [SerializeField] private NetworkVariable<int> Heat1Limit = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
     [SerializeField] private NetworkVariable<int> Heat1 = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-    [SerializeField] private NetworkVariable<int> Heat2Limit = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-    [SerializeField] private NetworkVariable<int> Heat2 = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+    [SerializeField] private NetworkVariable<int> CD1 = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+    
+    // Status
+    [SerializeField] private NetworkVariable<int> Ammo = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+    [SerializeField] private NetworkVariable<int> RealAmmo = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
     [SerializeField] private NetworkVariable<int> Disabled = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
     [SerializeField] private NetworkVariable<int> Immutable = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
     [SerializeField] private NetworkVariable<int> Level = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
@@ -31,6 +49,7 @@ public class RefereeController : NetworkBehaviour
 
     [Header("Referee")]
     private ArmorController[] Armors;
+    private ShooterController[] Shooters;
     private LightbarController LightBar;
     public int RobotID;
 
@@ -51,6 +70,15 @@ public class RefereeController : NetworkBehaviour
             }
         }
 
+        Shooters = this.gameObject.GetComponentsInChildren<ShooterController>();
+        foreach(ShooterController _shooter in Shooters)
+        {
+            if(_shooter != null)
+            {
+                _shooter.OnTrigger += TriggerHandler;
+            }
+        }
+
         LightBar = this.gameObject.GetComponentInChildren<LightbarController>();
     }
 
@@ -61,6 +89,14 @@ public class RefereeController : NetworkBehaviour
         {
             _armor.OnHit -= DamageHandler;
         }
+
+        foreach(ShooterController _shooter in Shooters)
+        {
+            if(_shooter != null)
+            {
+                _shooter.OnTrigger -= TriggerHandler;
+            }
+        }
     }
 
     void Update()
@@ -68,9 +104,30 @@ public class RefereeController : NetworkBehaviour
         // Sync Armor related Status
         foreach(ArmorController _armor in Armors)
         {
-            if(_armor != null) {
+            if(_armor != null) 
+            {
                 _armor.disabled = Disabled.Value != 0;
                 _armor.lightColor = RobotID > 20 ? 1 : 2;
+            }
+        }
+
+        int _counter = 0;
+        foreach(ShooterController _shooter in Shooters)
+        {
+            if(_shooter != null)
+            {
+                switch(_counter)
+                {
+                    case 0:
+                        _shooter.SetEnabled(Shooter0Enabled.Value != 0);
+                        break;
+                    case 1:
+                        _shooter.SetEnabled(Shooter1Enabled.Value != 0);
+                        break;
+                    default:
+                        Debug.LogError("Unknown shooter ID");
+                        break;
+                }
             }
         }
 
@@ -92,6 +149,23 @@ public class RefereeController : NetworkBehaviour
         {
             OnDamage(damageType, armorID, RobotID);
         }
+    }
+
+    void TriggerHandler(int ID, Vector3 Position, Vector3 Velocity)
+    {
+        // TODO: handle trigger events
+
+        // First judge whether the unit is disabled or not
+        if (Disabled.Value == 1) return;
+
+        // Judge whether there is free ammo, both real ammo and ammo in referee system
+        if (Ammo.Value <= 0) return;
+        if (RealAmmo.Value <= 0) return;
+
+        // Debug.Log("[RefereeController] OnShoot");
+
+        // Free Fire!
+        OnShoot(ID, ID == 0 ? Shooter0Type.Value : Shooter1Type.Value, RobotID, Position, Velocity);
     }
 
     public void SetHP(int hp)

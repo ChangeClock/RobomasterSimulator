@@ -14,7 +14,18 @@ This is a simulator built with unity aim to provide a tool for the Robomaster Te
 
 - Match
 - Replay
-- 
+
+### 2. Robot Customization
+- Customize Model
+- Customize Performance
+- Customize Control
+
+### 3. Control Simulation
+- Replace RobotController logic with embedded code
+
+### 4. Algorithm Simulation
+- Replace AutoAimController logic with custome code
+- Output Image Source to ROS2
 
 ## Requirements
 

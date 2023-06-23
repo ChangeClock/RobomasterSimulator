@@ -168,9 +168,18 @@ public class TransformManager : NetworkBehaviour
         // TODO: Instantiate these players according to their robotID in fixed position
         // TODO: Instantiate these players according to their choice in a limited area
         GameObject player = Instantiate(prefabList[model], Vector3.right * -110 + Vector3.up * 5, Quaternion.identity);
-        RefereeController refree = player.GetComponent<RefereeController>();
-        refree.RobotID = robotID;
+        RefereeController referee = player.GetComponent<RefereeController>();
+        referee.RobotID = robotID;
+
+        // if (gameManager.RefereeControllerList[referee.RobotID] != null)
+        // {
+        //     Debug.LogError($"{referee.RobotID} exists !!!");
+        //     return;
+        // }
+        
+        // gameManager.RefereeControllerList.Add(referee.RobotID, referee);
         
         player.GetComponent<NetworkObject>().SpawnAsPlayerObject(clientId);
+        // OnSpawn(robotID);
     }
 }

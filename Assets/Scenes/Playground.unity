@@ -865,6 +865,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bee08aeda95aebd47b7fb87ca21eed92, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  GameStatus: 0
+  Time: 0
 --- !u!4 &405277223
 Transform:
   m_ObjectHideFlags: 0
@@ -3264,6 +3266,16 @@ PrefabInstance:
       propertyPath: m_LocalPosition.z
       value: 75.5
       objectReference: {fileID: 0}
+    - target: {fileID: 2550653408871925631, guid: 09aade0ecefd01e4b8f7661acf64f5c2,
+        type: 3}
+      propertyPath: GlobalObjectIdHash
+      value: 3210204628
+      objectReference: {fileID: 0}
+    - target: {fileID: 2609771655386867175, guid: 09aade0ecefd01e4b8f7661acf64f5c2,
+        type: 3}
+      propertyPath: m_TagString
+      value: Area
+      objectReference: {fileID: 0}
     - target: {fileID: 2833952687628767482, guid: 09aade0ecefd01e4b8f7661acf64f5c2,
         type: 3}
       propertyPath: m_LocalPosition.y
@@ -3314,6 +3326,16 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalPosition.z
       value: 75.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 5292115651584085743, guid: 09aade0ecefd01e4b8f7661acf64f5c2,
+        type: 3}
+      propertyPath: m_TagString
+      value: Area
+      objectReference: {fileID: 0}
+    - target: {fileID: 5630387500686027895, guid: 09aade0ecefd01e4b8f7661acf64f5c2,
+        type: 3}
+      propertyPath: GlobalObjectIdHash
+      value: 598523093
       objectReference: {fileID: 0}
     - target: {fileID: 5663281794565743191, guid: 09aade0ecefd01e4b8f7661acf64f5c2,
         type: 3}

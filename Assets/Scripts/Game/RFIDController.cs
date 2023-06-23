@@ -15,29 +15,17 @@ public class RFIDController : MonoBehaviour
 
     private void OnTriggerStay(Collider other)
     {
-        Debug.Log("[RFIDController] OnTriggerStay");
+        // Debug.Log($"[RFIDController] OnTriggerStay {other.tag}");
         if (other.tag == "Area")
         {
-            AeraController _area = other.gameObject.GetComponent<AeraController>();
-            if (!_area.GetEnabled()) return;
+            AreaCardController _areaCard = other.gameObject.GetComponent<AreaCardController>();
+            // Debug.Log($"[RFIDController] {other.gameObject}");
+            if (_areaCard == null) return;
+            if (!_areaCard.Enabled.Value) return;
 
             isColliding = true;
             isCollidingCounter = 10;
-            areaID = _area.GetID();
-        }
-    }
-
-    private void OnCollisionStay(Collision collision)
-    {
-        Debug.Log("[RFIDController] OnCollisionStay");
-        if (collision.gameObject.tag == "Area")
-        {
-            AeraController _area = collision.gameObject.GetComponent<AeraController>();
-            if (!_area.GetEnabled()) return;
-
-            isColliding = true;
-            isCollidingCounter = 10;
-            areaID = _area.GetID();
+            areaID = _areaCard.ID.Value;
         }
     }
 

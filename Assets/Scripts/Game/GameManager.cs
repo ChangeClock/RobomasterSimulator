@@ -1,6 +1,6 @@
 using System.Collections;
-using Unity.Netcode;
 using System.Collections.Generic;
+using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.Networking;
 
@@ -9,7 +9,8 @@ public class GameManager : NetworkBehaviour
     [Header("Game Status")]
     // 0 - Not started 1 - ready 2 - checking 3 - running
     [SerializeField]private int GameStatus = 0;
-    [SerializeField]private int Time = 0;
+    [SerializeField]private float timer = 0.0f;
+    [SerializeField]private int TimePast = 0;
 
     // 0: 中立 1: R-Hero 2: R-Engineer 3/4/5: R-Infantry 6: R-Air 7: R-Sentry 9: R-Lidar 18: R-Outpost 19: R-Base 21: B-Hero 22: B-Engineer 23/24/25: B-Infantry 26: B-Air 27: B-Sentry 29: B-Lidar 38: B-Outpost 39: B-Base;
     public Dictionary<int, RefereeController> RefereeControllerList = new Dictionary<int, RefereeController>();
@@ -46,37 +47,58 @@ public class GameManager : NetworkBehaviour
                 case 3:
                 case 4:
                 case 5:
-                    RefereeControllerList[_referee.RobotID].SetHP(200);
+                    RefereeControllerList[_referee.RobotID].HP.Value = (200);
                     break;
                 case 18:
                 case 38:
-                    RefereeControllerList[_referee.RobotID].SetHP(1500);
+                    RefereeControllerList[_referee.RobotID].HP.Value = (1500);
                     break;
                 case 19:
                 case 39:
-                    RefereeControllerList[_referee.RobotID].SetHP(5000);
+                    RefereeControllerList[_referee.RobotID].HP.Value = (5000);
                     break;
                 default:
-                    RefereeControllerList[_referee.RobotID].SetHP(500);
+                    RefereeControllerList[_referee.RobotID].HP.Value = (500);
                     break;
             }
 
             Debug.Log("[GameController] _referee: " + _referee.gameObject.name + " " + _referee.RobotID);
-            Debug.Log("[GameController] _referee: " + RefereeControllerList[_referee.RobotID].GetHP());
+            Debug.Log("[GameController] _referee: " + RefereeControllerList[_referee.RobotID].HP.Value);
         }
     }
 
-
     /**
     * These status need to be updated on fixed interval
-    * 
+    * 1. Game Info
     */
 
     void Update()
     {
         // TODO: Update Status Struct according RobotID to every RefreeController
 
-        Time += 1;
+        timer += Time.deltaTime;
+        TimePast = (int)timer % 60;
+
+        foreach(var _referee in RefereeControllerList.Values)
+        {
+            var networkObject = _referee.gameObject.GetComponent<NetworkObject>();
+            if (!networkObject.IsSpawned) return;
+
+            _referee.TimePast.Value = TimePast;
+            _referee.RBaseShieldLimit.Value = RefereeControllerList[39].ShieldLimit.Value;
+            _referee.RBaseShield.Value = RefereeControllerList[39].Shield.Value;
+            _referee.RBaseHPLimit.Value = RefereeControllerList[39].HPLimit.Value;
+            _referee.RBaseHP.Value = RefereeControllerList[39].HP.Value;
+            _referee.BBaseShieldLimit.Value = RefereeControllerList[19].ShieldLimit.Value;
+            _referee.BBaseShield.Value = RefereeControllerList[19].Shield.Value;
+            _referee.BBaseHPLimit.Value = RefereeControllerList[19].HPLimit.Value;
+            _referee.BBaseHP.Value = RefereeControllerList[19].HP.Value;
+            _referee.ROutpostHPLimit.Value = RefereeControllerList[38].HPLimit.Value;
+            _referee.ROutpostHP.Value = RefereeControllerList[38].HP.Value;
+            _referee.BOutpostHPLimit.Value = RefereeControllerList[18].HPLimit.Value;
+            _referee.BOutpostHP.Value = RefereeControllerList[18].HP.Value;
+        }
+
         // Debug.Log("[GameController] HP: "+ RobotStatusList[18].GetHP());
     }
 
@@ -130,8 +152,8 @@ public class GameManager : NetworkBehaviour
     {
         Debug.Log("Damage Type: " + damageType + " Armor ID: " + armorID + " Robot ID: " + robotID);
         // Not Disabled or Immutable
-        if (!RefereeControllerList[robotID].GetDisabled() && !RefereeControllerList[robotID].GetImmutable()) {
-            int _hp = RefereeControllerList[robotID].GetHP();
+        if (RefereeControllerList[robotID].Enabled.Value && !RefereeControllerList[robotID].Immutable.Value) {
+            int _hp = RefereeControllerList[robotID].HP.Value;
             int _damage = 0;
             // Debug.Log("[GameManager - Damage] HP:"+RobotStatusList[robotID].HP);
             switch(damageType){
@@ -151,7 +173,7 @@ public class GameManager : NetworkBehaviour
                     Debug.LogWarning("Unknown Damage Type" + damageType);
                     break;
             }
-            RefereeControllerList[robotID].SetHP(_hp - _damage);
+            RefereeControllerList[robotID].HP.Value = (_hp - _damage);
         }
     }
 
@@ -174,6 +196,7 @@ public class GameManager : NetworkBehaviour
     [ServerRpc]
     void OccupyHandlerServerRpc(int areaID, int robotID, ServerRpcParams serverRpcParams = default)
     {
-        Debug.Log($"[GameManager] {robotID} occupied area {areaID}");
+        // Debug.Log($"[GameManager] {robotID} occupied area {areaID}");
+
     }
 }

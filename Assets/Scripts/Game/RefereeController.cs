@@ -26,57 +26,72 @@ public class RefereeController : NetworkBehaviour
 
     [Header("Status")]
     // PowerLimit: -1 - Unlimited
-    [SerializeField] private NetworkVariable<int> ShieldLimit       = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-    [SerializeField] private NetworkVariable<int> Shield            = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-    [SerializeField] private NetworkVariable<int> HPLimit           = new NetworkVariable<int>(500, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-    [SerializeField] private NetworkVariable<int> HP                = new NetworkVariable<int>(500, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-    [SerializeField] private NetworkVariable<int> PowerLimit        = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-    [SerializeField] private NetworkVariable<int> Power             = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-    [SerializeField] private NetworkVariable<int> EnergyLimit            = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-    [SerializeField] private NetworkVariable<int> Energy            = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+    [SerializeField] public NetworkVariable<int> ShieldLimit       = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+    [SerializeField] public NetworkVariable<int> Shield            = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+    [SerializeField] public NetworkVariable<int> HPLimit           = new NetworkVariable<int>(500, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+    [SerializeField] public NetworkVariable<int> HP                = new NetworkVariable<int>(500, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+    [SerializeField] public NetworkVariable<int> PowerLimit        = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+    [SerializeField] public NetworkVariable<int> Power             = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+    [SerializeField] public NetworkVariable<int> EnergyLimit       = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+    [SerializeField] public NetworkVariable<int> Energy            = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
 
     // Shooter Type: 0 - 17mm 1 - 42mm
     // Shooter Mode: 0 - None 1 - Boost 2 - CD 3 - Speed
     // Shooter 0
-    [SerializeField] private NetworkVariable<bool> Shooter0Enabled  = new NetworkVariable<bool>(false, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-    [SerializeField] private NetworkVariable<int> Shooter0Type      = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-    [SerializeField] private NetworkVariable<int> Shooter0Mode      = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-    [SerializeField] private NetworkVariable<int> Heat0Limit        = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-    [SerializeField] private NetworkVariable<int> Heat0             = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-    [SerializeField] private NetworkVariable<int> CD0               = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-    [SerializeField] private NetworkVariable<int> Speed0Limit       = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+    [SerializeField] public NetworkVariable<bool> Shooter0Enabled  = new NetworkVariable<bool>(true, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+    [SerializeField] public NetworkVariable<int> Shooter0Type      = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+    [SerializeField] public NetworkVariable<int> Shooter0Mode      = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+    [SerializeField] public NetworkVariable<int> Heat0Limit        = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+    [SerializeField] public NetworkVariable<int> Heat0             = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+    [SerializeField] public NetworkVariable<int> CD0               = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+    [SerializeField] public NetworkVariable<int> Speed0Limit       = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
     // Shooter 1
-    [SerializeField] private NetworkVariable<int> Shooter1Enabled   = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-    [SerializeField] private NetworkVariable<int> Shooter1Type      = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-    [SerializeField] private NetworkVariable<int> Shooter1Mode      = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-    [SerializeField] private NetworkVariable<int> Heat1Limit        = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-    [SerializeField] private NetworkVariable<int> Heat1             = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-    [SerializeField] private NetworkVariable<int> CD1               = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-    [SerializeField] private NetworkVariable<int> Speed1Limit       = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+    [SerializeField] public NetworkVariable<bool> Shooter1Enabled   = new NetworkVariable<bool>(false, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+    [SerializeField] public NetworkVariable<int> Shooter1Type      = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+    [SerializeField] public NetworkVariable<int> Shooter1Mode      = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+    [SerializeField] public NetworkVariable<int> Heat1Limit        = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+    [SerializeField] public NetworkVariable<int> Heat1             = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+    [SerializeField] public NetworkVariable<int> CD1               = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+    [SerializeField] public NetworkVariable<int> Speed1Limit       = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
     
     // Status
     // Ammo: 0 - 17mm 1 - 42 mm
-    [SerializeField] private NetworkVariable<int> Ammo0             = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-    [SerializeField] private NetworkVariable<int> RealAmmo0         = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-    [SerializeField] private NetworkVariable<int> Ammo1             = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-    [SerializeField] private NetworkVariable<int> RealAmmo1         = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-    [SerializeField] private NetworkVariable<int> Disabled          = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-    [SerializeField] private NetworkVariable<int> Immutable         = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-    [SerializeField] private NetworkVariable<int> Level             = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-    [SerializeField] private NetworkVariable<int> EXP               = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-    [SerializeField] private NetworkVariable<int> EXPValue               = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-    [SerializeField] private NetworkVariable<int> Warning           = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-    [SerializeField] private NetworkVariable<int> OccupiedArea      = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-    [SerializeField] private NetworkVariable<int> ATKBuff      = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-    [SerializeField] private NetworkVariable<int> DEFBuff      = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-    [SerializeField] private NetworkVariable<int> CDBuff      = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-    [SerializeField] public NetworkVariable<int> Time      = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+    [SerializeField] public NetworkVariable<int> Ammo0             = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+    [SerializeField] public NetworkVariable<int> RealAmmo0         = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+    [SerializeField] public NetworkVariable<int> Ammo1             = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+    [SerializeField] public NetworkVariable<int> RealAmmo1         = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+    [SerializeField] public NetworkVariable<bool> Enabled          = new NetworkVariable<bool>(true, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+    [SerializeField] public NetworkVariable<bool> Immutable         = new NetworkVariable<bool>(false, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+    [SerializeField] public NetworkVariable<int> Level             = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+    [SerializeField] public NetworkVariable<int> EXP               = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+    [SerializeField] public NetworkVariable<int> EXPValue               = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+    [SerializeField] public NetworkVariable<int> Warning           = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+    [SerializeField] public NetworkVariable<int> OccupiedArea      = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+    [SerializeField] public NetworkVariable<int> ATKBuff      = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+    [SerializeField] public NetworkVariable<int> DEFBuff      = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+    [SerializeField] public NetworkVariable<int> CDBuff      = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+
+    // Game Info
+    [SerializeField] public NetworkVariable<int> TimePast               = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+    [SerializeField] public NetworkVariable<int> RBaseShieldLimit       = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+    [SerializeField] public NetworkVariable<int> RBaseShield            = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+    [SerializeField] public NetworkVariable<int> RBaseHPLimit           = new NetworkVariable<int>(500, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+    [SerializeField] public NetworkVariable<int> RBaseHP                = new NetworkVariable<int>(500, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+    [SerializeField] public NetworkVariable<int> BBaseShieldLimit       = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+    [SerializeField] public NetworkVariable<int> BBaseShield            = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+    [SerializeField] public NetworkVariable<int> BBaseHPLimit           = new NetworkVariable<int>(500, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+    [SerializeField] public NetworkVariable<int> BBaseHP                = new NetworkVariable<int>(500, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+    [SerializeField] public NetworkVariable<int> ROutpostHPLimit           = new NetworkVariable<int>(500, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+    [SerializeField] public NetworkVariable<int> ROutpostHP                = new NetworkVariable<int>(500, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+    [SerializeField] public NetworkVariable<int> BOutpostHPLimit           = new NetworkVariable<int>(500, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+    [SerializeField] public NetworkVariable<int> BOutpostHP                = new NetworkVariable<int>(500, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
 
     [Header("Referee")]
     private ArmorController[] Armors;
     private ShooterController[] Shooters;
     private RFIDController RFID;
     private LightbarController LightBar;
+    private CameraController Camera;
     public int RobotID;
 
     public override void OnNetworkSpawn()
@@ -113,6 +128,8 @@ public class RefereeController : NetworkBehaviour
         RFID = this.gameObject.GetComponentInChildren<RFIDController>();
         if (RFID != null) RFID.OnDetect += DetectHandler;
 
+        Camera = this.gameObject.GetComponentInChildren<CameraController>();
+
         LightBar = this.gameObject.GetComponentInChildren<LightbarController>();
     }
 
@@ -142,8 +159,8 @@ public class RefereeController : NetworkBehaviour
         {
             if(_armor != null) 
             {
-                _armor.disabled = Disabled.Value != 0;
-                _armor.lightColor = RobotID > 20 ? 1 : 2;
+                _armor.Enabled = Enabled.Value;
+                _armor.LightColor = RobotID > 20 ? 1 : 2;
             }
         }
 
@@ -159,7 +176,7 @@ public class RefereeController : NetworkBehaviour
                         _shooter.SetEnabled(Shooter0Enabled.Value);
                         break;
                     case 1:
-                        _shooter.SetEnabled(Shooter1Enabled.Value != 0);
+                        _shooter.SetEnabled(Shooter1Enabled.Value);
                         break;
                     default:
                         Debug.LogError("Unknown shooter ID");
@@ -174,12 +191,33 @@ public class RefereeController : NetworkBehaviour
 
         }
 
+        if (Camera != null)
+        {
+            Camera.Enabled = Enabled.Value;
+            Camera.Warning = Warning.Value;
+            Camera.HPLimit = HPLimit.Value;
+            Camera.HP = HP.Value;
+            Camera.TimePast = TimePast.Value;    
+            Camera.RBaseShieldLimit = RBaseShieldLimit.Value;
+            Camera.RBaseShield     = RBaseShield.Value; 
+            Camera.RBaseHPLimit    = RBaseHPLimit.Value;
+            Camera.RBaseHP       = RBaseHP.Value;  
+            Camera.BBaseShieldLimit = BBaseShieldLimit.Value;
+            Camera.BBaseShield    = BBaseShield.Value;  
+            Camera.BBaseHPLimit    = BBaseHPLimit.Value;
+            Camera.BBaseHP         = BBaseHP.Value;
+            Camera.ROutpostHPLimit = ROutpostHPLimit.Value;
+            Camera.ROutpostHP      = ROutpostHP.Value;
+            Camera.BOutpostHPLimit = BOutpostHPLimit.Value;
+            Camera.BOutpostHP      = BOutpostHP.Value;
+        }
+
         // TODO: Need to sync the HP status
         if (LightBar != null)
         {
-            LightBar.disabled = Disabled.Value != 0;
-            LightBar.warning = Warning.Value != 0;
-            LightBar.lightColor = RobotID > 20 ? 1 : 2;
+            LightBar.Enabled = Enabled.Value;
+            LightBar.Warning = Warning.Value;
+            LightBar.LightColor = RobotID > 20 ? 1 : 2;
         }
 
         // Sync Observer UI
@@ -199,11 +237,20 @@ public class RefereeController : NetworkBehaviour
         // TODO: handle trigger events
 
         // First judge whether the unit is disabled or not
-        if (Disabled.Value == 1) return;
+        if (!Enabled.Value) return;
 
         // Judge whether there is free ammo, both real ammo and ammo in referee system
-        if (ID == 0 && (Ammo0.Value <= 0 || RealAmmo0.Value <= 0)) return;
-        if (ID == 1 && (Ammo1.Value <= 0 || RealAmmo1.Value <= 0)) return;
+        if (ID == 0)
+        {
+            if (Shooter0Type.Value == 0 && (Ammo0.Value <= 0 || RealAmmo0.Value <= 0)) return;
+            if (Shooter0Type.Value == 1 && (Ammo1.Value <= 0 || RealAmmo1.Value <= 0)) return;
+        }
+
+        if (ID == 1)
+        {
+            if (Shooter1Type.Value == 0 && (Ammo0.Value <= 0 || RealAmmo0.Value <= 0)) return;
+            if (Shooter1Type.Value == 1 && (Ammo1.Value <= 0 || RealAmmo1.Value <= 0)) return;
+        }
 
         // Debug.Log("[RefereeController] OnShoot");
 
@@ -213,38 +260,8 @@ public class RefereeController : NetworkBehaviour
 
     void DetectHandler(int areaID)
     {
-        if (Disabled.Value == 1) return;
+        if (!Enabled.Value) return;
 
         OnOccupy(areaID, RobotID);
-    }
-
-    public void SetHP(int hp)
-    {
-        HP.Value = hp;
-    }
-
-    public int GetHP()
-    {
-        return HP.Value;
-    }
-
-    public void SetDisabled(bool disabled)
-    {
-        Disabled.Value = disabled ? 1 : 0;
-    }
-
-    public bool GetDisabled()
-    {
-        return Disabled.Value == 1 ? true : false;
-    }
-
-    public void SetImmutable(bool immutable)
-    {
-        Immutable.Value = immutable ? 1 : 0;
-    }
-
-    public bool GetImmutable()
-    {
-        return Immutable.Value == 1 ? true : false;
     }
 }

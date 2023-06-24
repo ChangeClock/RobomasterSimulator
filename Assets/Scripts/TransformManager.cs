@@ -75,10 +75,10 @@ public class TransformManager : NetworkBehaviour
         GUILayout.Label("ClientID: " + NetworkManager.Singleton.LocalClientId);
         // NetworkSpawnManager spawnManager = new NetworkSpawnManager();
         // GUILayout.Label("PlayerObject: " + NetworkManager.SpawnManager.GetPlayerNetworkObject(NetworkManager.Singleton.LocalClientId));
-        GUILayout.Label("B-Outpost: " + gameManager.RefereeControllerList[18].GetHP());
-        GUILayout.Label("B-Base: " + gameManager.RefereeControllerList[19].GetHP());
-        GUILayout.Label("R-Outpost: " + gameManager.RefereeControllerList[38].GetHP());
-        GUILayout.Label("R-Base: " + gameManager.RefereeControllerList[39].GetHP());
+        GUILayout.Label("B-Outpost: " + gameManager.RefereeControllerList[18].HP.Value);
+        GUILayout.Label("B-Base: " + gameManager.RefereeControllerList[19].HP.Value);
+        GUILayout.Label("R-Outpost: " + gameManager.RefereeControllerList[38].HP.Value);
+        GUILayout.Label("R-Base: " + gameManager.RefereeControllerList[39].HP.Value);
     }
 
     void SpawnButtons()
@@ -138,12 +138,12 @@ public class TransformManager : NetworkBehaviour
     {
         if (GUILayout.Button("Reset R-Outpost"))
         {
-            gameManager.RefereeControllerList[18].SetHP(1500);
+            gameManager.RefereeControllerList[18].HP.Value = (1500);
         }
 
         if (GUILayout.Button("Reset B-Outpost"))
         {
-            gameManager.RefereeControllerList[38].SetHP(1500);
+            gameManager.RefereeControllerList[38].HP.Value = (1500);
         } 
     }
 

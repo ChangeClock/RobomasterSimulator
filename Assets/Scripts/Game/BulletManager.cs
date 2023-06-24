@@ -68,6 +68,6 @@ public class BulletManager : MonoBehaviour
             // TODO: Reuse the oldest bullets
         }
 
-        // Debug.Log($"Shoot {userPosition}, {userDirection}, {ShootVelocity}");
+        Debug.Log($"Shoot {userPosition}, {userDirection}, {shootVelocity}");
     }
 }

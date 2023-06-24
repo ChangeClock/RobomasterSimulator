@@ -10,10 +10,10 @@ public class ArmorController : MonoBehaviour
     public float velocityThreshold42mm = 8f;
     public float velocityThresholdMissle = 6f;
 
-    public int armorID;
+    public int ArmorID;
 
-    public bool disabled;
-    public int lightColor;
+    public bool Enabled;
+    public int LightColor;
 
     // damageType: 0 碰撞; 1 17mm; 2 42mm; 3 导弹;
     public delegate void HitAction(int damageType, int armorID);
@@ -36,8 +36,8 @@ public class ArmorController : MonoBehaviour
     void Update()
     {
         if (armorLight != null){
-            armorLight.disabled = disabled;
-            armorLight.lightColor = lightColor;
+            armorLight.Enabled = Enabled;
+            armorLight.LightColor = LightColor;
         }
     }
 
@@ -49,14 +49,14 @@ public class ArmorController : MonoBehaviour
         Vector3 perpendicularVelocity = Vector3.ProjectOnPlane(incomingVelocity, normal);
 
         // Debug.Log("[ArmorController] Armor on Hit wth velocity:" + perpendicularVelocity);
-        if (disabled) return;
+        if (!Enabled) return;
 
         if (collision.gameObject.tag == "Bullet-17mm" && damageDetection[1]) {
             // Check if the final velocity is above the minimum required
             if (Mathf.Abs(perpendicularVelocity.magnitude - velocityThreshold17mm) >= 0f)
             {
                 // Debug.Log("On Hit with 17mm");
-                if (OnHit != null) OnHit(1,armorID);
+                if (OnHit != null) OnHit(1,ArmorID);
                 StartCoroutine(Blink());
             }
 
@@ -65,7 +65,7 @@ public class ArmorController : MonoBehaviour
             if (Mathf.Abs(perpendicularVelocity.magnitude - velocityThreshold42mm) >= 0f)
             {
                 // Debug.Log("On Hit with 42mm");
-                if (OnHit != null) OnHit(2,armorID);
+                if (OnHit != null) OnHit(2,ArmorID);
                 StartCoroutine(Blink());
             }
 
@@ -74,7 +74,7 @@ public class ArmorController : MonoBehaviour
             if (Mathf.Abs(perpendicularVelocity.magnitude - velocityThresholdMissle) >= 0f)
             {
                 // Debug.Log("On Hit with Missle");
-                if(OnHit != null) OnHit(0,armorID);
+                if(OnHit != null) OnHit(0,ArmorID);
                 StartCoroutine(Blink());
             }
 
@@ -83,7 +83,7 @@ public class ArmorController : MonoBehaviour
             if (Mathf.Abs(perpendicularVelocity.magnitude - velocityThresholdImpact) >= 0f)
             {
                 // Debug.Log("On Hit with Impact");
-                if(OnHit != null) OnHit(0,armorID);
+                if(OnHit != null) OnHit(0,ArmorID);
                 StartCoroutine(Blink());
             }
 
@@ -95,9 +95,9 @@ public class ArmorController : MonoBehaviour
     IEnumerator Blink()
     {
         // Debug.Log("Light Off");
-        disabled = true;
+        Enabled = false;
         yield return new WaitForSeconds(0.1f);
-        disabled = false;
+        Enabled = true;
         // Debug.Log("Light On");
     }
 }

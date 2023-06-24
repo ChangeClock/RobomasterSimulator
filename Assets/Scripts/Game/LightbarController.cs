@@ -4,9 +4,9 @@ using UnityEngine;
 
 public class LightbarController : MonoBehaviour
 {
-    public bool disabled;
-    public bool warning;
-    public int lightColor;
+    public bool Enabled;
+    public int Warning;
+    public int LightColor;
 
     // TODO: need to control the percentage of light bar
 
@@ -25,9 +25,9 @@ public class LightbarController : MonoBehaviour
     void Update()
     {
         if (barLight != null){
-            barLight.disabled = disabled;
-            barLight.warning = warning;
-            barLight.lightColor = lightColor;
+            barLight.Enabled = Enabled;
+            barLight.Warning = Warning;
+            barLight.LightColor = LightColor;
         }
     }
 }

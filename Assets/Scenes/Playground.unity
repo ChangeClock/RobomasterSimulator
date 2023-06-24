@@ -866,7 +866,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   GameStatus: 0
-  Time: 0
+  timer: 0
+  TimePast: 0
 --- !u!4 &405277223
 Transform:
   m_ObjectHideFlags: 0
@@ -2579,6 +2580,11 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 9005220659476430820, guid: 2d3a85ecde41a8246a79669975912b74,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 9005220659476430821, guid: 2d3a85ecde41a8246a79669975912b74,
         type: 3}
       propertyPath: near clip plane
@@ -3241,6 +3247,11 @@ PrefabInstance:
       propertyPath: m_LocalPosition.z
       value: -75.5
       objectReference: {fileID: 0}
+    - target: {fileID: 1146092943392352656, guid: 09aade0ecefd01e4b8f7661acf64f5c2,
+        type: 3}
+      propertyPath: GlobalObjectIdHash
+      value: 2357313758
+      objectReference: {fileID: 0}
     - target: {fileID: 1172648077157687448, guid: 09aade0ecefd01e4b8f7661acf64f5c2,
         type: 3}
       propertyPath: m_TagString
@@ -3276,6 +3287,11 @@ PrefabInstance:
       propertyPath: m_TagString
       value: Area
       objectReference: {fileID: 0}
+    - target: {fileID: 2645373939324068576, guid: 09aade0ecefd01e4b8f7661acf64f5c2,
+        type: 3}
+      propertyPath: GlobalObjectIdHash
+      value: 566644736
+      objectReference: {fileID: 0}
     - target: {fileID: 2833952687628767482, guid: 09aade0ecefd01e4b8f7661acf64f5c2,
         type: 3}
       propertyPath: m_LocalPosition.y
@@ -3307,10 +3323,25 @@ PrefabInstance:
       propertyPath: m_LocalPosition.z
       value: -75.5
       objectReference: {fileID: 0}
+    - target: {fileID: 3903851244197687461, guid: 09aade0ecefd01e4b8f7661acf64f5c2,
+        type: 3}
+      propertyPath: GlobalObjectIdHash
+      value: 3304926240
+      objectReference: {fileID: 0}
+    - target: {fileID: 3927871372034279629, guid: 09aade0ecefd01e4b8f7661acf64f5c2,
+        type: 3}
+      propertyPath: GlobalObjectIdHash
+      value: 288414929
+      objectReference: {fileID: 0}
     - target: {fileID: 4073751356195167195, guid: 09aade0ecefd01e4b8f7661acf64f5c2,
         type: 3}
       propertyPath: GlobalObjectIdHash
       value: 2851798231
+      objectReference: {fileID: 0}
+    - target: {fileID: 4353972555646612038, guid: 09aade0ecefd01e4b8f7661acf64f5c2,
+        type: 3}
+      propertyPath: GlobalObjectIdHash
+      value: 2395190588
       objectReference: {fileID: 0}
     - target: {fileID: 4656757291989891138, guid: 09aade0ecefd01e4b8f7661acf64f5c2,
         type: 3}
@@ -3332,6 +3363,11 @@ PrefabInstance:
       propertyPath: m_TagString
       value: Area
       objectReference: {fileID: 0}
+    - target: {fileID: 5328000045004311016, guid: 09aade0ecefd01e4b8f7661acf64f5c2,
+        type: 3}
+      propertyPath: GlobalObjectIdHash
+      value: 3815192810
+      objectReference: {fileID: 0}
     - target: {fileID: 5630387500686027895, guid: 09aade0ecefd01e4b8f7661acf64f5c2,
         type: 3}
       propertyPath: GlobalObjectIdHash
@@ -3347,10 +3383,25 @@ PrefabInstance:
       propertyPath: m_LocalPosition.z
       value: 75.5
       objectReference: {fileID: 0}
+    - target: {fileID: 5848751652049148238, guid: 09aade0ecefd01e4b8f7661acf64f5c2,
+        type: 3}
+      propertyPath: GlobalObjectIdHash
+      value: 3176487087
+      objectReference: {fileID: 0}
     - target: {fileID: 5942691437981021705, guid: 09aade0ecefd01e4b8f7661acf64f5c2,
         type: 3}
       propertyPath: m_TagString
       value: Ground
+      objectReference: {fileID: 0}
+    - target: {fileID: 6587603378633530285, guid: 09aade0ecefd01e4b8f7661acf64f5c2,
+        type: 3}
+      propertyPath: GlobalObjectIdHash
+      value: 1544785254
+      objectReference: {fileID: 0}
+    - target: {fileID: 6612410602235388869, guid: 09aade0ecefd01e4b8f7661acf64f5c2,
+        type: 3}
+      propertyPath: GlobalObjectIdHash
+      value: 2036723787
       objectReference: {fileID: 0}
     - target: {fileID: 6700499594809873235, guid: 09aade0ecefd01e4b8f7661acf64f5c2,
         type: 3}
@@ -3361,6 +3412,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalPosition.z
       value: 75.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 7107004767917327000, guid: 09aade0ecefd01e4b8f7661acf64f5c2,
+        type: 3}
+      propertyPath: GlobalObjectIdHash
+      value: 2926674494
       objectReference: {fileID: 0}
     - target: {fileID: 7460537778592378225, guid: 09aade0ecefd01e4b8f7661acf64f5c2,
         type: 3}

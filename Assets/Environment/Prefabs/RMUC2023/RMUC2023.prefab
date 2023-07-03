@@ -62,7 +62,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: -3661639628750336703, guid: 7e0223e1d3e1733499accfa5ebffb67e, type: 3}
+  - {fileID: 2100000, guid: 6a67f762dca5a284e90e86e3f2e866a6, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -168,7 +168,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: -3661639628750336703, guid: 7e0223e1d3e1733499accfa5ebffb67e, type: 3}
+  - {fileID: 2100000, guid: 6a67f762dca5a284e90e86e3f2e866a6, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -434,7 +434,7 @@ Transform:
   - {fileID: 4828300892288770610}
   - {fileID: 3334643187226577210}
   m_Father: {fileID: 0}
-  m_RootOrder: 0
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &4073751356195167195
 MonoBehaviour:
@@ -2760,7 +2760,7 @@ PrefabInstance:
     - target: {fileID: 8339856734164697927, guid: ef2a53f076908bd4fa3266ae8e84c884,
         type: 3}
       propertyPath: m_TagString
-      value: Aera
+      value: Area
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -4072,7 +4072,7 @@ PrefabInstance:
     - target: {fileID: 8339856734164697927, guid: ef2a53f076908bd4fa3266ae8e84c884,
         type: 3}
       propertyPath: m_TagString
-      value: Aera
+      value: Area
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -4345,6 +4345,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: R-Landing-Platform
+      objectReference: {fileID: 0}
+    - target: {fileID: 6122885215000815439, guid: 1ca8c4c3811168b4c837b0a49b2d9412,
+        type: 3}
+      propertyPath: m_TagString
+      value: Ground
       objectReference: {fileID: 0}
     - target: {fileID: 6895867571513146869, guid: 1ca8c4c3811168b4c837b0a49b2d9412,
         type: 3}

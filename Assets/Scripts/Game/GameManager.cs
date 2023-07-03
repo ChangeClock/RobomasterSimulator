@@ -7,10 +7,10 @@ using UnityEngine.Networking;
 public class GameManager : NetworkBehaviour
 {
     [Header("Game Status")]
-    // 0 - Not started 1 - ready 2 - checking 3 - running
-    [SerializeField]private int GameStatus = 0;
-    [SerializeField]private float timer = 0.0f;
-    [SerializeField]private int TimePast = 0;
+    // 0 - Not started 1 - ready 2 - checking 3 - running 4 - ending
+    [SerializeField] public NetworkVariable<int> GameStatus = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+    [SerializeField] public NetworkVariable<float> timer = new NetworkVariable<float>(0.0f, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+    [SerializeField] private int TimePast = 0;
 
     // 0: 中立 1: R-Hero 2: R-Engineer 3/4/5: R-Infantry 6: R-Air 7: R-Sentry 9: R-Lidar 18: R-Outpost 19: R-Base 21: B-Hero 22: B-Engineer 23/24/25: B-Infantry 26: B-Air 27: B-Sentry 29: B-Lidar 38: B-Outpost 39: B-Base;
     public Dictionary<int, RefereeController> RefereeControllerList = new Dictionary<int, RefereeController>();
@@ -74,16 +74,52 @@ public class GameManager : NetworkBehaviour
 
     void Update()
     {
+        if (!IsServer) return;
         // TODO: Update Status Struct according RobotID to every RefreeController
 
-        timer += Time.deltaTime;
-        TimePast = (int)timer % 60;
+        timer.Value += Time.deltaTime;
+        TimePast = (int)timer.Value % 60;
 
         foreach(var _referee in RefereeControllerList.Values)
         {
             var networkObject = _referee.gameObject.GetComponent<NetworkObject>();
             if (!networkObject.IsSpawned) return;
 
+            // Revival & Immutable Status Sync
+            if (_referee.Reviving.Value)
+            {                    
+                // TODO: Revived through purchase only have 3 seconds immutable, 100% HP, higher power and shooter will be enabled
+                int _revivalTime = TimePast - _referee.TimePast.Value;
+                
+                if (_referee.Enabled.Value) {
+                    
+                    // Already revived, immutable for fixed amount of time
+                    if (_referee.RevivalTime.Value + _revivalTime >= 10)
+                    {
+                        _referee.Reviving.Value = false;
+                        _referee.Immutable.Value = false;
+                    }else{
+                        _referee.RevivalTime.Value += _revivalTime;
+                    }
+
+                } else {
+                    
+                    // Not revived yet, countdown revival time.
+                    if (_revivalTime <= 0)
+                    {
+                        _referee.HP.Value = _referee.HPLimit.Value / 10;
+                        _referee.RevivalTime.Value = 0;
+                        _referee.Immutable.Value = true;
+                        _referee.Enabled.Value = true;
+                    } else {
+                        // TODO: The progress will be 4 times quicked when detect reviving area.
+                        _referee.RevivalTime.Value = _revivalTime;
+                    }
+                
+                }
+            }
+
+            // Game Status Sync
             _referee.TimePast.Value = TimePast;
             _referee.RBaseShieldLimit.Value = RefereeControllerList[39].ShieldLimit.Value;
             _referee.RBaseShield.Value = RefereeControllerList[39].Shield.Value;
@@ -97,6 +133,9 @@ public class GameManager : NetworkBehaviour
             _referee.ROutpostHP.Value = RefereeControllerList[38].HP.Value;
             _referee.BOutpostHPLimit.Value = RefereeControllerList[18].HPLimit.Value;
             _referee.BOutpostHP.Value = RefereeControllerList[18].HP.Value;
+
+
+
         }
 
         // Debug.Log("[GameController] HP: "+ RobotStatusList[18].GetHP());
@@ -111,6 +150,7 @@ public class GameManager : NetworkBehaviour
     * 4. Purchase Event -> Supply Controller
     * 5. Exchange Event -> Exchange Controller
     * 6. Warning Event -> Judge Controller
+    * 7. Death Event -> Game Manager
     */
 
     void SpawnUpload(int robotID)
@@ -173,7 +213,15 @@ public class GameManager : NetworkBehaviour
                     Debug.LogWarning("Unknown Damage Type" + damageType);
                     break;
             }
-            RefereeControllerList[robotID].HP.Value = (_hp - _damage);
+            if (_hp - _damage <= 0)
+            {
+                RefereeControllerList[robotID].HP.Value = 0;
+                RefereeControllerList[robotID].Enabled.Value = false;
+                DeathHandlerServerRpc(robotID);
+            } else {
+                RefereeControllerList[robotID].HP.Value = (_hp - _damage);
+            }
+            
         }
     }
 
@@ -198,5 +246,32 @@ public class GameManager : NetworkBehaviour
     {
         // Debug.Log($"[GameManager] {robotID} occupied area {areaID}");
 
+    }
+
+    [ServerRpc]
+    void DeathHandlerServerRpc(int robotID, ServerRpcParams serverRpcParams = default)
+    {
+        // TODO: Add EXP to Killer and Assistant
+        switch (robotID)
+        {
+            case 7:
+            case 27:
+                // TODO: Change Base Status
+                break;
+            case 18:
+            case 38:
+                // TODO: Change Sentry & Base Status
+                break;
+            case 19:
+            case 39:
+                // TODO: Stop Game Handler
+                break;
+            default:
+                // TODO: If the robot is penalty to death, disable revival
+                // TODO: If the robot used purchase to revival, revival time will add 20s for each purchase
+                RefereeControllerList[robotID].RevivalTime.Value = 10 + (420 - TimePast) / 10;
+                RefereeControllerList[robotID].Reviving.Value = true;
+                break;
+        }
     }
 }

@@ -1,8 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine; 
+using Unity.Netcode;
 
-public class BulletManager : MonoBehaviour
+public class BulletManager : NetworkBehaviour
 {
     [SerializeField] private GameObject Bullet_17mm;
     [SerializeField] private GameObject Bullet_42mm;
@@ -45,29 +46,51 @@ public class BulletManager : MonoBehaviour
     {
         // 封装过多，需要改
 
-        // if (shooterType == 0){
-        //     bulletsList = & bullets_17mm;
-        // } else if (shooterType == 1) {
-        //     bulletsList = & bullets_42mm;
-        // } else {
-        //     Debug.LogError("Unknown Shooter Type");
-        // }
-
         Quaternion userDirection = Quaternion.Euler(shootVelocity.x, shootVelocity.y, shootVelocity.z);
+        int i = 0;
         foreach (GameObject bullet in bulletsList[shooterType])
         {
             if (!bullet.activeInHierarchy)
             {
                 bullet.transform.position = userPosition;
                 bullet.transform.rotation = userDirection;
+                bullet.GetComponent<Rigidbody>().isKinematic = false;
                 bullet.GetComponent<Rigidbody>().velocity = shootVelocity;
                 bullet.SetActive(true);
+
+                if(IsServer)
+                {
+                    Debug.Log("[BulletManager] Shoot on Server Side");
+                    BulletSyncClientRpc(shooterType, i, userPosition, shootVelocity);
+                }
+
                 return;
             }
+
+            i++;
 
             // TODO: Reuse the oldest bullets
         }
 
         Debug.Log($"Shoot {userPosition}, {userDirection}, {shootVelocity}");
+    }
+
+    [ClientRpc]
+    void BulletSyncClientRpc(int shooterType, int bulletID, Vector3 userPosition, Vector3 shootVelocity)
+    {
+        Quaternion userDirection = Quaternion.Euler(shootVelocity.x, shootVelocity.y, shootVelocity.z);
+        GameObject bullet = bulletsList[shooterType][bulletID];
+        if (!bullet.activeInHierarchy)
+            {
+                bullet.transform.position = userPosition;
+                bullet.transform.rotation = userDirection;
+                bullet.GetComponent<Rigidbody>().isKinematic = false;
+                bullet.GetComponent<Rigidbody>().velocity = shootVelocity;
+                bullet.SetActive(true);
+
+                Debug.Log("[BulletManager] Bullet Sync on Client Side");
+
+                return;
+            }
     }
 }

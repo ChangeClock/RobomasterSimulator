@@ -13,6 +13,7 @@ public class ArmorController : MonoBehaviour
     public int ArmorID;
 
     public bool Enabled;
+    public bool IsBlink;
     public int LightColor;
 
     // damageType: 0 碰撞; 1 17mm; 2 42mm; 3 导弹;
@@ -36,6 +37,7 @@ public class ArmorController : MonoBehaviour
     void Update()
     {
         if (armorLight != null){
+            if (IsBlink) return;
             armorLight.Enabled = Enabled;
             armorLight.LightColor = LightColor;
         }
@@ -95,9 +97,11 @@ public class ArmorController : MonoBehaviour
     IEnumerator Blink()
     {
         // Debug.Log("Light Off");
+        IsBlink = true;
         Enabled = false;
         yield return new WaitForSeconds(0.1f);
         Enabled = true;
+        IsBlink = false;
         // Debug.Log("Light On");
     }
 }

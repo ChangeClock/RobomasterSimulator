@@ -27,15 +27,15 @@ public class RobotController : NetworkBehaviour
     private float[] wheelForce = new float[4];
     private Vector3[] wheelForceDirection = new Vector3[4];
 
-    private bool isSpin = false;
+    [SerializeField] private bool isSpin = false;
 
     [Header("Gimbal")]
-    [SerializeField] private float yawTargetAngle = 0;
-    [SerializeField] private float pitchTargetAngle = 0;
     private PIDController yawController;
     private PIDController pitchController;
     [SerializeField] private float[] yawControllerParameters = {80f, 0f, 0.015f};
     [SerializeField] private float[] pitchControllerParameters = {50f, 0f, 0.015f};
+    [SerializeField] private float yawTargetAngle = 0;
+    [SerializeField] private float pitchTargetAngle = 0;
     private Transform yawComponent;
     private Transform pitchComponent;
     private HingeJoint yawJoint;

@@ -560,6 +560,7 @@ MonoBehaviour:
     m_InternalValue: 500
   BOutpostHP:
     m_InternalValue: 500
+  FPV: {fileID: 8966862610374934387}
   RobotID: 0
 --- !u!1 &8413717783539453555
 GameObject:
@@ -2270,6 +2271,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: FPV
       objectReference: {fileID: 0}
+    - target: {fileID: 2637587495049273238, guid: 4c4779aa1c303f44b9f2037286b2101f,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 3115842434068618923, guid: 4c4779aa1c303f44b9f2037286b2101f,
         type: 3}
       propertyPath: m_RootOrder
@@ -2324,6 +2330,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6341365489814791855, guid: 4c4779aa1c303f44b9f2037286b2101f,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6431261055531323485, guid: 4c4779aa1c303f44b9f2037286b2101f,
         type: 3}

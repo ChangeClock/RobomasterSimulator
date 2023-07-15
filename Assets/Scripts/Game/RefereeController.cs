@@ -89,12 +89,21 @@ public class RefereeController : NetworkBehaviour
     [SerializeField] public NetworkVariable<int> BOutpostHP                = new NetworkVariable<int>(500, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
 
     [Header("Referee")]
+    [SerializeField]private GameObject FPV;
     private ArmorController[] Armors;
     private ShooterController[] Shooters;
     private RFIDController RFID;
     private LightbarController LightBar;
     private CameraController Camera;
     public int RobotID;
+
+    public override void OnNetworkSpawn()
+    {
+        // Debug.Log("Client:" + NetworkManager.Singleton.LocalClientId + "IsOwner?" + IsOwner);
+        if (IsOwner) {
+            FPV.SetActive(true);
+        }
+    }
 
     void Start()
     {

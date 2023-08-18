@@ -85,6 +85,10 @@ public class GameManager : NetworkBehaviour
             var networkObject = _referee.gameObject.GetComponent<NetworkObject>();
             if (!networkObject.IsSpawned) return;
 
+            // ---------------Basic Status---------------//
+            // Exp Sync
+            // TODO: Calculate EXP during time
+
             // Revival & Immutable Status Sync
             if (_referee.Reviving.Value)
             {                    
@@ -119,22 +123,14 @@ public class GameManager : NetworkBehaviour
                 }
             }
 
+            
+
+            //--------------------Status only when enabled----------------------//
+            if(!_referee.Enabled.Value) return;
+
+
             // Game Status Sync
             _referee.TimePast.Value = TimePast;
-            _referee.RBaseShieldLimit.Value = RefereeControllerList[39].ShieldLimit.Value;
-            _referee.RBaseShield.Value = RefereeControllerList[39].Shield.Value;
-            _referee.RBaseHPLimit.Value = RefereeControllerList[39].HPLimit.Value;
-            _referee.RBaseHP.Value = RefereeControllerList[39].HP.Value;
-            _referee.BBaseShieldLimit.Value = RefereeControllerList[19].ShieldLimit.Value;
-            _referee.BBaseShield.Value = RefereeControllerList[19].Shield.Value;
-            _referee.BBaseHPLimit.Value = RefereeControllerList[19].HPLimit.Value;
-            _referee.BBaseHP.Value = RefereeControllerList[19].HP.Value;
-            _referee.ROutpostHPLimit.Value = RefereeControllerList[38].HPLimit.Value;
-            _referee.ROutpostHP.Value = RefereeControllerList[38].HP.Value;
-            _referee.BOutpostHPLimit.Value = RefereeControllerList[18].HPLimit.Value;
-            _referee.BOutpostHP.Value = RefereeControllerList[18].HP.Value;
-
-
 
         }
 
@@ -233,7 +229,17 @@ public class GameManager : NetworkBehaviour
     [ServerRpc]
     void ShootHandlerServerRpc(int shooterID, int shooterType, int robotID, ServerRpcParams serverRpcParams = default)
     {
-        
+        switch(shooterID){
+            case 0:
+                RefereeControllerList[robotID].Heat0.Value += (shooterType == 0) ? 10 : 100;
+                break;
+            case 1:
+                RefereeControllerList[robotID].Heat1.Value += (shooterType == 0) ? 10 : 100;
+                break;
+            default:
+                Debug.LogWarning("[GameManager] Unknown shooter ID");
+                break;
+        }
     }
 
     void OccupyUpload(int areaID, int robotID)
@@ -271,6 +277,7 @@ public class GameManager : NetworkBehaviour
                 // TODO: If the robot used purchase to revival, revival time will add 20s for each purchase
                 RefereeControllerList[robotID].RevivalTime.Value = 10 + (420 - TimePast) / 10;
                 RefereeControllerList[robotID].Reviving.Value = true;
+                RefereeControllerList[robotID].Enabled.Value = false;
                 break;
         }
     }

@@ -14,8 +14,6 @@ GameObject:
   - component: {fileID: 5920901610762163388}
   - component: {fileID: 2087589598418905570}
   - component: {fileID: 4260439120525712104}
-  - component: {fileID: 8854100170682224681}
-  - component: {fileID: 8604394723074927577}
   m_Layer: 0
   m_Name: Armor-Small
   m_TagString: Armor
@@ -107,6 +105,7 @@ MonoBehaviour:
   velocityThresholdMissle: 6
   ArmorID: 0
   Enabled: 0
+  IsBlink: 0
   LightColor: 0
   damageDetection: 01010100
 --- !u!54 &2087589598418905570
@@ -158,44 +157,6 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: -7877160491211906700, guid: e9d32746e1fa3b545b0faaed75466046, type: 3}
---- !u!114 &8854100170682224681
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5920901610762163391}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e96cb6065543e43c4a752faaa1468eb1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  SyncPositionX: 1
-  SyncPositionY: 1
-  SyncPositionZ: 1
-  SyncRotAngleX: 1
-  SyncRotAngleY: 1
-  SyncRotAngleZ: 1
-  SyncScaleX: 0
-  SyncScaleY: 0
-  SyncScaleZ: 0
-  PositionThreshold: 0.001
-  RotAngleThreshold: 0.01
-  ScaleThreshold: 0.01
-  InLocalSpace: 0
-  Interpolate: 1
---- !u!114 &8604394723074927577
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5920901610762163391}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f6c0be61502bb534f922ebb746851216, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &6061553835842980662
 GameObject:
   m_ObjectHideFlags: 0

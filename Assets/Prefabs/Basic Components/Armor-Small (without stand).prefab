@@ -80,7 +80,8 @@ PrefabInstance:
       propertyPath: m_Name
       value: Armor-Small (without stand)
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 0}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []

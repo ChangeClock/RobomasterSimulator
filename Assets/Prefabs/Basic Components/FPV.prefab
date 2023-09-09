@@ -153,7 +153,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &7926008511171200723
 RectTransform:
   m_ObjectHideFlags: 0
@@ -392,9 +392,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 2637587495049273238}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 47260c183b9b742418f710cf9fa08902, type: 3}
+  m_Script: {fileID: 11500000, guid: 3daf3c34106449e4988213ed8c8b663f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  FPVCamera: {fileID: 6341365489814791855}
+  PlayerUI: {fileID: 2080426337922380737}
   Enabled: 1
   Warning: 0
   TimeBar: {fileID: 6375021847599372938}

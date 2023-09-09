@@ -5,7 +5,6 @@ using Unity.Netcode;
 using TMPro;
 using Unity.Collections;
 
-[System.Serializable]
 public class RefereeController : NetworkBehaviour
 {
     public delegate void SpawnAction(int robotID);
@@ -20,9 +19,18 @@ public class RefereeController : NetworkBehaviour
     public delegate void OccupyAction(int areaID, int robotID);
     public static event OccupyAction OnOccupy;
 
-    public DataTransmission.RobotStatus Status = new DataTransmission.RobotStatus();
+    // public DataTransmission.RobotStatus Status = new DataTransmission.RobotStatus();
 
+    [Header("Referee")]
+    [SerializeField]private GameObject FPV;
+    private ArmorController[] Armors;
+    private ShooterController[] Shooters;
+    private RFIDController RFID;
+    private LightbarController LightBar;
+    private FPVController FPVCamera;
     [SerializeField] private TextMeshProUGUI ObserverUI;
+    public int RobotID;
+    public RobotClass robotClass;
 
     [Header("Status")]
     // PowerLimit: -1 - Unlimited
@@ -34,44 +42,21 @@ public class RefereeController : NetworkBehaviour
     [SerializeField] public NetworkVariable<int> Power             = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
     [SerializeField] public NetworkVariable<int> EnergyLimit       = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
     [SerializeField] public NetworkVariable<int> Energy            = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-
-    // Shooter Type: 0 - 17mm 1 - 42mm
-    // Shooter Mode: 0 - None 1 - Boost 2 - CD 3 - Speed
-    // Shooter 0
-    [SerializeField] public NetworkVariable<bool> Shooter0Enabled  = new NetworkVariable<bool>(true, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-    [SerializeField] public NetworkVariable<int> Shooter0Type      = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-    [SerializeField] public NetworkVariable<int> Shooter0Mode      = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-    [SerializeField] public NetworkVariable<int> Heat0Limit        = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-    [SerializeField] public NetworkVariable<int> Heat0             = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-    [SerializeField] public NetworkVariable<int> CD0               = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-    [SerializeField] public NetworkVariable<int> Speed0Limit       = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-    // Shooter 1
-    [SerializeField] public NetworkVariable<bool> Shooter1Enabled   = new NetworkVariable<bool>(false, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-    [SerializeField] public NetworkVariable<int> Shooter1Type      = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-    [SerializeField] public NetworkVariable<int> Shooter1Mode      = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-    [SerializeField] public NetworkVariable<int> Heat1Limit        = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-    [SerializeField] public NetworkVariable<int> Heat1             = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-    [SerializeField] public NetworkVariable<int> CD1               = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-    [SerializeField] public NetworkVariable<int> Speed1Limit       = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-    
+   
     // Status
     // Ammo: 0 - 17mm 1 - 42 mm
-    [SerializeField] public NetworkVariable<int> Ammo0             = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-    [SerializeField] public NetworkVariable<int> RealAmmo0         = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-    [SerializeField] public NetworkVariable<int> Ammo1             = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-    [SerializeField] public NetworkVariable<int> RealAmmo1         = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-    [SerializeField] public NetworkVariable<bool> Enabled          = new NetworkVariable<bool>(true, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+   [SerializeField] public NetworkVariable<bool> Enabled          = new NetworkVariable<bool>(true, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
     [SerializeField] public NetworkVariable<bool> Reviving          = new NetworkVariable<bool>(false, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-    [SerializeField] public NetworkVariable<int> RevivalTime          = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+    [SerializeField] public NetworkVariable<int> MaxReviveProgress = new NetworkVariable<int>(10, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+    [SerializeField] public NetworkVariable<float> CurrentReviveProgress = new NetworkVariable<float>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
     [SerializeField] public NetworkVariable<bool> Immutable         = new NetworkVariable<bool>(false, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-    [SerializeField] public NetworkVariable<int> Level             = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-    [SerializeField] public NetworkVariable<int> EXP               = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-    [SerializeField] public NetworkVariable<int> EXPValue               = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
     [SerializeField] public NetworkVariable<int> Warning           = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
     [SerializeField] public NetworkVariable<int> OccupiedArea      = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-    [SerializeField] public NetworkVariable<int> ATKBuff         = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-    [SerializeField] public NetworkVariable<int> DEFBuff         = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-    [SerializeField] public NetworkVariable<int> CDBuff         = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+    [SerializeField] public NetworkVariable<int> ATKBuff         = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
+    [SerializeField] public NetworkVariable<int> DEFBuff         = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
+    [SerializeField] public NetworkVariable<int> CDBuff         = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
+    [SerializeField] public NetworkVariable<int> ReviveProgressPerSec = new NetworkVariable<int>(1, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
+    [SerializeField] public NetworkVariable<int> HealBuff         = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
 
     // Game Info
     [SerializeField] public NetworkVariable<int> TimePast               = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
@@ -88,20 +73,20 @@ public class RefereeController : NetworkBehaviour
     [SerializeField] public NetworkVariable<int> BOutpostHPLimit           = new NetworkVariable<int>(500, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
     [SerializeField] public NetworkVariable<int> BOutpostHP                = new NetworkVariable<int>(500, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
 
-    [Header("Referee")]
-    [SerializeField]private GameObject FPV;
-    private ArmorController[] Armors;
-    private ShooterController[] Shooters;
-    private RFIDController RFID;
-    private LightbarController LightBar;
-    private CameraController Camera;
-    public int RobotID;
+    [Header("Player")]
+    private RobotController robotController;
 
     public override void OnNetworkSpawn()
     {
         // Debug.Log("Client:" + NetworkManager.Singleton.LocalClientId + "IsOwner?" + IsOwner);
-        if (IsOwner) {
+        if (IsLocalPlayer) {
             FPV.SetActive(true);
+        
+            FPVCamera = this.gameObject.GetComponentInChildren<FPVController>();
+            FPVCamera.TurnOnCamera();
+
+            robotController = this.gameObject.GetComponent<RobotController>();
+            robotController.enabled = true;
         }
     }
 
@@ -134,8 +119,6 @@ public class RefereeController : NetworkBehaviour
 
         RFID = this.gameObject.GetComponentInChildren<RFIDController>();
         if (RFID != null) RFID.OnDetect += DetectHandler;
-
-        Camera = this.gameObject.GetComponentInChildren<CameraController>();
 
         LightBar = this.gameObject.GetComponentInChildren<LightbarController>();
     }
@@ -198,27 +181,6 @@ public class RefereeController : NetworkBehaviour
 
         }
 
-        if (Camera != null)
-        {
-            Camera.Enabled = Enabled.Value;
-            Camera.Warning = Warning.Value;
-            Camera.HPLimit = HPLimit.Value;
-            Camera.HP = HP.Value;
-            Camera.TimePast = TimePast.Value;    
-            Camera.RBaseShieldLimit = RBaseShieldLimit.Value;
-            Camera.RBaseShield     = RBaseShield.Value; 
-            Camera.RBaseHPLimit    = RBaseHPLimit.Value;
-            Camera.RBaseHP       = RBaseHP.Value;  
-            Camera.BBaseShieldLimit = BBaseShieldLimit.Value;
-            Camera.BBaseShield    = BBaseShield.Value;  
-            Camera.BBaseHPLimit    = BBaseHPLimit.Value;
-            Camera.BBaseHP         = BBaseHP.Value;
-            Camera.ROutpostHPLimit = ROutpostHPLimit.Value;
-            Camera.ROutpostHP      = ROutpostHP.Value;
-            Camera.BOutpostHPLimit = BOutpostHPLimit.Value;
-            Camera.BOutpostHP      = BOutpostHP.Value;
-        }
-
         // TODO: Need to sync the HP status
         if (LightBar != null)
         {
@@ -231,6 +193,38 @@ public class RefereeController : NetworkBehaviour
         ObserverUI.text = "Player: " + (OwnerClientId) + "\n" + "HP: " + (HP.Value.ToString());
     }
 
+    private void FixedUpdate() {
+        if (!IsOwner) return;
+
+        if (robotController != null)
+        {
+            robotController.enabled = Enabled.Value;
+        }
+            
+        if (FPVCamera != null)
+        {
+            FPVCamera.Enabled = Enabled.Value;
+            FPVCamera.Warning = Warning.Value;
+            FPVCamera.HPLimit = HPLimit.Value;
+            FPVCamera.HP = HP.Value;
+            FPVCamera.TimePast = TimePast.Value;    
+            FPVCamera.RBaseShieldLimit = RBaseShieldLimit.Value;
+            FPVCamera.RBaseShield     = RBaseShield.Value; 
+            FPVCamera.RBaseHPLimit    = RBaseHPLimit.Value;
+            FPVCamera.RBaseHP       = RBaseHP.Value;  
+            FPVCamera.BBaseShieldLimit = BBaseShieldLimit.Value;
+            FPVCamera.BBaseShield    = BBaseShield.Value;  
+            FPVCamera.BBaseHPLimit    = BBaseHPLimit.Value;
+            FPVCamera.BBaseHP         = BBaseHP.Value;
+            FPVCamera.ROutpostHPLimit = ROutpostHPLimit.Value;
+            FPVCamera.ROutpostHP      = ROutpostHP.Value;
+            FPVCamera.BOutpostHPLimit = BOutpostHPLimit.Value;
+            FPVCamera.BOutpostHP      = BOutpostHP.Value;
+        }
+
+        TickBuff();
+    }
+
     void DamageHandler(int damageType, int armorID)
     {
         if (OnDamage != null)
@@ -238,6 +232,31 @@ public class RefereeController : NetworkBehaviour
             OnDamage(damageType, armorID, RobotID);
         }
     }
+
+    # region Shooter related
+    // Shooter Type: 0 - 17mm 1 - 42mm
+    // Shooter Mode: 0 - None 1 - Boost 2 - CD 3 - Speed
+    // Shooter 0
+    [SerializeField] public NetworkVariable<bool> Shooter0Enabled  = new NetworkVariable<bool>(true, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+    [SerializeField] public NetworkVariable<int> Shooter0Type      = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+    [SerializeField] public NetworkVariable<int> Shooter0Mode      = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+    [SerializeField] public NetworkVariable<int> Heat0Limit        = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+    [SerializeField] public NetworkVariable<int> Heat0             = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+    [SerializeField] public NetworkVariable<int> CD0               = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+    [SerializeField] public NetworkVariable<int> Speed0Limit       = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+    [SerializeField] public NetworkVariable<int> Ammo0             = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+    [SerializeField] public NetworkVariable<int> RealAmmo0         = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+     // Shooter 1
+    [SerializeField] public NetworkVariable<bool> Shooter1Enabled   = new NetworkVariable<bool>(false, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+    [SerializeField] public NetworkVariable<int> Shooter1Type      = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+    [SerializeField] public NetworkVariable<int> Shooter1Mode      = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+    [SerializeField] public NetworkVariable<int> Heat1Limit        = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+    [SerializeField] public NetworkVariable<int> Heat1             = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+    [SerializeField] public NetworkVariable<int> CD1               = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+    [SerializeField] public NetworkVariable<int> Speed1Limit       = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+    [SerializeField] public NetworkVariable<int> Ammo1             = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+    [SerializeField] public NetworkVariable<int> RealAmmo1         = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+ 
 
     void TriggerHandler(int ID, Vector3 Position, Vector3 Velocity)
     {
@@ -265,10 +284,187 @@ public class RefereeController : NetworkBehaviour
         OnShoot(ID, ID == 0 ? Shooter0Type.Value : Shooter1Type.Value, RobotID, Position, Velocity);
     }
 
+    #endregion
+
     void DetectHandler(int areaID)
     {
         if (!Enabled.Value) return;
 
         OnOccupy(areaID, RobotID);
     }
+
+    #region Buff Related
+    class BuffEffectInfo
+    {
+        public BuffEffectSO buffEffect;
+        public float timeActivated;
+        public BuffEffectInfo(BuffEffectSO buff)
+        {
+            buffEffect = buff;
+            timeActivated = Time.time;
+        }
+    }
+
+    Dictionary<BuffEffectSO, BuffEffectInfo> activeBuffs = new Dictionary<BuffEffectSO, BuffEffectInfo>();
+
+    [Header("Buff Related")]
+
+    public BuffEffectSO defaultBuff;
+
+    public bool HasBuff(BuffEffectSO buff)
+    {
+        return activeBuffs.ContainsKey(buff);
+    }
+
+    public void AddBuff(BuffEffectSO buff)
+    {
+        if (activeBuffs.ContainsKey(buff))
+        {
+            activeBuffs[buff].timeActivated = Time.time;
+            return;
+        }
+
+        if (buff.DEFBuff > DEFBuff.Value)
+        {
+            DEFBuff.Value = buff.DEFBuff;
+        }
+
+        if (buff.ATKBuff > ATKBuff.Value)
+        {
+            ATKBuff.Value = buff.ATKBuff;
+        }
+
+        if (buff.CDBuff > CDBuff.Value)
+        {
+            CDBuff.Value = buff.CDBuff;
+        }
+
+        // if (buff.speedBoost > speedBoost)
+        // {
+        //     speedBoost = buff.speedBoost;
+        // }
+
+        if (buff.ReviveProgressPerSec > ReviveProgressPerSec.Value)
+        {
+            ReviveProgressPerSec.Value = buff.ReviveProgressPerSec;
+        }
+
+        if (buff.HealBuff > HealBuff.Value)
+        {
+            HealBuff.Value = buff.HealBuff;
+        }
+
+        Debug.Log($"Adding {buff.name}");
+        activeBuffs.Add(buff, new BuffEffectInfo(buff));
+    }
+
+    public void RemoveBuff(BuffEffectSO buff)
+    {
+        if (activeBuffs.ContainsKey(buff))
+        {
+            Debug.Log($"Removing {buff.name}");
+            activeBuffs.Remove(buff);
+            UpdateBuff();
+        }
+        Debug.Log($"{activeBuffs.Count} buff remains");
+    }
+
+    void UpdateBuff()
+    {
+        BuffEffectSO newBuffStat = Instantiate(defaultBuff);
+
+        if (activeBuffs.Count > 0)
+        {
+            var activeBuffsCache = activeBuffs.Keys;
+
+            foreach (var activeBuff in activeBuffsCache)
+            {
+                if (activeBuff.DEFBuff > newBuffStat.DEFBuff)
+                {
+                    newBuffStat.DEFBuff = activeBuff.DEFBuff;
+                }
+
+                if (activeBuff.ATKBuff > newBuffStat.ATKBuff)
+                {
+                    newBuffStat.ATKBuff = activeBuff.ATKBuff;
+                }
+
+                if (activeBuff.CDBuff > newBuffStat.CDBuff)
+                {
+                    newBuffStat.CDBuff = activeBuff.CDBuff;
+                }
+
+                if (activeBuff.speedBoost > newBuffStat.speedBoost)
+                {
+                    newBuffStat.speedBoost = activeBuff.speedBoost;
+                }
+
+                if (activeBuff.ReviveProgressPerSec > newBuffStat.ReviveProgressPerSec)
+                {
+                    newBuffStat.ReviveProgressPerSec = activeBuff.ReviveProgressPerSec;
+                }
+
+                if (activeBuff.HealBuff > newBuffStat.HealBuff)
+                {
+                    newBuffStat.HealBuff = activeBuff.HealBuff;
+                }
+            }
+        }
+
+        DEFBuff.Value = newBuffStat.DEFBuff;
+        ATKBuff.Value = newBuffStat.ATKBuff;
+        CDBuff.Value = newBuffStat.CDBuff;
+        // speedBoost = newBuffStat.speedBoost;
+        ReviveProgressPerSec.Value = newBuffStat.ReviveProgressPerSec;
+        HealBuff.Value = newBuffStat.HealBuff;
+    }
+
+    void TickBuff()
+    {
+        if (activeBuffs.Count <= 0)
+        {
+            return;
+        }
+
+        List<BuffEffectSO> overtimeBuffs = new List<BuffEffectSO>();
+
+        var activeBuffCache = activeBuffs.Values;
+        foreach (var buffInfo in activeBuffCache)
+        {
+            if (buffInfo.buffEffect.buffDuration <= 0.0f)
+            {
+                continue;
+            }
+
+            if (buffInfo.timeActivated + buffInfo.buffEffect.buffDuration < Time.time)
+            {
+                overtimeBuffs.Add(buffInfo.buffEffect);
+            }
+        }
+
+        if (overtimeBuffs.Count > 0)
+        {
+            foreach (var overtimeBuff in overtimeBuffs)
+            {
+                RemoveBuff(overtimeBuff);
+            }
+        }
+    }
+
+    #endregion
+
+    #region EXP related
+
+    public RobotPerformanceSO chassisPerformanceTable;
+    public RobotPerformanceSO gimbalPerformanceTable;
+    public ExpInfoSO expInfoProfile;
+
+    [SerializeField] public NetworkVariable<int> Level             = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+    [SerializeField] public NetworkVariable<int> EXP               = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+    [SerializeField] public NetworkVariable<int> EXPToNextLevel    = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+    [SerializeField] public NetworkVariable<int> EXPValue          = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+    [SerializeField] public NetworkVariable<float> TimeToNextEXP = new NetworkVariable<float>(0.0f);
+
+
+    #endregion
 }

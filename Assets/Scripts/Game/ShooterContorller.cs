@@ -29,7 +29,7 @@ public class ShooterController : MonoBehaviour
     {
         if (!Enabled) return;
 
-        Debug.Log("[ShooterController] PullTrigger");
+        // Debug.Log("[ShooterController] PullTrigger");
         OnTrigger(ShooterID, this.gameObject.transform.position, this.gameObject.transform.right * Speed);
     }
 

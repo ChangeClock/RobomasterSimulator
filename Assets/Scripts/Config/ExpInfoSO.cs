@@ -6,7 +6,7 @@ using UnityEngine;
 public class ExpInfoSO : ScriptableObject
 {
     // Seconds taken per point
-    public float expGrowth;
-    public float[] expToNextLevel;
-    public float[] expValue;
+    public int expGrowth;
+    public int[] expToNextLevel;
+    public int[] expValue;
 }

@@ -12,6 +12,7 @@ TagManager:
   - Bullet-17mm
   - Ground
   - Area
+  - DivLines
   layers:
   - Default
   - TransparentFX

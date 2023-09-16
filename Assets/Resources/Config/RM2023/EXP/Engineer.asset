@@ -10,8 +10,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 107251088b861284c8bebda95cb3e84f, type: 3}
-  m_Name: Hero
+  m_Name: Engineer
   m_EditorClassIdentifier: 
-  expGrowth: 6
-  expToNextLevel: 000000003c0000008c00000000000000
-  expValue: 00000000460000006400000096000000
+  expGrowth: 0
+  expToNextLevel: 
+  expValue: 32000000

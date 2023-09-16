@@ -7,6 +7,7 @@ public enum Faction
 
 public enum ChassisPerformanceType
 {
+    Null,
     Hp,
     Speed,
     Balance,
@@ -14,6 +15,7 @@ public enum ChassisPerformanceType
 
 public enum GimbalPerformanceType
 {
+    Null,
     Brust,
     Cooldown,
     Velocity,

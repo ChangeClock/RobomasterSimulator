@@ -10,8 +10,15 @@ public class GameManager : NetworkBehaviour
     [Header("Game Status")]
     // 0 - Not started 1 - ready 2 - checking 3 - running 4 - ending
     [SerializeField] public NetworkVariable<int> GameStatus = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-    [SerializeField] public NetworkVariable<float> timer = new NetworkVariable<float>(0.0f, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-    [SerializeField] private int TimePast = 0;
+    [SerializeField] public NetworkVariable<float> TimeLeft = new NetworkVariable<float>(0.0f);
+    [SerializeField] private bool isRunning = false;
+
+    [SerializeField] public RefereeController RedBase;
+    [SerializeField] public RefereeController BlueBase;
+    [SerializeField] public RefereeController RedOutpost;
+    [SerializeField] public RefereeController BlueOutpost;
+    [SerializeField] public RefereeController RedSentry;
+    [SerializeField] public RefereeController BlueSentry;
 
     // 0: 中立 1: R-Hero 2: R-Engineer 3/4/5: R-Infantry 6: R-Air 7: R-Sentry 9: R-Lidar 18: R-Outpost 19: R-Base 21: B-Hero 22: B-Engineer 23/24/25: B-Infantry 26: B-Air 27: B-Sentry 29: B-Lidar 38: B-Outpost 39: B-Base;
     public Dictionary<int, RefereeController> RefereeControllerList = new Dictionary<int, RefereeController>();
@@ -22,8 +29,12 @@ public class GameManager : NetworkBehaviour
     [Header("Performance")]
     [SerializeField] private RobotPerformanceSO HeroChassisPerformance;
     [SerializeField] private RobotPerformanceSO HeroGimbalPerformance;
+    [SerializeField] private RobotPerformanceSO EngineerChassisPerformance;
     [SerializeField] private RobotPerformanceSO InfantryChassisPerformance;
     [SerializeField] private RobotPerformanceSO InfantryGimbalPerformance;
+    [SerializeField] private RobotPerformanceSO SentryChassisPerformance;
+    [SerializeField] private RobotPerformanceSO OutpostChassisPerformance;
+    [SerializeField] private RobotPerformanceSO BaseChassisPerformance;
 
     [Header("EXPInfo")]
     [SerializeField] private ExpInfoSO HeroExpInfo;
@@ -51,34 +62,41 @@ public class GameManager : NetworkBehaviour
         // TODO: Initial the default RobotStatusList according to a config file;
         // Debug.Log(JSONReader.LoadResourceTextfile("RMUC2023/RobotConfig.json"));
 
-        RefereeController[] _list = GameObject.FindObjectsByType<RefereeController>(FindObjectsSortMode.None); 
-        Debug.Log(_list.Length);
-        foreach(RefereeController _referee in _list)
-        {
-            RefereeControllerList.Add(_referee.RobotID, _referee);
+        // RefereeController[] _list = GameObject.FindObjectsByType<RefereeController>(FindObjectsSortMode.None); 
+        // Debug.Log(_list.Length);
+        // foreach(RefereeController _referee in _list)
+        // {
+        //     RefereeControllerList.Add(_referee.RobotID.Value, _referee);
 
-            switch(_referee.RobotID){
-                case 3:
-                case 4:
-                case 5:
-                    RefereeControllerList[_referee.RobotID].HP.Value = (200);
-                    break;
-                case 18:
-                case 38:
-                    RefereeControllerList[_referee.RobotID].HP.Value = (1500);
-                    break;
-                case 19:
-                case 39:
-                    RefereeControllerList[_referee.RobotID].HP.Value = (5000);
-                    break;
-                default:
-                    RefereeControllerList[_referee.RobotID].HP.Value = (500);
-                    break;
-            }
+        //     switch(_referee.RobotID.Value){
+        //         case 3:
+        //         case 4:
+        //         case 5:
+        //             RefereeControllerList[_referee.RobotID.Value].HP.Value = (200);
+        //             break;
+        //         case 18:
+        //         case 38:
+        //             RefereeControllerList[_referee.RobotID.Value].HP.Value = (1500);
+        //             break;
+        //         case 19:
+        //         case 39:
+        //             RefereeControllerList[_referee.RobotID.Value].HP.Value = (5000);
+        //             break;
+        //         default:
+        //             RefereeControllerList[_referee.RobotID.Value].HP.Value = (500);
+        //             break;
+        //     }
 
-            Debug.Log("[GameController] _referee: " + _referee.gameObject.name + " " + _referee.RobotID);
-            Debug.Log("[GameController] _referee: " + RefereeControllerList[_referee.RobotID].HP.Value);
-        }
+        //     Debug.Log("[GameController] _referee: " + _referee.gameObject.name + " " + _referee.RobotID.Value);
+        //     Debug.Log("[GameController] _referee: " + RefereeControllerList[_referee.RobotID.Value].HP.Value);
+        // }
+
+        // Initial NPCS already in the game scene
+
+        if (!IsServer) return;
+
+        // RefereeController.OnDamage += DamageUpload;
+        
     }
 
     /**
@@ -89,10 +107,6 @@ public class GameManager : NetworkBehaviour
     void Update()
     {
         if (!IsServer) return;
-        // TODO: Update Status Struct according RobotID to every RefreeController
-
-        timer.Value += Time.deltaTime;
-        TimePast = (int)timer.Value % 60;
 
         foreach(var _referee in RefereeControllerList.Values)
         {
@@ -110,7 +124,7 @@ public class GameManager : NetworkBehaviour
 
                 if (_referee.CurrentReviveProgress.Value >= _referee.MaxReviveProgress.Value)
                 {
-                    Debug.Log($"Robot {_referee.RobotID} revived!");
+                    Debug.Log($"Robot {_referee.RobotID.Value} revived!");
                     _referee.Reviving.Value = false;
                     _referee.CurrentReviveProgress.Value = 0;
                     _referee.HP.Value = _referee.HPLimit.Value;
@@ -119,66 +133,91 @@ public class GameManager : NetworkBehaviour
                 }
             }
 
-            //--------------------Status only when enabled----------------------//
-            if(!_referee.Enabled.Value) return;
+            //--------------------Status only when robot is enabled & game is running----------------------//
+            if (!_referee.Enabled.Value) return;
+            
+            if (!isRunning) return;
+
+            // Time Update
+            TimeLeft.Value -= Time.deltaTime;
+
+            if (TimeLeft.Value <= 0.0f) FinishGame();
 
             // Exp & Level Up Sync
             // Full level robots & non-hero/infantry robot will skip
 
-            if (_referee.Level < 3 && (_referee.robotClass == RobotClass.Hero || _referee.robotClass == RobotClass.Infantry))
+            if (_referee.Level.Value < 3 && (_referee.robotClass.Value == RobotClass.Hero || _referee.robotClass.Value == RobotClass.Infantry))
             {
                 _referee.TimeToNextEXP.Value += Time.deltaTime;
                 
-                switch (_referee.robotClass)
+                switch (_referee.robotClass.Value)
                 {
                     case RobotClass.Hero:
                         // EXP growth with time
-                        if (_referee.TimeToNextEXP.Value >= )
+                        if (_referee.TimeToNextEXP.Value >= HeroExpInfo.expGrowth)
                         {
                             _referee.TimeToNextEXP.Value -= HeroExpInfo.expGrowth;
-                            _referee.EXP += 1;
+                            _referee.EXP.Value += 1;
                         }
 
                         // Level up
-                        if (_referee.EXP.Value >= HeroExpInfo.EXPToNextLevel[_referee.Level.Value])
+                        if (_referee.EXP.Value >= HeroExpInfo.expToNextLevel[_referee.Level.Value])
                         {
                             // Don't zero the current EXP, just minus the EXP needed to next level
-                            _referee.EXP.Value -= HeroExpInfo.EXPToNextLevel[_referee.Level.Value];
+                            _referee.EXP.Value -= HeroExpInfo.expToNextLevel[_referee.Level.Value];
                             _referee.Level.Value += 1;
 
                             // TODO: Update performance
 
                         }
+                        break;
                     case RobotClass.Infantry:
                         // EXP growth with time
                         if (_referee.TimeToNextEXP.Value >= InfantryExpInfo.expGrowth)
                         {
                             _referee.TimeToNextEXP.Value -= InfantryExpInfo.expGrowth;
-                            _referee.EXP += 1;
+                            _referee.EXP.Value += 1;
                         }
 
                         // Level up
-                        if (_referee.EXP.Value >= InfantryExpInfo.EXPToNextLevel[_referee.Level.Value])
+                        if (_referee.EXP.Value >= InfantryExpInfo.expToNextLevel[_referee.Level.Value])
                         {
                             // Don't zero the current EXP, just minus the EXP needed to next level
-                            _referee.EXP.Value -= InfantryExpInfo.EXPToNextLevel[_referee.Level.Value];
+                            _referee.EXP.Value -= InfantryExpInfo.expToNextLevel[_referee.Level.Value];
                             _referee.Level.Value += 1;
 
                             // TODO: Update performance
 
                         }
+                        break;
                     default:
                         break;
                 }
+
+            } else if (_referee.Level.Value == 0) {
+                // Haven't choose performance, just addon the EXP.
+                _referee.TimeToNextEXP.Value += Time.deltaTime;
             }
-
-
-            // Game Status Sync
-            _referee.TimePast.Value = TimePast;
 
         }
 
         // Debug.Log("[GameController] HP: "+ RobotStatusList[18].GetHP());
+    }
+
+    public void FinishGame()
+    {
+        isRunning = false;
+
+        // TODO: Reset robot status, play ending
+    }
+
+    public void StartGame()
+    {
+        isRunning = true;
+
+        // TODO: bring robot to their spawnpoint, reset HP, EXP, Level, Ammo, Heat, Energy
+
+        // TODO: Reset bank on each side, reset mine ore status.
     }
 
     /**
@@ -213,10 +252,10 @@ public class GameManager : NetworkBehaviour
         Debug.Log($"[GameManager] List Length: {_list.Length}");
         foreach (RefereeController _referee in _list)
         {
-            if (_referee.RobotID == robotID)
+            if (_referee.RobotID.Value == robotID)
             {
                 Debug.Log($"[GameManager] {robotID} referee added to gamemanager");
-                RefereeControllerList.Add(_referee.RobotID, _referee);
+                RefereeControllerList.Add(_referee.RobotID.Value, _referee);
                 return;
             }
         }
@@ -321,7 +360,7 @@ public class GameManager : NetworkBehaviour
             default:
                 // TODO: If the robot is penalty to death, disable revival
                 // TODO: If the robot used purchase to revival, revival time will add 20s for each purchase
-                RefereeControllerList[robotID].MaxReviveProgress.Value = 10 + (420 - TimePast) / 10;
+                RefereeControllerList[robotID].MaxReviveProgress.Value = (int)Math.Round(10.0f + TimeLeft.Value / 10.0f);
                 RefereeControllerList[robotID].Reviving.Value = true;
                 RefereeControllerList[robotID].Enabled.Value = false;
                 break;

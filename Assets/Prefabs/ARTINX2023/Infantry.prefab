@@ -226,8 +226,8 @@ GameObject:
   - component: {fileID: 8717777462774421389}
   - component: {fileID: 4675986586983816773}
   - component: {fileID: 5524609865410801367}
-  - component: {fileID: 704796762685571713}
   - component: {fileID: -9196820610464076246}
+  - component: {fileID: 704796762685571713}
   m_Layer: 0
   m_Name: Infantry
   m_TagString: Player
@@ -374,130 +374,6 @@ MonoBehaviour:
   AlwaysReplicateAsRoot: 0
   DontDestroyWithOwner: 0
   AutoObjectParentSync: 1
---- !u!114 &704796762685571713
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4566135839495928145}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c588dc8e7f3394e6ba6dc7fcf0bb7644, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  ShieldLimit:
-    m_InternalValue: 0
-  Shield:
-    m_InternalValue: 0
-  HPLimit:
-    m_InternalValue: 500
-  HP:
-    m_InternalValue: 500
-  PowerLimit:
-    m_InternalValue: 0
-  Power:
-    m_InternalValue: 0
-  EnergyLimit:
-    m_InternalValue: 0
-  Energy:
-    m_InternalValue: 0
-  Shooter0Enabled:
-    m_InternalValue: 1
-  Shooter0Type:
-    m_InternalValue: 0
-  Shooter0Mode:
-    m_InternalValue: 0
-  Heat0Limit:
-    m_InternalValue: 0
-  Heat0:
-    m_InternalValue: 0
-  CD0:
-    m_InternalValue: 0
-  Speed0Limit:
-    m_InternalValue: 0
-  Shooter1Enabled:
-    m_InternalValue: 0
-  Shooter1Type:
-    m_InternalValue: 0
-  Shooter1Mode:
-    m_InternalValue: 0
-  Heat1Limit:
-    m_InternalValue: 0
-  Heat1:
-    m_InternalValue: 0
-  CD1:
-    m_InternalValue: 0
-  Speed1Limit:
-    m_InternalValue: 0
-  Ammo0:
-    m_InternalValue: 200
-  RealAmmo0:
-    m_InternalValue: 200
-  Ammo1:
-    m_InternalValue: 0
-  RealAmmo1:
-    m_InternalValue: 0
-  Enabled:
-    m_InternalValue: 1
-  Reviving:
-    m_InternalValue: 0
-  MaxReviveProgress:
-    m_InternalValue: 10
-  CurrentReviveProgress:
-    m_InternalValue: 0
-  Immutable:
-    m_InternalValue: 0
-  Level:
-    m_InternalValue: 0
-  EXP:
-    m_InternalValue: 0
-  EXPValue:
-    m_InternalValue: 0
-  Warning:
-    m_InternalValue: 0
-  OccupiedArea:
-    m_InternalValue: 0
-  ATKBuff:
-    m_InternalValue: 0
-  DEFBuff:
-    m_InternalValue: 0
-  CDBuff:
-    m_InternalValue: 0
-  ReviveProgressPerSec:
-    m_InternalValue: 1
-  HealBuff:
-    m_InternalValue: 0
-  TimePast:
-    m_InternalValue: 0
-  RBaseShieldLimit:
-    m_InternalValue: 0
-  RBaseShield:
-    m_InternalValue: 0
-  RBaseHPLimit:
-    m_InternalValue: 500
-  RBaseHP:
-    m_InternalValue: 500
-  BBaseShieldLimit:
-    m_InternalValue: 0
-  BBaseShield:
-    m_InternalValue: 0
-  BBaseHPLimit:
-    m_InternalValue: 500
-  BBaseHP:
-    m_InternalValue: 500
-  ROutpostHPLimit:
-    m_InternalValue: 500
-  ROutpostHP:
-    m_InternalValue: 500
-  BOutpostHPLimit:
-    m_InternalValue: 500
-  BOutpostHP:
-    m_InternalValue: 500
-  FPV: {fileID: 8966862610374934387}
-  ObserverUI: {fileID: 6091095696374493705}
-  RobotID: 0
-  defaultBuff: {fileID: 0}
 --- !u!114 &-9196820610464076246
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -553,6 +429,115 @@ MonoBehaviour:
   useLocalTransformOnly: 0
   ownerChangeIndicator: 1
   receivedStatesCounter: 0
+--- !u!114 &704796762685571713
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4566135839495928145}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c588dc8e7f3394e6ba6dc7fcf0bb7644, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  FPV: {fileID: 8966862610374934387}
+  ObserverUI: {fileID: 6091095696374493705}
+  RobotID:
+    m_InternalValue: 0
+  robotClass:
+    m_InternalValue: 0
+  faction:
+    m_InternalValue: 2
+  ShieldLimit:
+    m_InternalValue: 0
+  Shield:
+    m_InternalValue: 0
+  HPLimit:
+    m_InternalValue: 500
+  HP:
+    m_InternalValue: 500
+  PowerLimit:
+    m_InternalValue: 0
+  Power:
+    m_InternalValue: 0
+  EnergyLimit:
+    m_InternalValue: 0
+  Energy:
+    m_InternalValue: 0
+  Enabled:
+    m_InternalValue: 1
+  Reviving:
+    m_InternalValue: 0
+  MaxReviveProgress:
+    m_InternalValue: 10
+  CurrentReviveProgress:
+    m_InternalValue: 0
+  Immutable:
+    m_InternalValue: 0
+  Warning:
+    m_InternalValue: 0
+  OccupiedArea:
+    m_InternalValue: 0
+  ATKBuff:
+    m_InternalValue: 0
+  DEFBuff:
+    m_InternalValue: 0
+  CDBuff:
+    m_InternalValue: 0
+  ReviveProgressPerSec:
+    m_InternalValue: 1
+  HealBuff:
+    m_InternalValue: 0
+  Shooter0Enabled:
+    m_InternalValue: 1
+  Shooter0Type:
+    m_InternalValue: 0
+  Shooter0Mode:
+    m_InternalValue: 0
+  Heat0Limit:
+    m_InternalValue: 0
+  Heat0:
+    m_InternalValue: 0
+  CD0:
+    m_InternalValue: 0
+  Speed0Limit:
+    m_InternalValue: 0
+  Ammo0:
+    m_InternalValue: 200
+  RealAmmo0:
+    m_InternalValue: 200
+  Shooter1Enabled:
+    m_InternalValue: 0
+  Shooter1Type:
+    m_InternalValue: 0
+  Shooter1Mode:
+    m_InternalValue: 0
+  Heat1Limit:
+    m_InternalValue: 0
+  Heat1:
+    m_InternalValue: 0
+  CD1:
+    m_InternalValue: 0
+  Speed1Limit:
+    m_InternalValue: 0
+  Ammo1:
+    m_InternalValue: 0
+  RealAmmo1:
+    m_InternalValue: 0
+  defaultBuff: {fileID: 0}
+  chassisType: 0
+  gimbalType: 0
+  Level:
+    m_InternalValue: 0
+  EXP:
+    m_InternalValue: 0
+  EXPToNextLevel:
+    m_InternalValue: 0
+  EXPValue:
+    m_InternalValue: 0
+  TimeToNextEXP:
+    m_InternalValue: 0
 --- !u!1 &8413717783539453555
 GameObject:
   m_ObjectHideFlags: 0

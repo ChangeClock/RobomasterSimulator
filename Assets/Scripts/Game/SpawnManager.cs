@@ -27,7 +27,7 @@ public class SpawnManager : NetworkBehaviour
             case 2:
                 player = Instantiate(prefabList[id+1], Vector3.right * -110 + Vector3.up * 5, Quaternion.identity);
                 RefereeController referee = player.GetComponent<RefereeController>();
-                referee.RobotID = id + 1;
+                referee.RobotID.Value = id + 1;
                 break;
             case 0:
             case 3:

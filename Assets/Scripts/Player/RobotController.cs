@@ -8,9 +8,6 @@ using Cinemachine;
 
 public class RobotController : NetworkBehaviour
 {
-    public float rotateSpeed;
-    public float motorTorque;
-
     // private PlayerInputs _input;
     private float[] _input = new float[6];
 
@@ -22,10 +19,8 @@ public class RobotController : NetworkBehaviour
     [SerializeField] private float[] moveControllerParameters = {0.02f, 0f, 0.015f};
     [SerializeField] private float[] followControllerParameters = {0.02f, 0f, 0.015f};
     
-    private bool[] wheelsIsGrounded = new bool[4];
     private Transform[] wheels = new Transform[4];
     private float[] wheelForce = new float[4];
-    private Vector3[] wheelForceDirection = new Vector3[4];
 
     [SerializeField] private bool isSpin = false;
 
@@ -203,18 +198,8 @@ public class RobotController : NetworkBehaviour
         wheelForce[2] = vx-vy+vw;
         wheelForce[3] = vx+vy-vw;
 
-        wheelForceDirection[0] = Base.right + Base.forward; // (-1,0,1)
-        wheelForceDirection[1] = -Base.right + Base.forward; // (-1,0,-1)
-        wheelForceDirection[2] = -Base.right - Base.forward; // (1,0,-1)
-        wheelForceDirection[3] = Base.right - Base.forward; // (1,0,1)
-
         for (int i=0; i<4; i++)
         {
-            // 捕捉每个轮子的碰撞状态，设置是否触底，根据触底与否再施加力
-            // Debug.Log("wheel " + i + " is colliding? : " + wheels[i].GetComponent<WheelController>().IsColliding());
-            // wheels[i].GetComponent<Rigidbody>().AddForce(wheelForce[i] * wheelForceDirection[i] * motorTorque * (wheels[i].GetComponent<WheelController>().IsColliding() ? 1 : 0));
-            // Debug.DrawLine(wheels[i].position, wheels[i].position + (wheelForceDirection[i] * wheelForce[i] * (wheels[i].GetComponent<WheelController>().IsColliding() ? 1 : 0) * 25f) , Color.red);
-            
             wheels[i].GetComponent<WheelController>().SetPower(wheelForce[i]  * wheels[i].GetComponent<WheelController>().GetPowerLimit());
         
         }

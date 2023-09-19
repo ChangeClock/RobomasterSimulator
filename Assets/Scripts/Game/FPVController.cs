@@ -29,6 +29,9 @@ public class FPVController : MonoBehaviour
     [SerializeField] private TextMeshProUGUI Shooter1Speed;
     [SerializeField] private TextMeshProUGUI Shooter1Ammo;
     [SerializeField] private BarController Shooter1Heat;
+
+    [SerializeField] private BarController BufferBar;
+    [SerializeField] private TextMeshProUGUI Power;
  
     // public override void OnStartLocalPlayer()
     // {
@@ -102,5 +105,20 @@ public class FPVController : MonoBehaviour
     {
         Shooter0Heat.SetMaxValue(limit0);
         Shooter1Heat.SetMaxValue(limit1);
+    }
+
+    public void SetMaxBuffer(float bufferLimit)
+    {
+        BufferBar.SetMaxValue(bufferLimit);
+    }
+
+    public void SetBuffer(float var)
+    {
+        BufferBar.SetValue(var);
+    }
+
+    public void SetPower(float var)
+    {
+        Power.text = var.ToString("F1") + "w";
     }
 }

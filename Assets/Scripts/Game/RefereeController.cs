@@ -28,6 +28,7 @@ public class RefereeController : NetworkBehaviour
     private RFIDController RFID;
     private LightbarController LightBar;
     private FPVController FPVCamera;
+    private EnergyController EnergyCtl;
     [SerializeField] private TextMeshProUGUI ObserverUI;
     [SerializeField] public NetworkVariable<int> RobotID       = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
     [SerializeField] public NetworkVariable<RobotClass> robotClass = new NetworkVariable<RobotClass>(RobotClass.Infantry);
@@ -41,8 +42,8 @@ public class RefereeController : NetworkBehaviour
     [SerializeField] public NetworkVariable<int> HP                = new NetworkVariable<int>(500, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
     [SerializeField] public NetworkVariable<int> PowerLimit        = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
     [SerializeField] public NetworkVariable<int> Power             = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-    [SerializeField] public NetworkVariable<int> EnergyLimit       = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-    [SerializeField] public NetworkVariable<int> Energy            = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+    [SerializeField] public NetworkVariable<int> BufferLimit       = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+    [SerializeField] public NetworkVariable<int> Buffer            = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
    
     // Status
     // Ammo: 0 - 17mm 1 - 42 mm
@@ -107,6 +108,13 @@ public class RefereeController : NetworkBehaviour
             {
                 _shooter.OnTrigger += TriggerHandler;
             }
+        }
+
+        EnergyCtl = this.gameObject.GetComponent<EnergyController>();
+        if (EnergyCtl != null)
+        {
+            EnergyCtl.SetMaxPower(PowerLimit.Value);
+            EnergyCtl.SetMaxBuffer(BufferLimit.Value);
         }
 
         RFID = this.gameObject.GetComponentInChildren<RFIDController>();
@@ -205,6 +213,10 @@ public class RefereeController : NetworkBehaviour
 
             FPVCamera.SetExpInfo(EXP.Value, EXPToNextLevel.Value);
             FPVCamera.SetLevelInfo(Level.Value);
+
+            FPVCamera.SetPower(EnergyCtl.GetPower());
+            FPVCamera.SetMaxBuffer(EnergyCtl.GetMaxBuffer());
+            FPVCamera.SetBuffer(EnergyCtl.GetBuffer());
         }
 
         TickBuff();

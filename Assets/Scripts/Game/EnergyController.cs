@@ -8,8 +8,8 @@ public class EnergyController : MonoBehaviour
 
     [SerializeField] private float Power = 0.0f;
     [SerializeField] private float MaxPower = 200.0f;
-    [SerializeField] private float Buffer = 200.0f;
-    [SerializeField] private float MaxBuffer = 200.0f;
+    [SerializeField] private float Buffer = 60.0f;
+    [SerializeField] private float MaxBuffer = 60.0f;
     [SerializeField] private float Energy = 0.0f;
     [SerializeField] private float MaxEnergy = 2000.0f;
 
@@ -32,7 +32,7 @@ public class EnergyController : MonoBehaviour
 
         foreach (WheelController wheel in wheels)
         {
-            Power += wheel.GetPower();
+            Power += Mathf.Abs(wheel.GetPower());
         }
 
         float _deltaPower = (MaxPower - Power) * Time.deltaTime;
@@ -41,9 +41,9 @@ public class EnergyController : MonoBehaviour
         {
             if (Energy > 0)
             {
-                Energy -= _deltaPower;
+                Energy += _deltaPower;
             } else if (Buffer > 0) {
-                Buffer -= _deltaPower;
+                Buffer += _deltaPower;
             } else {
                 // Call overpower events for refreecontroller
             }
@@ -67,9 +67,24 @@ public class EnergyController : MonoBehaviour
         }
     }
 
-    public float GetPower(float var)
+    public float GetPower()
     {
         return Power;
+    }
+
+    public void SetMaxBuffer(float var)
+    {
+        MaxBuffer = var;
+    }
+
+    public float GetMaxBuffer()
+    {
+        return MaxBuffer;
+    }
+
+    public float GetBuffer()
+    {
+        return Buffer;
     }
 
     public void RefillBuffer()

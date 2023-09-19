@@ -173,6 +173,8 @@ MonoBehaviour:
   Shooter1Speed: {fileID: 2125865791680791734}
   Shooter1Ammo: {fileID: 9134143170364738141}
   Shooter1Heat: {fileID: 2943952092834834225}
+  BufferBar: {fileID: 5808076517676159921}
+  Power: {fileID: 1472291558729242939}
 --- !u!54 &3201802606071057446
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -366,6 +368,18 @@ GameObject:
     type: 3}
   m_PrefabInstance: {fileID: 4690917457986437831}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1472291558729242939 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 6158634885073935356, guid: a320c4d18d384e443a9bc130e7f7a5ee,
+    type: 3}
+  m_PrefabInstance: {fileID: 4690917457986437831}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1785536824274045009 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 6475891331763669654, guid: a320c4d18d384e443a9bc130e7f7a5ee,
@@ -460,6 +474,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &5808076517676159921 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1261872391271076214, guid: a320c4d18d384e443a9bc130e7f7a5ee,
+    type: 3}
+  m_PrefabInstance: {fileID: 4690917457986437831}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8152aa71efd08c443ad091dba99ff293, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!114 &6193233994156017581 stripped

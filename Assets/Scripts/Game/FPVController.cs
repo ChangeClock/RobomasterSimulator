@@ -117,8 +117,19 @@ public class FPVController : MonoBehaviour
         BufferBar.SetValue(var);
     }
 
-    public void SetPower(float var)
+    // Mode: 0-Normal 1-Overpower
+    public void SetPower(float var, int mode = 0)
     {
         Power.text = var.ToString("F1") + "w";
+
+        switch (mode)
+        {
+            case 1:
+                Power.color = Color.red;
+                break;
+            default:
+                Power.color = Color.white;
+                break;
+        }
     }
 }

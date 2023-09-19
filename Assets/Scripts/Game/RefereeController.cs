@@ -214,7 +214,12 @@ public class RefereeController : NetworkBehaviour
             FPVCamera.SetExpInfo(EXP.Value, EXPToNextLevel.Value);
             FPVCamera.SetLevelInfo(Level.Value);
 
-            FPVCamera.SetPower(EnergyCtl.GetPower());
+            if (PowerLimit.Value >= 0)
+            {
+                FPVCamera.SetPower(EnergyCtl.GetPower(), EnergyCtl.IsOverPower() ? 1 : 0);
+            } else {
+                FPVCamera.SetPower(EnergyCtl.GetPower());
+            }
             FPVCamera.SetMaxBuffer(EnergyCtl.GetMaxBuffer());
             FPVCamera.SetBuffer(EnergyCtl.GetBuffer());
         }

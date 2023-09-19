@@ -71,6 +71,11 @@ public class EnergyController : MonoBehaviour
     {
         return Power;
     }
+    
+    public bool IsOverPower()
+    {
+        return (Mathf.Abs(Power) > MaxPower);
+    }
 
     public void SetMaxBuffer(float var)
     {
@@ -91,4 +96,5 @@ public class EnergyController : MonoBehaviour
     {
         Buffer = MaxBuffer;
     }
+
 }

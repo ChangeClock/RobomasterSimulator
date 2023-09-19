@@ -13,13 +13,23 @@ public class FPVController : MonoBehaviour
     [SerializeField] public bool Enabled = true;
     [SerializeField] public int Warning = 0;
 
-    [SerializeField] private HealthBarController HPBar;
+    [SerializeField] private BarController HPBar;
     [SerializeField] private TextMeshProUGUI HP;
     [SerializeField] private TextMeshProUGUI HPLimit;
 
     [SerializeField] private GameObject[] LevelIcons;
-    [SerializeField] private HealthBarController EXPBar;
+    [SerializeField] private BarController EXPBar;
 
+    [SerializeField] private GameObject Shooter0Info;
+    [SerializeField] private TextMeshProUGUI Shooter0Speed;
+    [SerializeField] private TextMeshProUGUI Shooter0Ammo;
+    [SerializeField] private BarController Shooter0Heat;
+
+    [SerializeField] private GameObject Shooter1Info;
+    [SerializeField] private TextMeshProUGUI Shooter1Speed;
+    [SerializeField] private TextMeshProUGUI Shooter1Ammo;
+    [SerializeField] private BarController Shooter1Heat;
+ 
     // public override void OnStartLocalPlayer()
     // {
     //     if (IsLocalPlayer)
@@ -49,13 +59,13 @@ public class FPVController : MonoBehaviour
     public void SetHP(int hp)
     {
         HP.text = hp.ToString();
-        HPBar.SetHealth(hp);
+        HPBar.SetValue(hp);
     }
 
     public void SetHPLimit(int hplimit)
     {
         HPLimit.text = hplimit.ToString();
-        HPBar.SetMaxHealth(hplimit);
+        HPBar.SetMaxValue(hplimit);
     }
 
     public void SetColor(Color color)
@@ -63,7 +73,7 @@ public class FPVController : MonoBehaviour
         HPBar.SetColor(color);
     }
 
-    public void SetLevelInfo(int Level, int EXP, int EXPToNextLevel)
+    public void SetLevelInfo(int Level)
     {
         for (int i = 0; i< 4; i++)
         {
@@ -74,8 +84,23 @@ public class FPVController : MonoBehaviour
                 LevelIcons[i].SetActive(false);
             }
         }
+    }
 
-        EXPBar.SetMaxHealth(EXPToNextLevel);
-        EXPBar.SetHealth(EXP);
+    public void SetExpInfo(int EXP, int EXPToNextLevel)
+    {
+        EXPBar.SetMaxValue(EXPToNextLevel);
+        EXPBar.SetValue(EXP);
+    }
+
+    public void SetHeat(float heat0, float heat1)
+    {
+        Shooter0Heat.SetValue(heat0);
+        Shooter1Heat.SetValue(heat1);
+    }
+
+    public void SetHeatLimit(float limit0, float limit1)
+    {
+        Shooter0Heat.SetMaxValue(limit0);
+        Shooter1Heat.SetMaxValue(limit1);
     }
 }

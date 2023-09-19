@@ -2,14 +2,14 @@ using System;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class HealthBarController : MonoBehaviour 
+public class BarController : MonoBehaviour 
 {
     [SerializeField] private GameObject divisionLine;
     [SerializeField] private bool displayDivision = false;
     [SerializeField] private float divisionStep = 0.5f;
     // [SerializeField] private GameObject[] lines;
 
-    [SerializeField] private Slider HealthBar;
+    [SerializeField] private Slider SliderBar;
     [SerializeField] private Image Bar;
     [SerializeField] private Image Boarder;
 
@@ -36,15 +36,15 @@ public class HealthBarController : MonoBehaviour
         
     }
 
-    public void SetMaxHealth(float max)
+    public void SetMaxValue(float max)
     {
-        if (HealthBar != null) HealthBar.maxValue = max;
+        if (SliderBar != null) SliderBar.maxValue = max;
         // UpdateDivision();
     }
 
-    public void SetHealth(float var)
+    public void SetValue(float var)
     {
-        if (HealthBar != null) HealthBar.value = var;
+        if (SliderBar != null) SliderBar.value = var;
     }
 
     public void SetColor(Color color)
@@ -80,8 +80,8 @@ public class HealthBarController : MonoBehaviour
 
         if (displayDivision)
         {
-            float pixelsPerDiv = Size.y * (divisionStep / HealthBar.maxValue);
-            int lineCounts = (int)Math.Round(HealthBar.maxValue / divisionStep - 1);
+            float pixelsPerDiv = Size.y * (divisionStep / SliderBar.maxValue);
+            int lineCounts = (int)Math.Round(SliderBar.maxValue / divisionStep - 1);
             float start = - Size.y / 2;
 
             Debug.Log($"Health Bar have {lineCounts} lines");

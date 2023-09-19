@@ -493,6 +493,8 @@ MonoBehaviour:
     m_InternalValue: 1
   HealBuff:
     m_InternalValue: 0
+  ShooterEnabled:
+    m_InternalValue: 1
   Shooter0Enabled:
     m_InternalValue: 1
   Shooter0Type:
@@ -500,11 +502,11 @@ MonoBehaviour:
   Shooter0Mode:
     m_InternalValue: 0
   Heat0Limit:
-    m_InternalValue: 0
+    m_InternalValue: 50
   Heat0:
     m_InternalValue: 0
   CD0:
-    m_InternalValue: 0
+    m_InternalValue: 10
   Speed0Limit:
     m_InternalValue: 0
   Shooter1Enabled:

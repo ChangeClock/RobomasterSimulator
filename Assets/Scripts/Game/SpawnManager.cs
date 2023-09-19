@@ -51,6 +51,7 @@ public class SpawnManager : NetworkBehaviour
         // gameManager.RefereeControllerList.Add(referee.RobotID, referee);
         
         player.GetComponent<NetworkObject>().SpawnAsPlayerObject(clientId);
+        // gameManager.SpawnUpload(id + 1);
 
         // OnSpawn(robotID);
     }

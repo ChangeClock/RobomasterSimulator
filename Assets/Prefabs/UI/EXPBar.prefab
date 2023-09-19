@@ -174,7 +174,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3730641140165116588}
   - component: {fileID: 7957607324711240396}
-  - component: {fileID: 6188069744928876360}
+  - component: {fileID: 2177541968384404926}
   m_Layer: 0
   m_Name: EXPBar
   m_TagString: Untagged
@@ -254,7 +254,7 @@ MonoBehaviour:
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls: []
---- !u!114 &6188069744928876360
+--- !u!114 &2177541968384404926
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -263,12 +263,14 @@ MonoBehaviour:
   m_GameObject: {fileID: 8311582209535507407}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e62a4362bdb4c7c4582eb2ff1a4b867b, type: 3}
+  m_Script: {fileID: 11500000, guid: 8152aa71efd08c443ad091dba99ff293, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  divisionLine: {fileID: 8311582209535507407}
-  displayDivision: 1
-  divisionStep: 1000
-  HealthBar: {fileID: 7957607324711240396}
+  divisionLine: {fileID: 3742353167700293612, guid: d6da100232e5b514285790b6059e0b0d,
+    type: 3}
+  displayDivision: 0
+  divisionStep: 0.5
+  SliderBar: {fileID: 7957607324711240396}
+  Bar: {fileID: 5307554526139043346}
   Boarder: {fileID: 0}
   recTransform: {fileID: 3730641140165116588}

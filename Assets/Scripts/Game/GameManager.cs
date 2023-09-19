@@ -104,17 +104,64 @@ public class GameManager : NetworkBehaviour
     * 1. Game Info
     */
 
-    void Update()
+    void FixedUpdate()
     {
         if (!IsServer) return;
 
+        // Debug.Log(RefereeControllerList.Count);
+
+        String IDList = "";
+
         foreach(var _referee in RefereeControllerList.Values)
         {
-            var networkObject = _referee.gameObject.GetComponent<NetworkObject>();
-            if (!networkObject.IsSpawned) return;
+            // var networkObject = _referee.gameObject.GetComponent<NetworkObject>();
+            // if (!networkObject.IsSpawned) return;
 
             // ---------------Basic Status---------------//
             
+            IDList += _referee.RobotID.Value + " ";
+
+            // if (_referee.RobotID.Value == 2) Debug.Log($"{_referee.RobotID.Value} Robot Shooter0 Enabled? {_referee.Shooter0Enabled.Value}");
+
+            // Heat Status
+            if (_referee.Shooter0Enabled.Value & _referee.Heat0.Value > 0)
+            {
+                // Shooter 0 overheating
+                if (_referee.Heat0.Value > _referee.Heat0Limit.Value & _referee.Heat0.Value <= 2*_referee.Heat0Limit.Value)
+                {
+                    RefereeDamage((_referee.Heat0.Value - _referee.Heat0Limit.Value) / 250 / 10 * _referee.HPLimit.Value , _referee.RobotID.Value);
+                } else if (_referee.Heat0.Value >= 2*_referee.Heat0Limit.Value) {
+                    RefereeDamage((_referee.Heat0.Value - 2*_referee.Heat0Limit.Value) / 250 * _referee.HPLimit.Value, _referee.RobotID.Value);
+                    _referee.Heat0.Value = 2*_referee.Heat0Limit.Value;
+                }
+                
+                // Shooter 0 CD
+                if (_referee.Heat0.Value >= _referee.CD0.Value * Time.deltaTime) 
+                {
+                    _referee.Heat0.Value -= _referee.CD0.Value * Time.deltaTime;
+                } else {
+                    _referee.Heat0.Value = 0;
+                }
+            }
+
+            if (_referee.Shooter1Enabled.Value & _referee.Heat1.Value > 0)
+            {
+                // Shooter 1 overheating
+                if (_referee.Heat1.Value > _referee.Heat1Limit.Value & _referee.Heat1.Value <= 2*_referee.Heat1Limit.Value)
+                {
+                    RefereeDamage((_referee.Heat1.Value - _referee.Heat1Limit.Value) / 250 / 10 * _referee.HPLimit.Value , _referee.RobotID.Value);
+                } else if (_referee.Heat1.Value >= 2*_referee.Heat1Limit.Value) {
+                    RefereeDamage((_referee.Heat1.Value - 2*_referee.Heat1Limit.Value) / 250 * _referee.HPLimit.Value, _referee.RobotID.Value);
+                    _referee.Heat1.Value = 2*_referee.Heat1Limit.Value;
+                }
+
+                if (_referee.Heat1.Value >= _referee.CD1.Value * Time.deltaTime) 
+                {
+                    _referee.Heat1.Value -= _referee.CD1.Value * Time.deltaTime;
+                } else {
+                    _referee.Heat1.Value = 0;
+                }
+            }
 
             // Revival & Immutable Status Sync
             if (_referee.Reviving.Value)
@@ -134,72 +181,73 @@ public class GameManager : NetworkBehaviour
             }
 
             //--------------------Status only when robot is enabled & game is running----------------------//
-            if (!_referee.Enabled.Value) return;
-            
-            if (!isRunning) return;
-
-            // Time Update
-            TimeLeft.Value -= Time.deltaTime;
-
-            if (TimeLeft.Value <= 0.0f) FinishGame();
-
-            // Exp & Level Up Sync
-            // Full level robots & non-hero/infantry robot will skip
-
-            if (_referee.Level.Value < 3 && (_referee.robotClass.Value == RobotClass.Hero || _referee.robotClass.Value == RobotClass.Infantry))
+            if (_referee.Enabled.Value && isRunning) 
             {
-                _referee.TimeToNextEXP.Value += Time.deltaTime;
-                
-                switch (_referee.robotClass.Value)
+                // Time Update
+                TimeLeft.Value -= Time.deltaTime;
+
+                if (TimeLeft.Value <= 0.0f) FinishGame();
+
+                // Exp & Level Up Sync
+                // Full level robots & non-hero/infantry robot will skip
+
+                if (_referee.Level.Value < 3 && (_referee.robotClass.Value == RobotClass.Hero || _referee.robotClass.Value == RobotClass.Infantry))
                 {
-                    case RobotClass.Hero:
-                        // EXP growth with time
-                        if (_referee.TimeToNextEXP.Value >= HeroExpInfo.expGrowth)
-                        {
-                            _referee.TimeToNextEXP.Value -= HeroExpInfo.expGrowth;
-                            _referee.EXP.Value += 1;
-                        }
+                    _referee.TimeToNextEXP.Value += Time.deltaTime;
+                    
+                    switch (_referee.robotClass.Value)
+                    {
+                        case RobotClass.Hero:
+                            // EXP growth with time
+                            if (_referee.TimeToNextEXP.Value >= HeroExpInfo.expGrowth)
+                            {
+                                _referee.TimeToNextEXP.Value -= HeroExpInfo.expGrowth;
+                                _referee.EXP.Value += 1;
+                            }
 
-                        // Level up
-                        if (_referee.EXP.Value >= HeroExpInfo.expToNextLevel[_referee.Level.Value])
-                        {
-                            // Don't zero the current EXP, just minus the EXP needed to next level
-                            _referee.EXP.Value -= HeroExpInfo.expToNextLevel[_referee.Level.Value];
-                            _referee.Level.Value += 1;
+                            // Level up
+                            if (_referee.EXP.Value >= HeroExpInfo.expToNextLevel[_referee.Level.Value])
+                            {
+                                // Don't zero the current EXP, just minus the EXP needed to next level
+                                _referee.EXP.Value -= HeroExpInfo.expToNextLevel[_referee.Level.Value];
+                                _referee.Level.Value += 1;
 
-                            // TODO: Update performance
+                                // TODO: Update performance
 
-                        }
-                        break;
-                    case RobotClass.Infantry:
-                        // EXP growth with time
-                        if (_referee.TimeToNextEXP.Value >= InfantryExpInfo.expGrowth)
-                        {
-                            _referee.TimeToNextEXP.Value -= InfantryExpInfo.expGrowth;
-                            _referee.EXP.Value += 1;
-                        }
+                            }
+                            break;
+                        case RobotClass.Infantry:
+                            // EXP growth with time
+                            if (_referee.TimeToNextEXP.Value >= InfantryExpInfo.expGrowth)
+                            {
+                                _referee.TimeToNextEXP.Value -= InfantryExpInfo.expGrowth;
+                                _referee.EXP.Value += 1;
+                            }
 
-                        // Level up
-                        if (_referee.EXP.Value >= InfantryExpInfo.expToNextLevel[_referee.Level.Value])
-                        {
-                            // Don't zero the current EXP, just minus the EXP needed to next level
-                            _referee.EXP.Value -= InfantryExpInfo.expToNextLevel[_referee.Level.Value];
-                            _referee.Level.Value += 1;
+                            // Level up
+                            if (_referee.EXP.Value >= InfantryExpInfo.expToNextLevel[_referee.Level.Value])
+                            {
+                                // Don't zero the current EXP, just minus the EXP needed to next level
+                                _referee.EXP.Value -= InfantryExpInfo.expToNextLevel[_referee.Level.Value];
+                                _referee.Level.Value += 1;
 
-                            // TODO: Update performance
+                                // TODO: Update performance
 
-                        }
-                        break;
-                    default:
-                        break;
+                            }
+                            break;
+                        default:
+                            break;
+                    }
+
+                } else if (_referee.Level.Value == 0) {
+                    // Haven't choose performance, just addon the EXP.
+                    _referee.TimeToNextEXP.Value += Time.deltaTime;
                 }
-
-            } else if (_referee.Level.Value == 0) {
-                // Haven't choose performance, just addon the EXP.
-                _referee.TimeToNextEXP.Value += Time.deltaTime;
             }
 
         }
+
+        // Debug.Log("[GameManager] IDList: " + IDList);
 
         // Debug.Log("[GameController] HP: "+ RobotStatusList[18].GetHP());
     }
@@ -257,6 +305,26 @@ public class GameManager : NetworkBehaviour
                 Debug.Log($"[GameManager] {robotID} referee added to gamemanager");
                 RefereeControllerList.Add(_referee.RobotID.Value, _referee);
                 return;
+            }
+        }
+    }
+
+    void RefereeDamage(float damage, int robotID)
+    {
+        if (RefereeControllerList[robotID].Enabled.Value)
+        {
+            int _hp = RefereeControllerList[robotID].HP.Value;
+            int _damage = (int)Math.Round(damage);
+            
+            // Debug.Log($"[GameManager] raw damage: {damage}, damage {damage}");
+
+            if (_hp - _damage <= 0)
+            {
+                RefereeControllerList[robotID].HP.Value = 0;
+                RefereeControllerList[robotID].Enabled.Value = false;
+                DeathHandlerServerRpc(robotID);
+            } else {
+                RefereeControllerList[robotID].HP.Value = (_hp - _damage);
             }
         }
     }

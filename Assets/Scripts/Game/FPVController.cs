@@ -13,9 +13,12 @@ public class FPVController : MonoBehaviour
     [SerializeField] public bool Enabled = true;
     [SerializeField] public int Warning = 0;
 
-    [SerializeField] private TextMeshProUGUI HPBar;
-    [SerializeField] public int HPLimit;
-    [SerializeField] public int HP;
+    [SerializeField] private HealthBarController HPBar;
+    [SerializeField] private TextMeshProUGUI HP;
+    [SerializeField] private TextMeshProUGUI HPLimit;
+
+    [SerializeField] private GameObject[] LevelIcons;
+    [SerializeField] private HealthBarController EXPBar;
 
     // public override void OnStartLocalPlayer()
     // {
@@ -34,12 +37,45 @@ public class FPVController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        HPBar.text = $"{HP} / {HPLimit}"; 
+
     }
 
     public void TurnOnCamera()
     {
         FPVCamera.enabled = true;
         PlayerUI.SetActive(true);
+    }
+
+    public void SetHP(int hp)
+    {
+        HP.text = hp.ToString();
+        HPBar.SetHealth(hp);
+    }
+
+    public void SetHPLimit(int hplimit)
+    {
+        HPLimit.text = hplimit.ToString();
+        HPBar.SetMaxHealth(hplimit);
+    }
+
+    public void SetColor(Color color)
+    {
+        HPBar.SetColor(color);
+    }
+
+    public void SetLevelInfo(int Level, int EXP, int EXPToNextLevel)
+    {
+        for (int i = 0; i< 4; i++)
+        {
+            if (Level == i)
+            {
+                LevelIcons[i].SetActive(true);
+            } else {
+                LevelIcons[i].SetActive(false);
+            }
+        }
+
+        EXPBar.SetMaxHealth(EXPToNextLevel);
+        EXPBar.SetHealth(EXP);
     }
 }

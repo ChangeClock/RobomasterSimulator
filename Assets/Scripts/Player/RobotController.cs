@@ -199,8 +199,8 @@ public class RobotController : NetworkBehaviour
         }
 
         wheelForce[0] = vx-vy-vw;
-        wheelForce[1] = -vx-vy-vw;
-        wheelForce[2] = -vx+vy-vw;
+        wheelForce[1] = vx+vy+vw;
+        wheelForce[2] = vx-vy+vw;
         wheelForce[3] = vx+vy-vw;
 
         wheelForceDirection[0] = Base.right + Base.forward; // (-1,0,1)
@@ -212,8 +212,11 @@ public class RobotController : NetworkBehaviour
         {
             // 捕捉每个轮子的碰撞状态，设置是否触底，根据触底与否再施加力
             // Debug.Log("wheel " + i + " is colliding? : " + wheels[i].GetComponent<WheelController>().IsColliding());
-            wheels[i].GetComponent<Rigidbody>().AddForce(wheelForce[i] * wheelForceDirection[i] * motorTorque * (wheels[i].GetComponent<WheelController>().IsColliding() ? 1 : 0));
-            Debug.DrawLine(wheels[i].position, wheels[i].position + (wheelForceDirection[i] * wheelForce[i] * (wheels[i].GetComponent<WheelController>().IsColliding() ? 1 : 0) * 25f) , Color.red);
+            // wheels[i].GetComponent<Rigidbody>().AddForce(wheelForce[i] * wheelForceDirection[i] * motorTorque * (wheels[i].GetComponent<WheelController>().IsColliding() ? 1 : 0));
+            // Debug.DrawLine(wheels[i].position, wheels[i].position + (wheelForceDirection[i] * wheelForce[i] * (wheels[i].GetComponent<WheelController>().IsColliding() ? 1 : 0) * 25f) , Color.red);
+            
+            wheels[i].GetComponent<WheelController>().SetPower(wheelForce[i]  * wheels[i].GetComponent<WheelController>().GetPowerLimit());
+        
         }
     }
 

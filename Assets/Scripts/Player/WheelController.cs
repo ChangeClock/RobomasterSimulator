@@ -10,6 +10,16 @@ public class WheelController : MonoBehaviour
     private bool isColliding = false;
     private int isCollidingCounter = 10;
 
+    private Vector3 lastPos;
+
+    [SerializeField] private float power = 0.0f; 
+    [SerializeField] private float torque = 100.0f;
+    [SerializeField] private float powerLimit = 10.0f;
+
+    public bool printLog = false;
+
+    [SerializeField] private Vector3 wheelForceDirection = new Vector3(1,0,1);
+
     private void OnCollisionStay(Collision collision) 
     {
         // Debug.Log("Tag: " + collision.gameObject.tag);
@@ -21,7 +31,13 @@ public class WheelController : MonoBehaviour
         }
     }
 
-    private void Update() {
+    void Start()
+    {
+        lastPos = transform.position;
+    }
+
+    private void Update() 
+    {
         if (isCollidingCounter > 0)
         {
             isCollidingCounter --;
@@ -30,10 +46,55 @@ public class WheelController : MonoBehaviour
         }
     }
 
+    private void FixedUpdate()
+    {
+        float displacement = Vector3.Distance(transform.position, lastPos) + 1.0f;
+        float wheelForce = 0.0f;
+        lastPos = transform.position;
+
+        if (power > powerLimit) 
+        {
+            wheelForce = powerLimit / displacement;
+        } else if (power < -powerLimit) {
+            wheelForce = -powerLimit / displacement;
+        } else {
+            wheelForce = power / displacement;
+        }
+
+        if (printLog) Debug.Log($"power {displacement * wheelForce}");
+
+        Vector3 direction = wheelForceDirection.x * transform.forward + wheelForceDirection.y * transform.up - wheelForceDirection.z * transform.right;
+
+        // if (printLog) Debug.Log($"Thruster {thruster}, Displacement {displacement}, WheelForce {wheelForce}");
+
+        gameObject.GetComponent<Rigidbody>().AddForce(wheelForce * direction * (isColliding ? 1 : 0) * torque);
+        Debug.DrawLine(transform.position, transform.position + (direction * wheelForce * (isColliding ? 1 : 0) * 25f) , Color.red);
+    }
+
     // You can call this function externally if you need to know whether this object is currently colliding with something.
     public bool IsColliding()
     {
         return isColliding;
+    }
+
+    public void SetPower(float var)
+    {
+        power = var;
+    }
+    
+    public float GetPower()
+    {
+        return power;
+    }
+
+    public void SetPowerLimit(float var)
+    {
+        powerLimit = var;
+    }
+
+    public float GetPowerLimit()
+    {
+        return powerLimit;
     }
 
     // TODO：检测压力情况，模拟摩擦力大小变化，影响加力大小/上限

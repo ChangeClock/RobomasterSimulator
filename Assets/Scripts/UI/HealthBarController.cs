@@ -10,6 +10,7 @@ public class HealthBarController : MonoBehaviour
     // [SerializeField] private GameObject[] lines;
 
     [SerializeField] private Slider HealthBar;
+    [SerializeField] private Image Bar;
     [SerializeField] private Image Boarder;
 
     [SerializeField] private RectTransform recTransform;
@@ -27,7 +28,7 @@ public class HealthBarController : MonoBehaviour
 
     void OnEnable()
     {
-        UpdateDivision();
+        // UpdateDivision();
     }
 
     void Update()
@@ -38,12 +39,17 @@ public class HealthBarController : MonoBehaviour
     public void SetMaxHealth(float max)
     {
         if (HealthBar != null) HealthBar.maxValue = max;
-        UpdateDivision();
+        // UpdateDivision();
     }
 
     public void SetHealth(float var)
     {
         if (HealthBar != null) HealthBar.value = var;
+    }
+
+    public void SetColor(Color color)
+    {
+        if (Bar != null) Bar.color = color;
     }
 
     public void SetBoardColor(Color color)

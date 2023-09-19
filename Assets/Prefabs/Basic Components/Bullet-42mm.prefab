@@ -13,6 +13,11 @@ PrefabInstance:
       propertyPath: GlobalObjectIdHash
       value: 951099334
       objectReference: {fileID: 0}
+    - target: {fileID: 6248520303916968257, guid: 8578b0f8ccabf1f4f923e69fe45bcbbc,
+        type: 3}
+      propertyPath: GlobalObjectIdHash
+      value: 951099334
+      objectReference: {fileID: 0}
     - target: {fileID: 8727588297436816320, guid: 8578b0f8ccabf1f4f923e69fe45bcbbc,
         type: 3}
       propertyPath: m_RootOrder
@@ -101,6 +106,11 @@ PrefabInstance:
     - target: {fileID: 8727588297436816351, guid: 8578b0f8ccabf1f4f923e69fe45bcbbc,
         type: 3}
       propertyPath: m_Name
+      value: Bullet-42mm
+      objectReference: {fileID: 0}
+    - target: {fileID: 8727588297436816351, guid: 8578b0f8ccabf1f4f923e69fe45bcbbc,
+        type: 3}
+      propertyPath: m_TagString
       value: Bullet-42mm
       objectReference: {fileID: 0}
     m_RemovedComponents:

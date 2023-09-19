@@ -70,6 +70,12 @@ public class RefereeController : NetworkBehaviour
         
             FPVCamera = this.gameObject.GetComponentInChildren<FPVController>();
             FPVCamera.TurnOnCamera();
+            if (RobotID.Value < 20)
+            {
+                FPVCamera.SetColor(Color.red);
+            } else {
+                FPVCamera.SetColor(Color.blue);
+            }
 
             robotController = this.gameObject.GetComponent<RobotController>();
             robotController.enabled = true;
@@ -191,8 +197,8 @@ public class RefereeController : NetworkBehaviour
         {
             FPVCamera.Enabled = Enabled.Value;
             FPVCamera.Warning = Warning.Value;
-            FPVCamera.HPLimit = HPLimit.Value;
-            FPVCamera.HP = HP.Value;
+            FPVCamera.SetHPLimit(HPLimit.Value);
+            FPVCamera.SetHP(HP.Value);
         }
 
         TickBuff();

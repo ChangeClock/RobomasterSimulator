@@ -21,7 +21,7 @@ public class ArmorController : MonoBehaviour
     public event HitAction OnHit;
 
     // damageDetection: 对应上面的damageType，设定此装甲板是否响应对应的伤害
-    public bool[] damageDetection = {true,true,true,false};
+    public float[] damage = {2.0f, 10.0f, 100.0f, 0.0f};
 
     private LightController armorLight;
     private Color purple = new Color(0.57f,0.25f,1f,1f);
@@ -53,7 +53,7 @@ public class ArmorController : MonoBehaviour
         // Debug.Log("[ArmorController] Armor on Hit wth velocity:" + perpendicularVelocity);
         if (!Enabled) return;
 
-        if (collision.gameObject.tag == "Bullet-17mm" && damageDetection[1]) {
+        if (collision.gameObject.tag == "Bullet-17mm" && damage[1] > 0) {
             // Check if the final velocity is above the minimum required
             if (Mathf.Abs(perpendicularVelocity.magnitude - velocityThreshold17mm) >= 0f)
             {
@@ -62,7 +62,7 @@ public class ArmorController : MonoBehaviour
                 StartCoroutine(Blink());
             }
 
-        } else if (collision.gameObject.tag == "Bullet-42mm" & damageDetection[2]) {
+        } else if (collision.gameObject.tag == "Bullet-42mm" & damage[2] > 0) {
 
             if (Mathf.Abs(perpendicularVelocity.magnitude - velocityThreshold42mm) >= 0f)
             {
@@ -71,7 +71,7 @@ public class ArmorController : MonoBehaviour
                 StartCoroutine(Blink());
             }
 
-        } else if (collision.gameObject.tag == "Missle" & damageDetection[3]) {
+        } else if (collision.gameObject.tag == "Missle" & damage[3] > 0) {
 
             if (Mathf.Abs(perpendicularVelocity.magnitude - velocityThresholdMissle) >= 0f)
             {
@@ -80,7 +80,7 @@ public class ArmorController : MonoBehaviour
                 StartCoroutine(Blink());
             }
 
-        } else if (damageDetection[0]) {
+        } else if (damage[0] > 0) {
 
             if (Mathf.Abs(perpendicularVelocity.magnitude - velocityThresholdImpact) >= 0f)
             {

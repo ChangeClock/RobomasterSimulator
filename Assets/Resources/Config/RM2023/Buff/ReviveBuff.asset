@@ -13,9 +13,9 @@ MonoBehaviour:
   m_Name: ReviveBuff
   m_EditorClassIdentifier: 
   buffDuration: 10
-  DEFBuff: 1
-  ATKBuff: 1
-  CDBuff: 1
-  speedBoost: 1
+  DEFBuff: 100
+  ATKBuff: 0
+  CDBuff: 0
+  speedBoost: 0
   ReviveProgressPerSec: 0
   HealBuff: 0

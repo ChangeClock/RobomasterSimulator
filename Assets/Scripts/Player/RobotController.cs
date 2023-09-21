@@ -8,6 +8,8 @@ using Cinemachine;
 
 public class RobotController : NetworkBehaviour
 {
+    public bool Enabled = false;
+
     // private PlayerInputs _input;
     private float[] _input = new float[6];
 
@@ -103,6 +105,8 @@ public class RobotController : NetworkBehaviour
     void Update()
     {
         if (!IsOwner) return;
+
+        if (!Enabled) return;
 
         StarterAssets.StarterAssetsInputs _playerInputs = GetComponent<StarterAssets.StarterAssetsInputs>();
 
@@ -228,7 +232,7 @@ public class RobotController : NetworkBehaviour
         }
     }
 
-    [ServerRpc]
+    [ServerRpc(RequireOwnership = false)]
     public void ControlRobotServerRpc(float[] input, ServerRpcParams serverRpcParams = default)
     {
         // Debug.Log("Client uploading user input: " + serverRpcParams.Receive.SenderClientId);
@@ -239,9 +243,9 @@ public class RobotController : NetworkBehaviour
             isSpin = !isSpin;
         }
 
-        Debug.DrawLine(Base.position, Base.right * 20 + Base.position, Color.blue);
-        Debug.DrawLine(yawComponent.position, yawComponent.right * 20 + yawComponent.position, Color.green);
-        Debug.DrawLine(pitchComponent.position, - pitchComponent.right * 20 + pitchComponent.position, Color.yellow);
+        // Debug.DrawLine(Base.position, Base.right * 20 + Base.position, Color.blue);
+        // Debug.DrawLine(yawComponent.position, yawComponent.right * 20 + yawComponent.position, Color.green);
+        // Debug.DrawLine(pitchComponent.position, - pitchComponent.right * 20 + pitchComponent.position, Color.yellow);
 
         MoveSight();
         Move();

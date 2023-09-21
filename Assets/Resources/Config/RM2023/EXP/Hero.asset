@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: Hero
   m_EditorClassIdentifier: 
   expGrowth: 6
-  expToNextLevel: 000000003c0000008c00000000000000
-  expValue: 00000000460000006400000096000000
+  expToNextLevel: 3c0000008c000000ffffffff
+  expValue: 460000006400000096000000

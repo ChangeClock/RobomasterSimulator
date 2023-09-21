@@ -37,10 +37,10 @@ public class LightController : MonoBehaviour
                 meshRenderer.material.SetColor("_EmissionColor", purple);
                 return;
             case 1:
-                meshRenderer.material.SetColor("_EmissionColor", Color.blue);
+                meshRenderer.material.SetColor("_EmissionColor", Color.red);
                 return;
             case 2:
-                meshRenderer.material.SetColor("_EmissionColor", Color.red);
+                meshRenderer.material.SetColor("_EmissionColor", Color.blue);
                 return;
             default:
                 Debug.LogWarning("[ArmorController] Unknown armor light type");

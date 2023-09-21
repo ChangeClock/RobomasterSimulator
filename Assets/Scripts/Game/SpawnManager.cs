@@ -19,15 +19,22 @@ public class SpawnManager : NetworkBehaviour
     {
         var clientId = serverRpcParams.Receive.SenderClientId;
         GameObject player = new GameObject();
+        RefereeController referee;
 
         // role: 0-observer 1-red 2-blue 3-referee
         switch(role)
         {
             case 1:
+                player = Instantiate(prefabList[id+1], Vector3.right * -110 + Vector3.up * 5, Quaternion.identity);
+                referee = player.GetComponent<RefereeController>();
+                referee.RobotID.Value = id + 1;
+                referee.faction.Value = Faction.Red;
+                break;
             case 2:
                 player = Instantiate(prefabList[id+1], Vector3.right * -110 + Vector3.up * 5, Quaternion.identity);
-                RefereeController referee = player.GetComponent<RefereeController>();
-                referee.RobotID.Value = id + 1;
+                referee = player.GetComponent<RefereeController>();
+                referee.RobotID.Value = id + 21;
+                referee.faction.Value = Faction.Blue;
                 break;
             case 0:
             case 3:

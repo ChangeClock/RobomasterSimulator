@@ -33,3 +33,9 @@ public enum RobotClass
     Base,
     Buff,
 }
+
+public enum RobotTag
+{
+    Unit,
+    Building
+}

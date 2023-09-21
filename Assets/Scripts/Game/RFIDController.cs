@@ -36,6 +36,7 @@ public class RFIDController : MonoBehaviour
             isCollidingCounter --;
         } else {
             isColliding = false;
+            areaID = 0;
         }
 
         if (isColliding)

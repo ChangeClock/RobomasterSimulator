@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: Infantry
   m_EditorClassIdentifier: 
   expGrowth: 3
-  expToNextLevel: 000000001e0000005a00000000000000
-  expValue: 0000000019000000320000004b000000
+  expToNextLevel: 1e0000005a000000ffffffff
+  expValue: 19000000320000004b000000

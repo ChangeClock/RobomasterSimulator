@@ -13,6 +13,10 @@ public class RefereeController : NetworkBehaviour
     public delegate void DamageAction(int damageType, int armorID, int robotID);
     public static event DamageAction OnDamage;
 
+    // mode: 0-自然复活 1-买活
+    public delegate void RevivedAction(int id, int mode = 0);
+    public static event RevivedAction OnRevived;
+
     public delegate void ShootAction(int shooterID, int shooterType, int robotID, Vector3 userPosition, Vector3 shootVelocity);
     public static event ShootAction OnShoot;
 
@@ -32,33 +36,8 @@ public class RefereeController : NetworkBehaviour
     [SerializeField] private TextMeshProUGUI ObserverUI;
     [SerializeField] public NetworkVariable<int> RobotID       = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
     [SerializeField] public NetworkVariable<RobotClass> robotClass = new NetworkVariable<RobotClass>(RobotClass.Infantry);
+    [SerializeField] public List<RobotTag> robotTags = new List<RobotTag>();
     [SerializeField] public NetworkVariable<Faction> faction = new NetworkVariable<Faction>(Faction.Neu);
-
-    [Header("Status")]
-    // PowerLimit: -1 - Unlimited
-    [SerializeField] public NetworkVariable<int> ShieldLimit       = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-    [SerializeField] public NetworkVariable<int> Shield            = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-    [SerializeField] public NetworkVariable<int> HPLimit           = new NetworkVariable<int>(500, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-    [SerializeField] public NetworkVariable<int> HP                = new NetworkVariable<int>(500, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-    [SerializeField] public NetworkVariable<int> PowerLimit        = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-    [SerializeField] public NetworkVariable<int> Power             = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-    [SerializeField] public NetworkVariable<int> BufferLimit       = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-    [SerializeField] public NetworkVariable<int> Buffer            = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-   
-    // Status
-    // Ammo: 0 - 17mm 1 - 42 mm
-    [SerializeField] public NetworkVariable<bool> Enabled          = new NetworkVariable<bool>(true, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-    [SerializeField] public NetworkVariable<bool> Reviving          = new NetworkVariable<bool>(false, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-    [SerializeField] public NetworkVariable<int> MaxReviveProgress = new NetworkVariable<int>(10, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-    [SerializeField] public NetworkVariable<float> CurrentReviveProgress = new NetworkVariable<float>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-    [SerializeField] public NetworkVariable<bool> Immutable         = new NetworkVariable<bool>(false, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-    [SerializeField] public NetworkVariable<int> Warning           = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-    [SerializeField] public NetworkVariable<int> OccupiedArea      = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-    [SerializeField] public NetworkVariable<int> ATKBuff         = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
-    [SerializeField] public NetworkVariable<int> DEFBuff         = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
-    [SerializeField] public NetworkVariable<int> CDBuff         = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
-    [SerializeField] public NetworkVariable<int> ReviveProgressPerSec = new NetworkVariable<int>(1, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
-    [SerializeField] public NetworkVariable<int> HealBuff         = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
 
     [Header("Player")]
     private RobotController robotController;
@@ -66,26 +45,25 @@ public class RefereeController : NetworkBehaviour
     public override void OnNetworkSpawn()
     {
         // Debug.Log("Client:" + NetworkManager.Singleton.LocalClientId + "IsOwner?" + IsOwner);
-        if (IsLocalPlayer) {
+        if (IsOwner) {
             FPV.SetActive(true);
-        
-            FPVCamera = this.gameObject.GetComponentInChildren<FPVController>();
-            FPVCamera.TurnOnCamera();
-            if (RobotID.Value < 20)
-            {
-                FPVCamera.SetColor(Color.red);
-            } else {
-                FPVCamera.SetColor(Color.blue);
-            }
 
             robotController = this.gameObject.GetComponent<RobotController>();
-            robotController.enabled = true;
+            robotController.Enabled = true;
+        
+            FPVCamera = this.gameObject.GetComponentInChildren<FPVController>();
+            
+            FPVCamera.SetShooterInfo(Shooter0Enabled.Value, Shooter1Enabled.Value);
+            
+            FPVCamera.TurnOnCamera();
+
+            FPVCamera.SetRoleInfo(faction.Value, RobotID.Value);
         }
     }
 
     void Start()
     {
-        if (!IsOwner) return;
+        // if (!IsOwner) return;
         Debug.Log($"[RefereeController] {RobotID.Value} Spawned");
         OnSpawn(RobotID.Value);
     }
@@ -150,7 +128,7 @@ public class RefereeController : NetworkBehaviour
             if(_armor != null) 
             {
                 _armor.Enabled = Enabled.Value;
-                _armor.LightColor = RobotID.Value > 20 ? 1 : 2;
+                _armor.LightColor = faction.Value == Faction.Red ? 1 : 2;
             }
         }
 
@@ -186,45 +164,92 @@ public class RefereeController : NetworkBehaviour
         {
             LightBar.Enabled = Enabled.Value;
             LightBar.Warning = Warning.Value;
-            LightBar.LightColor = RobotID.Value > 20 ? 1 : 2;
+            LightBar.LightColor = faction.Value == Faction.Red ? 1 : 2;
         }
 
         // Sync Observer UI
         ObserverUI.text = "Player: " + (OwnerClientId) + "\n" + "HP: " + (HP.Value.ToString());
+    
     }
 
-    private void FixedUpdate() {
-        if (!IsOwner) return;
-
-        if (robotController != null)
+    private void FixedUpdate() 
+    {
+        if (IsOwner)
         {
-            robotController.enabled = Enabled.Value;
-        }
-            
-        if (FPVCamera != null)
-        {
-            FPVCamera.Enabled = Enabled.Value;
-            FPVCamera.Warning = Warning.Value;
-            FPVCamera.SetHPLimit(HPLimit.Value);
-            FPVCamera.SetHP(HP.Value);
-
-            FPVCamera.SetHeatLimit(Heat0Limit.Value, Heat1Limit.Value);
-            FPVCamera.SetHeat(Heat0.Value, Heat1.Value);
-
-            FPVCamera.SetExpInfo(EXP.Value, EXPToNextLevel.Value);
-            FPVCamera.SetLevelInfo(Level.Value);
-
-            if (PowerLimit.Value >= 0)
+            if (robotController != null)
             {
-                FPVCamera.SetPower(EnergyCtl.GetPower(), EnergyCtl.IsOverPower() ? 1 : 0);
-            } else {
-                FPVCamera.SetPower(EnergyCtl.GetPower());
+                robotController.Enabled = Enabled.Value;
             }
-            FPVCamera.SetMaxBuffer(EnergyCtl.GetMaxBuffer());
-            FPVCamera.SetBuffer(EnergyCtl.GetBuffer());
+                
+            if (FPVCamera != null)
+            {
+                FPVCamera.Enabled = Enabled.Value;
+                FPVCamera.Warning = Warning.Value;
+
+                FPVCamera.SetRoleInfo(faction.Value, RobotID.Value);
+
+                FPVCamera.SetHPLimit(HPLimit.Value);
+                FPVCamera.SetHP(HP.Value);
+
+                FPVCamera.SetHeatLimit(Heat0Limit.Value, Heat1Limit.Value);
+                FPVCamera.SetHeat(Heat0.Value, Heat1.Value);
+
+                FPVCamera.SetHealBuff(HealBuff.Value > 0, HealBuff.Value);
+                FPVCamera.SetDEFBuff(DEFBuff.Value > 0, DEFBuff.Value);
+                FPVCamera.SetATKBuff(ATKBuff.Value > 0, ATKBuff.Value);
+                FPVCamera.SetCDBuff(CDBuff.Value > 0, CDBuff.Value);
+
+                FPVCamera.SetExpInfo(EXP.Value, EXPToNextLevel.Value);
+                FPVCamera.SetLevelInfo(Level.Value);
+
+                if (PowerLimit.Value >= 0)
+                {
+                    FPVCamera.SetPower(Power.Value, IsOverPower ? 1 : 0);
+                } else {
+                    FPVCamera.SetPower(Power.Value);
+                }
+
+                FPVCamera.SetMaxBuffer(EnergyCtl.GetMaxBuffer());
+                FPVCamera.SetBuffer(EnergyCtl.GetBuffer());
+            }
         }
 
-        TickBuff();
+        if (IsServer)
+        {
+            if (EnergyCtl != null) TickPower();
+
+            if (Reviving.Value) TickRevive();
+
+            TickBuff();
+
+            if (!Enabled.Value) return;
+
+            if (EXPInfo != null) TickEXP();
+
+            TickHealth();
+        }
+
+        // TickBuffServerRpc();
+    }
+    
+    [Header("Status")]
+    // PowerLimit: -1 - Unlimited
+    [SerializeField] public NetworkVariable<int> ShieldLimit       = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+    [SerializeField] public NetworkVariable<int> Shield            = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+    [SerializeField] public NetworkVariable<float> HPLimit           = new NetworkVariable<float>(500, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+    [SerializeField] public NetworkVariable<float> HP                = new NetworkVariable<float>(500, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+    [SerializeField] public NetworkVariable<float> PowerLimit        = new NetworkVariable<float>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+    [SerializeField] public NetworkVariable<float> Power             = new NetworkVariable<float>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+    [SerializeField] public NetworkVariable<float> BufferLimit       = new NetworkVariable<float>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+    [SerializeField] public NetworkVariable<float> Buffer            = new NetworkVariable<float>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+    bool IsOverPower
+    {
+        get { return Power.Value > PowerLimit.Value; }
+    }
+    
+    void TickPower()
+    {
+        Power.Value = EnergyCtl.GetPower();
     }
 
     void DamageHandler(int damageType, int armorID)
@@ -234,6 +259,50 @@ public class RefereeController : NetworkBehaviour
             OnDamage(damageType, armorID, RobotID.Value);
         }
     }
+
+    void TickHealth()
+    {
+        if (HP.Value < HPLimit.Value && HealBuff.Value > 0)
+        {
+            float _recoverHP = HPLimit.Value * HealBuff.Value / 100 * Time.deltaTime;
+
+            if (HP.Value + _recoverHP < HPLimit.Value)
+            {
+                HP.Value += _recoverHP;
+            } else {
+                HP.Value = HPLimit.Value;
+            }
+        }
+    }
+
+    void TickRevive()
+    {
+        Debug.Log($"[RefereeController] Revive Progress {CurrentReviveProgress.Value} / {MaxReviveProgress.Value}");
+
+        CurrentReviveProgress.Value += ReviveProgressPerSec.Value * Time.deltaTime;
+
+        if (CurrentReviveProgress.Value >= MaxReviveProgress.Value)
+        {
+            Debug.Log($"Robot {RobotID.Value} revived!");
+            Reviving.Value = false;
+            CurrentReviveProgress.Value = 0;
+            HP.Value = HPLimit.Value * 10 / 100;
+            Enabled.Value = true;
+
+            OnRevived(RobotID.Value);
+            // AddBuff(ReviveBuff);
+        }
+    }
+
+    // Status
+    [SerializeField] public NetworkVariable<bool> Enabled          = new NetworkVariable<bool>(true, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+    [SerializeField] public NetworkVariable<bool> Reviving          = new NetworkVariable<bool>(false, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+    [SerializeField] public NetworkVariable<int> MaxReviveProgress = new NetworkVariable<int>(10, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+    [SerializeField] public NetworkVariable<int> ReviveProgressPerSec = new NetworkVariable<int>(1, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+    [SerializeField] public NetworkVariable<float> CurrentReviveProgress = new NetworkVariable<float>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+    [SerializeField] public NetworkVariable<bool> Immutable         = new NetworkVariable<bool>(false, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+    [SerializeField] public NetworkVariable<int> Warning           = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+    [SerializeField] public NetworkVariable<int> OccupiedArea      = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
 
     # region Shooter related
     // Shooter Type: 0 - 17mm 1 - 42mm
@@ -256,12 +325,15 @@ public class RefereeController : NetworkBehaviour
     [SerializeField] public NetworkVariable<float> Heat1             = new NetworkVariable<float>(0f, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
     [SerializeField] public NetworkVariable<int> CD1               = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
     [SerializeField] public NetworkVariable<int> Speed1Limit       = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
- 
+
+    // Ammo: 0 - 17mm 1 - 42 mm
     // Ammo0 - 17mm
+    [SerializeField] public NetworkVariable<int> ConsumedAmmo0     = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
     [SerializeField] public NetworkVariable<int> Ammo0             = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
     [SerializeField] public NetworkVariable<int> RealAmmo0         = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
 
     // Ammo1 - 42mm
+    [SerializeField] public NetworkVariable<int> ConsumedAmmo1     = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
     [SerializeField] public NetworkVariable<int> Ammo1             = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
     [SerializeField] public NetworkVariable<int> RealAmmo1         = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
 
@@ -294,28 +366,26 @@ public class RefereeController : NetworkBehaviour
 
     #endregion
 
-    void DetectHandler(int areaID)
-    {
-        if (!Enabled.Value) return;
-
-        OnOccupy(areaID, RobotID.Value);
-    }
-
     #region Buff Related
-    class BuffEffectInfo
+    public class BuffEffectInfo
     {
         public BuffEffectSO buffEffect;
-        public float timeActivated;
+        public float lastTime;
         public BuffEffectInfo(BuffEffectSO buff)
         {
             buffEffect = buff;
-            timeActivated = Time.time;
+            lastTime = 0.0f;
         }
     }
 
-    Dictionary<BuffEffectSO, BuffEffectInfo> activeBuffs = new Dictionary<BuffEffectSO, BuffEffectInfo>();
-
     [Header("Buff Related")]
+    [SerializeField] public NetworkVariable<int> ATKBuff         = new NetworkVariable<int>(0);
+    [SerializeField] public NetworkVariable<int> DEFBuff         = new NetworkVariable<int>(0);
+    [SerializeField] public NetworkVariable<int> CDBuff         = new NetworkVariable<int>(0);
+    [SerializeField] public NetworkVariable<int> HealBuff         = new NetworkVariable<int>(0);
+
+
+    public Dictionary<BuffEffectSO, BuffEffectInfo> activeBuffs = new Dictionary<BuffEffectSO, BuffEffectInfo>();
 
     public BuffEffectSO defaultBuff;
 
@@ -328,38 +398,8 @@ public class RefereeController : NetworkBehaviour
     {
         if (activeBuffs.ContainsKey(buff))
         {
-            activeBuffs[buff].timeActivated = Time.time;
+            activeBuffs[buff].lastTime = 0.0f;
             return;
-        }
-
-        if (buff.DEFBuff > DEFBuff.Value)
-        {
-            DEFBuff.Value = buff.DEFBuff;
-        }
-
-        if (buff.ATKBuff > ATKBuff.Value)
-        {
-            ATKBuff.Value = buff.ATKBuff;
-        }
-
-        if (buff.CDBuff > CDBuff.Value)
-        {
-            CDBuff.Value = buff.CDBuff;
-        }
-
-        // if (buff.speedBoost > speedBoost)
-        // {
-        //     speedBoost = buff.speedBoost;
-        // }
-
-        if (buff.ReviveProgressPerSec > ReviveProgressPerSec.Value)
-        {
-            ReviveProgressPerSec.Value = buff.ReviveProgressPerSec;
-        }
-
-        if (buff.HealBuff > HealBuff.Value)
-        {
-            HealBuff.Value = buff.HealBuff;
         }
 
         Debug.Log($"Adding {buff.name}");
@@ -372,99 +412,92 @@ public class RefereeController : NetworkBehaviour
         {
             Debug.Log($"Removing {buff.name}");
             activeBuffs.Remove(buff);
-            UpdateBuff();
         }
         Debug.Log($"{activeBuffs.Count} buff remains");
     }
 
-    void UpdateBuff()
+    void TickBuff()
     {
+        if (defaultBuff == null) return;
+
         BuffEffectSO newBuffStat = Instantiate(defaultBuff);
 
         if (activeBuffs.Count > 0)
         {
-            var activeBuffsCache = activeBuffs.Keys;
+            var _activeBuffsCache = activeBuffs.Values;
+            List<BuffEffectSO> overtimeBuff = new List<BuffEffectSO>();
 
-            foreach (var activeBuff in activeBuffsCache)
+            foreach (var _buffInfo in _activeBuffsCache)
             {
-                if (activeBuff.DEFBuff > newBuffStat.DEFBuff)
+                var _buff = _buffInfo.buffEffect;
+
+                if (_buff.DEFBuff > newBuffStat.DEFBuff)
                 {
-                    newBuffStat.DEFBuff = activeBuff.DEFBuff;
+                    newBuffStat.DEFBuff = _buff.DEFBuff;
                 }
 
-                if (activeBuff.ATKBuff > newBuffStat.ATKBuff)
+                if (_buff.ATKBuff > newBuffStat.ATKBuff)
                 {
-                    newBuffStat.ATKBuff = activeBuff.ATKBuff;
+                    newBuffStat.ATKBuff = _buff.ATKBuff;
                 }
 
-                if (activeBuff.CDBuff > newBuffStat.CDBuff)
+                if (_buff.CDBuff > newBuffStat.CDBuff)
                 {
-                    newBuffStat.CDBuff = activeBuff.CDBuff;
+                    newBuffStat.CDBuff = _buff.CDBuff;
                 }
 
-                if (activeBuff.speedBoost > newBuffStat.speedBoost)
+                if (_buff.ReviveProgressPerSec > newBuffStat.ReviveProgressPerSec)
                 {
-                    newBuffStat.speedBoost = activeBuff.speedBoost;
+                    newBuffStat.ReviveProgressPerSec = _buff.ReviveProgressPerSec;
                 }
 
-                if (activeBuff.ReviveProgressPerSec > newBuffStat.ReviveProgressPerSec)
+                if (_buff.HealBuff > newBuffStat.HealBuff)
                 {
-                    newBuffStat.ReviveProgressPerSec = activeBuff.ReviveProgressPerSec;
+                    newBuffStat.HealBuff = _buff.HealBuff;
                 }
 
-                if (activeBuff.HealBuff > newBuffStat.HealBuff)
+                _buffInfo.lastTime += Time.deltaTime;
+                if (_buffInfo.lastTime > _buff.buffDuration) overtimeBuff.Add(_buff);
+            }
+
+            if (overtimeBuff.Count > 0)
+            {
+                foreach(var _buff in overtimeBuff)
                 {
-                    newBuffStat.HealBuff = activeBuff.HealBuff;
+                    RemoveBuff(_buff);
                 }
             }
         }
 
+        ReviveProgressPerSec.Value = newBuffStat.ReviveProgressPerSec;
+
+        if (!Enabled.Value) return; 
+
+        HealBuff.Value = newBuffStat.HealBuff;
         DEFBuff.Value = newBuffStat.DEFBuff;
         ATKBuff.Value = newBuffStat.ATKBuff;
         CDBuff.Value = newBuffStat.CDBuff;
-        // speedBoost = newBuffStat.speedBoost;
-        ReviveProgressPerSec.Value = newBuffStat.ReviveProgressPerSec;
-        HealBuff.Value = newBuffStat.HealBuff;
     }
 
-    void TickBuff()
+    [ServerRpc]
+    void TickBuffServerRpc(int heal, int def, int atk, int cd, ServerRpcParams serverRpcParams)
     {
-        if (activeBuffs.Count <= 0)
-        {
-            return;
-        }
+        HealBuff.Value = heal;
+        DEFBuff.Value = def;
+        ATKBuff.Value = atk;
+        CDBuff.Value = cd;
+    }
+    
+    void DetectHandler(int areaID)
+    {
+        if (!Enabled.Value) return;
 
-        List<BuffEffectSO> overtimeBuffs = new List<BuffEffectSO>();
-
-        var activeBuffCache = activeBuffs.Values;
-        foreach (var buffInfo in activeBuffCache)
-        {
-            if (buffInfo.buffEffect.buffDuration <= 0.0f)
-            {
-                continue;
-            }
-
-            if (buffInfo.timeActivated + buffInfo.buffEffect.buffDuration < Time.time)
-            {
-                overtimeBuffs.Add(buffInfo.buffEffect);
-            }
-        }
-
-        if (overtimeBuffs.Count > 0)
-        {
-            foreach (var overtimeBuff in overtimeBuffs)
-            {
-                RemoveBuff(overtimeBuff);
-            }
-        }
+        OnOccupy(areaID, RobotID.Value);
     }
 
     #endregion
 
     #region EXP related
-
-    public ChassisPerformanceType chassisType;
-    public GimbalPerformanceType gimbalType;
 
     [SerializeField] public NetworkVariable<int> Level             = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
     [SerializeField] public NetworkVariable<int> EXP               = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
@@ -472,6 +505,52 @@ public class RefereeController : NetworkBehaviour
     [SerializeField] public NetworkVariable<int> EXPValue          = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
     [SerializeField] public NetworkVariable<float> TimeToNextEXP = new NetworkVariable<float>(0.0f);
 
+    [SerializeField] public RobotPerformanceSO ChassisPerformance;
+    [SerializeField] public RobotPerformanceSO GimbalPerformance0;
+    [SerializeField] public RobotPerformanceSO GimbalPerformance1;
+
+    [SerializeField] public ExpInfoSO EXPInfo;
+
+    void TickEXP()
+    {        
+        // EXP growth with time
+        TimeToNextEXP.Value += Time.deltaTime;
+
+        if (TimeToNextEXP.Value >= EXPInfo.expGrowth)
+        {
+            TimeToNextEXP.Value -= EXPInfo.expGrowth;
+            EXP.Value += 1;
+        }
+        
+        // Add up EXP but don't level up if the performance are not chosen yet
+        if (ChassisPerformance == null || GimbalPerformance0 == null) return;
+        if (Shooter1Enabled.Value && GimbalPerformance1 == null) return;
+
+        // Level up
+        if (EXP.Value >= EXPInfo.expToNextLevel[Level.Value] && EXPInfo.expToNextLevel[Level.Value] >= 0)
+        {
+            // Don't zero the current EXP, just minus the EXP needed to next level
+            EXP.Value -= EXPInfo.expToNextLevel[Level.Value];
+            Level.Value += 1;
+
+            // TODO: Update performance
+            float _recoverHP = ChassisPerformance.maxHealth[Level.Value] - HPLimit.Value;
+            HPLimit.Value = ChassisPerformance.maxHealth[Level.Value];
+            HP.Value += _recoverHP;
+            PowerLimit.Value = ChassisPerformance.maxPower[Level.Value];
+
+            Heat0Limit.Value = GimbalPerformance0.maxHeat[Level.Value];
+            CD0.Value = GimbalPerformance0.coolDown[Level.Value];
+            Speed0Limit.Value = GimbalPerformance0.shootSpeed[Level.Value];
+
+            if (Shooter1Enabled.Value)
+            {
+                Heat1Limit.Value = GimbalPerformance1.maxHeat[Level.Value];
+                CD1.Value = GimbalPerformance1.coolDown[Level.Value];
+                Speed1Limit.Value = GimbalPerformance1.shootSpeed[Level.Value];
+            }
+        }
+    }
 
     #endregion
 }

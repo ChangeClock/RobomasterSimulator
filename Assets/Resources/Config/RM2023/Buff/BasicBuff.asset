@@ -13,9 +13,9 @@ MonoBehaviour:
   m_Name: BasicBuff
   m_EditorClassIdentifier: 
   buffDuration: 0
-  damageResistance: 0
-  damageMultiplier: 1
-  cooldownBoost: 1
+  DEFBuff: 0
+  ATKBuff: 0
+  CDBuff: 0
   speedBoost: 1
-  reviveProgressPerSecond: 1
-  healPercentPerSecond: 0
+  ReviveProgressPerSec: 1
+  HealBuff: 0

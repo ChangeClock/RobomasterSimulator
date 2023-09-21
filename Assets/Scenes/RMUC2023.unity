@@ -1105,6 +1105,9 @@ MonoBehaviour:
   TimeLeft:
     m_InternalValue: 0
   isRunning: 0
+  KeyRobots: 070000000600000003000000
+  Buildings: 0700000006000000
+  LevelRobots: 0000000001000000
   RedBase: {fileID: 1477806041}
   BlueBase: {fileID: 919268244}
   RedOutpost: {fileID: 405291678}
@@ -1112,6 +1115,8 @@ MonoBehaviour:
   RedSentry: {fileID: 0}
   BlueSentry: {fileID: 0}
   ReviveBuff: {fileID: 11400000, guid: 4b060836a2d65814ebccca40134036a4, type: 2}
+  RedPatrolPoints: []
+  BluePatrolPoints: []
   HeroChassisPerformance: {fileID: 0}
   HeroGimbalPerformance: {fileID: 0}
   EngineerChassisPerformance: {fileID: 0}
@@ -6108,6 +6113,11 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 430788945433076921, guid: 09aade0ecefd01e4b8f7661acf64f5c2,
+        type: 3}
+      propertyPath: belongFaction.m_InternalValue
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 1146092943392352656, guid: 09aade0ecefd01e4b8f7661acf64f5c2,
         type: 3}
       propertyPath: GlobalObjectIdHash
@@ -6178,6 +6188,11 @@ PrefabInstance:
         type: 3}
       propertyPath: GlobalObjectIdHash
       value: 2926674494
+      objectReference: {fileID: 0}
+    - target: {fileID: 7547155669673562033, guid: 09aade0ecefd01e4b8f7661acf64f5c2,
+        type: 3}
+      propertyPath: belongFaction.m_InternalValue
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8345070699079395522, guid: 09aade0ecefd01e4b8f7661acf64f5c2,
         type: 3}

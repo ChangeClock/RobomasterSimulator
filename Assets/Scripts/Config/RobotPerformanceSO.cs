@@ -6,9 +6,8 @@ using UnityEngine;
 public class RobotPerformanceSO : ScriptableObject
 {
     public float[] maxHealth;
-    public float[] maxLinearVelocity;
-    public float[] maxAngularVelocity;
-    public float[] maxHeat;
-    public float[] cooldown;
-    public float[] projectileVelocity;
+    public int[] maxPower;
+    public int[] maxHeat;
+    public int[] coolDown;
+    public int[] shootSpeed;
 }

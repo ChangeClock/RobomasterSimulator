@@ -1,8 +1,9 @@
+using Unity.Netcode;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class EnergyController : MonoBehaviour 
+public class EnergyController : NetworkBehaviour 
 {
     [SerializeField] private WheelController[] wheels;
 

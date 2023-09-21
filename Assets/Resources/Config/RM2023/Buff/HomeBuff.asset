@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 3638868b60ea87c44b2b147d83fc8e17, type: 3}
-  m_Name: RepairBuff
+  m_Name: HomeBuff
   m_EditorClassIdentifier: 
   buffDuration: 2
   DEFBuff: 0
@@ -18,4 +18,4 @@ MonoBehaviour:
   CDBuff: 0
   speedBoost: 1
   ReviveProgressPerSec: 4
-  HealBuff: 10
+  HealBuff: 25

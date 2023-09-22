@@ -56,6 +56,7 @@ public class GameManager : NetworkBehaviour
         RefereeController.OnOccupy += OccupyUpload;
         RefereeController.OnSpawn += SpawnUpload;
         RefereeController.OnRevived += ReviveUpload;
+        RefereeController.OnDeath += DeathUpload;
     }
 
     private void OnDisable()
@@ -65,49 +66,12 @@ public class GameManager : NetworkBehaviour
         RefereeController.OnOccupy -= OccupyUpload;
         RefereeController.OnSpawn -= SpawnUpload;
         RefereeController.OnRevived -= ReviveUpload;
+        RefereeController.OnDeath -= DeathUpload;
     }
 
-    private void Start() {
-        // TODO: Need to register new referee controller dynamicallyRefereeController[] _list = GameObject.FindObjectsByType<RefereeController>(FindObjectsSortMode.None); 
-        
-        // TODO: Initial the default RobotStatusList according to a config file;
-        // Debug.Log(JSONReader.LoadResourceTextfile("RMUC2023/RobotConfig.json"));
-
-        // RefereeController[] _list = GameObject.FindObjectsByType<RefereeController>(FindObjectsSortMode.None); 
-        // Debug.Log(_list.Length);
-        // foreach(RefereeController _referee in _list)
-        // {
-        //     RefereeControllerList.Add(_referee.RobotID.Value, _referee);
-
-        //     switch(_referee.RobotID.Value){
-        //         case 3:
-        //         case 4:
-        //         case 5:
-        //             RefereeControllerList[_referee.RobotID.Value].HP.Value = (200);
-        //             break;
-        //         case 18:
-        //         case 38:
-        //             RefereeControllerList[_referee.RobotID.Value].HP.Value = (1500);
-        //             break;
-        //         case 19:
-        //         case 39:
-        //             RefereeControllerList[_referee.RobotID.Value].HP.Value = (5000);
-        //             break;
-        //         default:
-        //             RefereeControllerList[_referee.RobotID.Value].HP.Value = (500);
-        //             break;
-        //     }
-
-        //     Debug.Log("[GameController] _referee: " + _referee.gameObject.name + " " + _referee.RobotID.Value);
-        //     Debug.Log("[GameController] _referee: " + RefereeControllerList[_referee.RobotID.Value].HP.Value);
-        // }
-
-        // Initial NPCS already in the game scene
-
+    void Start() 
+    {
         if (!IsServer) return;
-
-        // RefereeController.OnDamage += DamageUpload;
-        
     }
 
     /**
@@ -125,149 +89,15 @@ public class GameManager : NetworkBehaviour
 
         foreach(var _referee in RefereeControllerList.Values)
         {
-            // var networkObject = _referee.gameObject.GetComponent<NetworkObject>();
-            // if (!networkObject.IsSpawned) return;
-
             // ---------------Basic Status---------------//
             
             IDList += _referee.RobotID.Value + " ";
 
             // if (_referee.RobotID.Value == 2) Debug.Log($"{_referee.RobotID.Value} Robot Shooter0 Enabled? {_referee.Shooter0Enabled.Value}");
 
-            // Heat Status
-
-            int CDBuff = 1;
-            if (_referee.CDBuff.Value > 0) CDBuff = _referee.CDBuff.Value;
-
-            if (_referee.Shooter0Enabled.Value & _referee.Heat0.Value > 0)
-            {
-                // Shooter 0 overheating
-                if (_referee.Heat0.Value > _referee.Heat0Limit.Value & _referee.Heat0.Value <= 2*_referee.Heat0Limit.Value)
-                {
-                    RefereeDamage((_referee.Heat0.Value - _referee.Heat0Limit.Value) / 250 / 10 * _referee.HPLimit.Value , _referee.RobotID.Value);
-                } else if (_referee.Heat0.Value >= 2*_referee.Heat0Limit.Value) {
-                    RefereeDamage((_referee.Heat0.Value - 2*_referee.Heat0Limit.Value) / 250 * _referee.HPLimit.Value, _referee.RobotID.Value);
-                    _referee.Heat0.Value = 2*_referee.Heat0Limit.Value;
-                }
-                
-                // Shooter 0 CD
-                if (_referee.Heat0.Value >= _referee.CD0.Value * CDBuff * Time.deltaTime) 
-                {
-                    _referee.Heat0.Value -= _referee.CD0.Value * CDBuff * Time.deltaTime;
-                } else {
-                    _referee.Heat0.Value = 0;
-                }
-            }
-
-            if (_referee.Shooter1Enabled.Value & _referee.Heat1.Value > 0)
-            {
-                // Shooter 1 overheating
-                if (_referee.Heat1.Value > _referee.Heat1Limit.Value & _referee.Heat1.Value <= 2*_referee.Heat1Limit.Value)
-                {
-                    RefereeDamage((_referee.Heat1.Value - _referee.Heat1Limit.Value) / 250 / 10 * _referee.HPLimit.Value , _referee.RobotID.Value);
-                } else if (_referee.Heat1.Value >= 2*_referee.Heat1Limit.Value) {
-                    RefereeDamage((_referee.Heat1.Value - 2*_referee.Heat1Limit.Value) / 250 * _referee.HPLimit.Value, _referee.RobotID.Value);
-                    _referee.Heat1.Value = 2*_referee.Heat1Limit.Value;
-                }
-
-                if (_referee.Heat1.Value >= _referee.CD1.Value * CDBuff * Time.deltaTime) 
-                {
-                    _referee.Heat1.Value -= _referee.CD1.Value * CDBuff * Time.deltaTime;
-                } else {
-                    _referee.Heat1.Value = 0;
-                }
-            }
-
-            // Revival & Immutable Status Sync
-            // if (_referee.Reviving.Value && !KeyRobots.Contains(_referee.robotClass.Value))
-            // {                    
-            //     // TODO: Revived through purchase only have 3 seconds immutable, 100% HP, higher power and shooter will be enabled
-            //     _referee.CurrentReviveProgress.Value += _referee.ReviveProgressPerSec.Value * Time.deltaTime;
-
-            //     if (_referee.CurrentReviveProgress.Value >= _referee.MaxReviveProgress.Value)
-            //     {
-            //         Debug.Log($"Robot {_referee.RobotID.Value} revived!");
-            //         _referee.Reviving.Value = false;
-            //         _referee.CurrentReviveProgress.Value = 0;
-            //         _referee.HP.Value = _referee.HPLimit.Value * 10 / 100;
-            //         _referee.Enabled.Value = true;
-            //         _referee.AddBuff(ReviveBuff);
-            //     }
-            // }
-
             //--------------------Status only when robot is enabled ----------------------//
             if (_referee.Enabled.Value)
             {
-                // Buff Sync
-                // if (!Buildings.Contains(_referee.robotClass.Value))
-                // {
-                //     BuffEffectSO newBuffStat = Instantiate(_referee.defaultBuff);
-
-                //     if (_referee.activeBuffs.Count > 0)
-                //     {
-                //         var _activeBuffsCache = _referee.activeBuffs.Values;
-                //         List<BuffEffectSO> overtimeBuff = new List<BuffEffectSO>();
-
-                //         foreach (var _buffInfo in _activeBuffsCache)
-                //         {
-                //             var _buff = _buffInfo.buffEffect;
-
-                //             if (_buff.DEFBuff > newBuffStat.DEFBuff)
-                //             {
-                //                 newBuffStat.DEFBuff = _buff.DEFBuff;
-                //             }
-
-                //             if (_buff.ATKBuff > newBuffStat.ATKBuff)
-                //             {
-                //                 newBuffStat.ATKBuff = _buff.ATKBuff;
-                //             }
-
-                //             if (_buff.CDBuff > newBuffStat.CDBuff)
-                //             {
-                //                 newBuffStat.CDBuff = _buff.CDBuff;
-                //             }
-
-                //             if (_buff.ReviveProgressPerSec > newBuffStat.ReviveProgressPerSec)
-                //             {
-                //                 newBuffStat.ReviveProgressPerSec = _buff.ReviveProgressPerSec;
-                //             }
-
-                //             if (_buff.HealBuff > newBuffStat.HealBuff)
-                //             {
-                //                 newBuffStat.HealBuff = _buff.HealBuff;
-                //             }
-
-                //             _buffInfo.lastTime += Time.deltaTime;
-                //             if (_buffInfo.lastTime > _buff.buffDuration) overtimeBuff.Add(_buff);
-                //         }
-
-                //         if (overtimeBuff.Count > 0)
-                //         {
-                //             foreach(var _buff in overtimeBuff)
-                //             {
-                //                 _referee.RemoveBuff(_buff);
-                //             }
-                //         }
-                //     }
-
-                //     _referee.HealBuff.Value = newBuffStat.HealBuff;
-                //     _referee.DEFBuff.Value = newBuffStat.DEFBuff;
-                //     _referee.ATKBuff.Value = newBuffStat.ATKBuff;
-                //     _referee.CDBuff.Value = newBuffStat.CDBuff;
-                //     _referee.ReviveProgressPerSec.Value = newBuffStat.ReviveProgressPerSec;
-                // }
-
-                // if (_referee.HP.Value < _referee.HPLimit.Value && _referee.HealBuff.Value > 0 && !Buildings.Contains(_referee.robotClass.Value))
-                // {
-                //     float _recoverHP = _referee.HPLimit.Value * _referee.HealBuff.Value / 100 * Time.deltaTime;
-
-                //     if (_referee.HP.Value + _recoverHP < _referee.HPLimit.Value)
-                //     {
-                //         _referee.HP.Value += _recoverHP;
-                //     } else {
-                //         _referee.HP.Value = _referee.HPLimit.Value;
-                //     }
-                // }
 
             //--------------------Status only when game is running ----------------------//
                 if (isRunning) 
@@ -276,62 +106,6 @@ public class GameManager : NetworkBehaviour
                     TimeLeft.Value -= Time.deltaTime;
 
                     if (TimeLeft.Value <= 0.0f) FinishGame();
-
-                    // Exp & Level Up Sync
-                    // Full level robots & non-hero/infantry robot will skip
-
-                    // if (_referee.Level.Value < 3 && (_referee.robotClass.Value == RobotClass.Hero || _referee.robotClass.Value == RobotClass.Infantry))
-                    // {
-                    //     _referee.TimeToNextEXP.Value += Time.deltaTime;
-                        
-                    //     switch (_referee.robotClass.Value)
-                    //     {
-                    //         case RobotClass.Hero:
-                    //             // EXP growth with time
-                    //             if (_referee.TimeToNextEXP.Value >= HeroExpInfo.expGrowth)
-                    //             {
-                    //                 _referee.TimeToNextEXP.Value -= HeroExpInfo.expGrowth;
-                    //                 _referee.EXP.Value += 1;
-                    //             }
-
-                    //             // Level up
-                    //             if (_referee.EXP.Value >= HeroExpInfo.expToNextLevel[_referee.Level.Value])
-                    //             {
-                    //                 // Don't zero the current EXP, just minus the EXP needed to next level
-                    //                 _referee.EXP.Value -= HeroExpInfo.expToNextLevel[_referee.Level.Value];
-                    //                 _referee.Level.Value += 1;
-
-                    //                 // TODO: Update performance
-
-                    //             }
-                    //             break;
-                    //         case RobotClass.Infantry:
-                    //             // EXP growth with time
-                    //             if (_referee.TimeToNextEXP.Value >= InfantryExpInfo.expGrowth)
-                    //             {
-                    //                 _referee.TimeToNextEXP.Value -= InfantryExpInfo.expGrowth;
-                    //                 _referee.EXP.Value += 1;
-                    //             }
-
-                    //             // Level up
-                    //             if (_referee.EXP.Value >= InfantryExpInfo.expToNextLevel[_referee.Level.Value])
-                    //             {
-                    //                 // Don't zero the current EXP, just minus the EXP needed to next level
-                    //                 _referee.EXP.Value -= InfantryExpInfo.expToNextLevel[_referee.Level.Value];
-                    //                 _referee.Level.Value += 1;
-
-                    //                 // TODO: Update performance
-
-                    //             }
-                    //             break;
-                    //         default:
-                    //             break;
-                    //     }
-
-                    // } else if (_referee.Level.Value == 0) {
-                    //     // Haven't choose performance, just addon the EXP.
-                    //     _referee.TimeToNextEXP.Value += Time.deltaTime;
-                    // }
                 }
             }
 
@@ -498,6 +272,11 @@ public class GameManager : NetworkBehaviour
     {
         // Debug.Log($"[GameManager] {robotID} occupied area {areaID}");
 
+    }
+
+    void DeathUpload(int id)
+    {
+        DeathHandlerServerRpc(id);
     }
 
     [ServerRpc]

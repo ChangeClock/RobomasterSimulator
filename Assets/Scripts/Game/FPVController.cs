@@ -81,7 +81,7 @@ public class FPVController : MonoBehaviour
 
     public void SetLevelInfo(int Level)
     {
-        for (int i = 0; i< 4; i++)
+        for (int i = 0; i < LevelIcons.Length; i++)
         {
             if (Level == i)
             {

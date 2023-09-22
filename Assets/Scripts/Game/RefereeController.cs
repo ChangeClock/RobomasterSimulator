@@ -17,6 +17,9 @@ public class RefereeController : NetworkBehaviour
     public delegate void RevivedAction(int id, int mode = 0);
     public static event RevivedAction OnRevived;
 
+    public delegate void DeathAction(int id);
+    public static event DeathAction OnDeath;
+
     public delegate void ShootAction(int shooterID, int shooterType, int robotID, Vector3 userPosition, Vector3 shootVelocity);
     public static event ShootAction OnShoot;
 
@@ -44,8 +47,15 @@ public class RefereeController : NetworkBehaviour
 
     public override void OnNetworkSpawn()
     {
+        if (IsServer)
+        {
+            EXPToNextLevel.Value = EXPInfo.expToNextLevel[Level.Value];
+            EXPValue.Value = EXPInfo.expValue[Level.Value];
+        }
+
         // Debug.Log("Client:" + NetworkManager.Singleton.LocalClientId + "IsOwner?" + IsOwner);
-        if (IsOwner) {
+        if (IsOwner) 
+        {
             FPV.SetActive(true);
 
             robotController = this.gameObject.GetComponent<RobotController>();
@@ -63,7 +73,7 @@ public class RefereeController : NetworkBehaviour
 
     void Start()
     {
-        // if (!IsOwner) return;
+        if (!IsServer) return;
         Debug.Log($"[RefereeController] {RobotID.Value} Spawned");
         OnSpawn(RobotID.Value);
     }
@@ -220,6 +230,8 @@ public class RefereeController : NetworkBehaviour
 
             if (Reviving.Value) TickRevive();
 
+            TickHeat();
+
             TickBuff();
 
             if (!Enabled.Value) return;
@@ -294,6 +306,25 @@ public class RefereeController : NetworkBehaviour
         }
     }
 
+    void RefereeDamage(float damage)
+    {
+        if (Enabled.Value)
+        {
+            float _hp = HP.Value;
+            
+            // Debug.Log($"[GameManager] raw damage: {damage}, damage {damage}");
+
+            if (_hp - damage <= 0)
+            {
+                HP.Value = 0;
+                Enabled.Value = false;
+                OnDeath(RobotID.Value);
+            } else {
+                HP.Value = (_hp - damage);
+            }
+        }
+    }
+
     // Status
     [SerializeField] public NetworkVariable<bool> Enabled          = new NetworkVariable<bool>(true, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
     [SerializeField] public NetworkVariable<bool> Reviving          = new NetworkVariable<bool>(false, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
@@ -362,6 +393,51 @@ public class RefereeController : NetworkBehaviour
 
         // Free Fire!
         OnShoot(ID, ID == 0 ? Shooter0Type.Value : Shooter1Type.Value, RobotID.Value, Position, Velocity);
+    }
+
+    void TickHeat()
+    {
+        int CDFactor = 1;
+        if (CDBuff.Value > 0) CDFactor = CDBuff.Value;
+
+        if (Shooter0Enabled.Value & Heat0.Value > 0)
+        {
+            // Shooter 0 overheating
+            if (Heat0.Value > Heat0Limit.Value & Heat0.Value <= 2*Heat0Limit.Value)
+            {
+                RefereeDamage((Heat0.Value - Heat0Limit.Value) / 250 / 10 * HPLimit.Value);
+            } else if (Heat0.Value >= 2*Heat0Limit.Value) {
+                RefereeDamage((Heat0.Value - 2*Heat0Limit.Value) / 250 * HPLimit.Value);
+                Heat0.Value = 2*Heat0Limit.Value;
+            }
+            
+            // Shooter 0 CD
+            if (Heat0.Value >= CD0.Value * CDFactor * Time.deltaTime) 
+            {
+                Heat0.Value -= CD0.Value * CDFactor * Time.deltaTime;
+            } else {
+                Heat0.Value = 0;
+            }
+        }
+
+        if (Shooter1Enabled.Value & Heat1.Value > 0)
+        {
+            // Shooter 1 overheating
+            if (Heat1.Value > Heat1Limit.Value & Heat1.Value <= 2*Heat1Limit.Value)
+            {
+                RefereeDamage((Heat1.Value - Heat1Limit.Value) / 250 / 10 * HPLimit.Value);
+            } else if (Heat1.Value >= 2*Heat1Limit.Value) {
+                RefereeDamage((Heat1.Value - 2*Heat1Limit.Value) / 250 * HPLimit.Value);
+                Heat1.Value = 2*Heat1Limit.Value;
+            }
+
+            if (Heat1.Value >= CD1.Value * CDFactor * Time.deltaTime) 
+            {
+                Heat1.Value -= CD1.Value * CDFactor * Time.deltaTime;
+            } else {
+                Heat1.Value = 0;
+            }
+        }
     }
 
     #endregion
@@ -530,10 +606,12 @@ public class RefereeController : NetworkBehaviour
         if (EXP.Value >= EXPInfo.expToNextLevel[Level.Value] && EXPInfo.expToNextLevel[Level.Value] >= 0)
         {
             // Don't zero the current EXP, just minus the EXP needed to next level
+            EXPToNextLevel.Value = EXPInfo.expToNextLevel[Level.Value];
             EXP.Value -= EXPInfo.expToNextLevel[Level.Value];
             Level.Value += 1;
 
-            // TODO: Update performance
+            EXPValue.Value = EXPInfo.expValue[Level.Value];
+
             float _recoverHP = ChassisPerformance.maxHealth[Level.Value] - HPLimit.Value;
             HPLimit.Value = ChassisPerformance.maxHealth[Level.Value];
             HP.Value += _recoverHP;

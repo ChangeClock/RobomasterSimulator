@@ -162,7 +162,6 @@ MonoBehaviour:
   HP: {fileID: 3788152623204388255}
   HPLimit: {fileID: 4020970627005994732}
   LevelIcons:
-  - {fileID: 2301147518175308760}
   - {fileID: 332466347157028079}
   - {fileID: 7250213181079039093}
   - {fileID: 1785536824274045009}
@@ -546,12 +545,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!1 &2301147518175308760 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 6842707170596333855, guid: a320c4d18d384e443a9bc130e7f7a5ee,
-    type: 3}
-  m_PrefabInstance: {fileID: 4690917457986437831}
-  m_PrefabAsset: {fileID: 0}
 --- !u!114 &2450459947084887517 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 7140655970277193498, guid: a320c4d18d384e443a9bc130e7f7a5ee,

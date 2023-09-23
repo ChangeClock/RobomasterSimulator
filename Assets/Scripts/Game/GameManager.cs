@@ -9,23 +9,9 @@ public class GameManager : NetworkBehaviour
 {
     [Header("Game Status")]
     // 0 - Not started 1 - ready 2 - checking 3 - running 4 - ending
-    [SerializeField] public NetworkVariable<int> GameStatus = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+    [SerializeField] public NetworkVariable<int> GameStatus = new NetworkVariable<int>(0);
     [SerializeField] public NetworkVariable<float> TimeLeft = new NetworkVariable<float>(0.0f);
     [SerializeField] private bool isRunning = false;
-
-    [SerializeField] public List<RobotClass> KeyRobots = new List<RobotClass>()
-    {
-        RobotClass.Base, 
-        RobotClass.Outpost, 
-        RobotClass.Sentry
-    };
-
-    [SerializeField] public List<RobotClass> Buildings = new List<RobotClass>()
-    {
-        RobotClass.Base, 
-        RobotClass.Outpost,
-        RobotClass.Buff
-    };
 
     [SerializeField] public RefereeController RedBase;
     [SerializeField] public RefereeController BlueBase;
@@ -36,6 +22,9 @@ public class GameManager : NetworkBehaviour
 
     // 0: 中立 1: R-Hero 2: R-Engineer 3/4/5: R-Infantry 6: R-Air 7: R-Sentry 9: R-Lidar 18: R-Outpost 19: R-Base 21: B-Hero 22: B-Engineer 23/24/25: B-Infantry 26: B-Air 27: B-Sentry 29: B-Lidar 38: B-Outpost 39: B-Base;
     public Dictionary<int, RefereeController> RefereeControllerList = new Dictionary<int, RefereeController>();
+
+    [Header("EXP")]
+    [SerializeField] private bool HasFirstBlood = false;
 
     [Header("Buff")]
     [SerializeField] private BuffEffectSO ReviveBuff;
@@ -116,7 +105,24 @@ public class GameManager : NetworkBehaviour
         // Debug.Log("[GameController] HP: "+ RobotStatusList[18].GetHP());
     }
 
-    public void FinishGame()
+    public void BaseShieldOff(Faction faction)
+    {
+        switch (faction)
+        {
+            case Faction.Red:
+                RedBase.Shield.Value = 0;
+                RedBase.ShieldOff();
+                break;
+            case Faction.Blue:
+                BlueBase.Shield.Value = 0;
+                BlueBase.ShieldOff();
+                break;
+            default:
+                break;
+        }
+    }
+
+    public void FinishGame(Faction faction = Faction.Neu)
     {
         isRunning = false;
 
@@ -185,59 +191,36 @@ public class GameManager : NetworkBehaviour
             {
                 RefereeControllerList[robotID].HP.Value = 0;
                 RefereeControllerList[robotID].Enabled.Value = false;
-                DeathHandlerServerRpc(robotID);
+                DeathHandlerServerRpc(0, robotID);
             } else {
                 RefereeControllerList[robotID].HP.Value = (_hp - damage);
             }
         }
     }
 
-    void DamageUpload(int damageType, int armorID, int robotID)
+    void DamageUpload(int damageType, float damage, int armorID, int attackerID, int robotID)
     {
-        DamageHandlerServerRpc(damageType, armorID, robotID);
+        DamageHandlerServerRpc(damageType, damage, armorID, attackerID, robotID);
     }
 
     [ServerRpc]
-    void DamageHandlerServerRpc(int damageType, int armorID, int robotID, ServerRpcParams serverRpcParams = default)
+    void DamageHandlerServerRpc(int damageType, float damage, int armorID, int attackerID, int robotID, ServerRpcParams serverRpcParams = default)
     {
         Debug.Log("Damage Type: " + damageType + " Armor ID: " + armorID + " Robot ID: " + robotID);
         // Not Disabled or Immutable
 
-        if (RefereeControllerList[robotID].Enabled.Value && !RefereeControllerList[robotID].Immutable.Value) {
-            float _hp = RefereeControllerList[robotID].HP.Value;
-            float _damage = 0f;
-            // Debug.Log("[GameManager - Damage] HP:"+RobotStatusList[robotID].HP);
-            switch(damageType){
-                case 0:
-                    _damage = 2f;
-                    break;
-                case 1:
-                    _damage = 10f;
-                    break;
-                case 2:
-                    _damage = 100f;
-                    break;
-                case 3:
-                    _damage = 750f;
-                    break;
-                default:
-                    Debug.LogWarning("Unknown Damage Type" + damageType);
-                    break;
-            }
-
-            if (RefereeControllerList[robotID].DEFBuff.Value > 0) _damage = _damage * RefereeControllerList[robotID].DEFBuff.Value / 100;
-
-            // Add ATKBuff accoding to attacker ID;
-
-            if (_hp - _damage <= 0)
-            {
-                RefereeControllerList[robotID].HP.Value = 0;
-                RefereeControllerList[robotID].Enabled.Value = false;
-                DeathHandlerServerRpc(robotID);
-            } else {
-                RefereeControllerList[robotID].HP.Value = (_hp - _damage);
-            }
-            
+        switch(damageType){
+            case 0:
+            case 1:
+            case 2:
+                break;
+            case 3:
+                // Missle damage
+                // TODO: Add blind to robotID belong team
+                break;
+            default:
+                Debug.LogWarning("Unknown Damage Type" + damageType);
+                break;
         }
     }
 
@@ -274,38 +257,93 @@ public class GameManager : NetworkBehaviour
 
     }
 
-    void DeathUpload(int id)
+    void DeathUpload(int attackerID, int id)
     {
-        DeathHandlerServerRpc(id);
+        DeathHandlerServerRpc(attackerID, id);
     }
 
     [ServerRpc]
-    void DeathHandlerServerRpc(int robotID, ServerRpcParams serverRpcParams = default)
+    void DeathHandlerServerRpc(int attackerID, int robotID, ServerRpcParams serverRpcParams = default)
     {
         Debug.Log($"Robot {robotID} death event!");
+
+        RefereeController Victim = RefereeControllerList[robotID];
 
         // TODO: Add EXP to Killer and Assistant
         switch (robotID)
         {
+            // TODO: Change Base Status
             case 7:
+                if (!RedOutpost.Enabled.Value) BaseShieldOff(Faction.Red);
+                break;
             case 27:
-                // TODO: Change Base Status
+                if (!BlueOutpost.Enabled.Value) BaseShieldOff(Faction.Blue);
                 break;
+
+            // TODO: Change Sentry & Base Status
             case 18:
-            case 38:
-                // TODO: Change Sentry & Base Status
+                if (RedSentry == null || !RedSentry.Enabled.Value) 
+                {
+                    BaseShieldOff(Faction.Red);
+                } else {
+                    RedSentry.Immutable.Value = false;
+                    RedBase.Immutable.Value = false;
+                }
                 break;
+            case 38:
+                if (BlueSentry == null || !BlueSentry.Enabled.Value)
+                {
+                    BaseShieldOff(Faction.Blue);
+                } else {
+                    BlueSentry.Immutable.Value = false;
+                    BlueBase.Immutable.Value = false;
+                }
+                break;
+            
+            // TODO: Stop Game Handler
             case 19:
+                FinishGame(Faction.Blue);
+                break;
             case 39:
-                // TODO: Stop Game Handler
+                FinishGame(Faction.Red);
                 break;
             default:
                 // TODO: If the robot is penalty to death, disable revival
-                // TODO: If the robot used purchase to revival, revival time will add 20s for each purchase
-                RefereeControllerList[robotID].MaxReviveProgress.Value = (int)Math.Round(10.0f + TimeLeft.Value / 10.0f);
-                RefereeControllerList[robotID].Reviving.Value = true;
-                RefereeControllerList[robotID].Enabled.Value = false;
+                Victim.MaxReviveProgress.Value = (int)Math.Round(10.0f + TimeLeft.Value / 10.0f);
+                Victim.Reviving.Value = true;
+                Victim.Enabled.Value = false;
                 break;
+        }
+
+        if (!Victim.robotTags.Contains(RobotTag.GroundUnit)) return;
+
+        if (Victim.AttackList.Count > 0)
+        {
+            foreach (var _id in Victim.AttackList.Keys)
+            {
+                if (RefereeControllerList[_id].faction.Value != Victim.faction.Value) RefereeControllerList[_id].EXP.Value += (_id == attackerID) ? Victim.EXP.Value + (HasFirstBlood ? 50 : 0) : Victim.EXP.Value / 4;
+            }
+        } else {
+            int _expInTotal = Victim.EXPValue.Value + (HasFirstBlood ? 50 : 0);
+            List<int> _idList = new List<int>();
+
+            foreach (var _referee in RefereeControllerList.Values)
+            {
+                if (_referee.faction.Value != Victim.faction.Value 
+                && (_referee.robotClass.Value == RobotClass.Infantry || _referee.robotClass.Value == RobotClass.Hero) 
+                && _referee.Enabled.Value
+                ) _idList.Add(_referee.RobotID.Value); 
+            }
+
+            foreach (var _id in _idList)
+            {
+                RefereeControllerList[_id].EXP.Value += _expInTotal / _idList.Count;
+            }
+        }
+
+        if (!HasFirstBlood)
+        {
+            HasFirstBlood = true;
         }
     }
 
@@ -323,6 +361,8 @@ public class GameManager : NetworkBehaviour
                 RefereeControllerList[id].AddBuff(ReviveBuff);
                 break;
             case 1:
+                // TODO: If the robot used purchase to revival, revival time will add 20s for each purchase
+                RefereeControllerList[id].MaxReviveProgress.Value += 20;
                 RefereeControllerList[id].AddBuff(PurchaseReviveBuff);
                 break;
             default:

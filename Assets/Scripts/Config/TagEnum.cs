@@ -37,5 +37,6 @@ public enum RobotClass
 public enum RobotTag
 {
     Unit,
+    GroundUnit,
     Building
 }

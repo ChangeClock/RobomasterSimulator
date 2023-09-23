@@ -15,6 +15,7 @@ GameObject:
   - component: {fileID: 8727588297436816348}
   - component: {fileID: 7214052445012445556}
   - component: {fileID: 6248520303916968257}
+  - component: {fileID: -5469638032661934821}
   m_Layer: 0
   m_Name: Bullet-17mm
   m_TagString: Bullet-17mm
@@ -206,3 +207,19 @@ MonoBehaviour:
   AlwaysReplicateAsRoot: 0
   DontDestroyWithOwner: 0
   AutoObjectParentSync: 1
+--- !u!114 &-5469638032661934821
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8727588297436816351}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 56433e76bf0c68f4190f04eedb7cf5bc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  attackerID:
+    m_InternalValue: 0
+  lastTime: 0
+  liveTime: 10

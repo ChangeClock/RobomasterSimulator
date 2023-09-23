@@ -18,7 +18,7 @@ public class SpawnManager : NetworkBehaviour
     public void SpawnServerRpc(int role, int id, ServerRpcParams serverRpcParams = default)
     {
         var clientId = serverRpcParams.Receive.SenderClientId;
-        GameObject player = new GameObject();
+        GameObject player;
         RefereeController referee;
 
         // role: 0-observer 1-red 2-blue 3-referee

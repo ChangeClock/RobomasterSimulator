@@ -5,11 +5,6 @@ using Unity.Netcode;
 
 public class ArmorController : MonoBehaviour
 {
-    public float velocityThresholdImpact = 6f;
-    public float velocityThreshold17mm = 12f;
-    public float velocityThreshold42mm = 8f;
-    public float velocityThresholdMissle = 6f;
-
     public int ArmorID;
 
     public bool Enabled;
@@ -17,10 +12,10 @@ public class ArmorController : MonoBehaviour
     public int LightColor;
 
     // damageType: 0 碰撞; 1 17mm; 2 42mm; 3 导弹;
-    public delegate void HitAction(int damageType, int armorID);
+    public delegate void HitAction(int damageType, float damage ,int armorID, int attackerID = 0);
     public event HitAction OnHit;
 
-    // damageDetection: 对应上面的damageType，设定此装甲板是否响应对应的伤害
+    public float[] velocityThreshold = {6f, 12f, 8f, 6f};
     public float[] damage = {2.0f, 10.0f, 100.0f, 0.0f};
 
     private LightController armorLight;
@@ -55,37 +50,37 @@ public class ArmorController : MonoBehaviour
 
         if (collision.gameObject.tag == "Bullet-17mm" && damage[1] > 0) {
             // Check if the final velocity is above the minimum required
-            if (Mathf.Abs(perpendicularVelocity.magnitude - velocityThreshold17mm) >= 0f)
+            if (Mathf.Abs(perpendicularVelocity.magnitude - velocityThreshold[1]) >= 0f)
             {
                 // Debug.Log("On Hit with 17mm");
-                if (OnHit != null) OnHit(1,ArmorID);
+                if (OnHit != null) OnHit(1, damage[1] ,ArmorID, collision.gameObject.GetComponent<BulletController>().attackerID.Value);
                 StartCoroutine(Blink());
             }
 
         } else if (collision.gameObject.tag == "Bullet-42mm" & damage[2] > 0) {
 
-            if (Mathf.Abs(perpendicularVelocity.magnitude - velocityThreshold42mm) >= 0f)
+            if (Mathf.Abs(perpendicularVelocity.magnitude - velocityThreshold[2]) >= 0f)
             {
                 // Debug.Log("On Hit with 42mm");
-                if (OnHit != null) OnHit(2,ArmorID);
+                if (OnHit != null) OnHit(2, damage[2] ,ArmorID, collision.gameObject.GetComponent<BulletController>().attackerID.Value);
                 StartCoroutine(Blink());
             }
 
         } else if (collision.gameObject.tag == "Missle" & damage[3] > 0) {
 
-            if (Mathf.Abs(perpendicularVelocity.magnitude - velocityThresholdMissle) >= 0f)
+            if (Mathf.Abs(perpendicularVelocity.magnitude - velocityThreshold[3]) >= 0f)
             {
                 // Debug.Log("On Hit with Missle");
-                if(OnHit != null) OnHit(0,ArmorID);
+                if(OnHit != null) OnHit(3, damage[3] ,ArmorID, collision.gameObject.GetComponent<BulletController>().attackerID.Value);
                 StartCoroutine(Blink());
             }
 
         } else if (damage[0] > 0) {
 
-            if (Mathf.Abs(perpendicularVelocity.magnitude - velocityThresholdImpact) >= 0f)
+            if (Mathf.Abs(perpendicularVelocity.magnitude - velocityThreshold[0]) >= 0f)
             {
                 // Debug.Log("On Hit with Impact");
-                if(OnHit != null) OnHit(0,ArmorID);
+                if(OnHit != null) OnHit(0, damage[0] ,ArmorID);
                 StartCoroutine(Blink());
             }
 

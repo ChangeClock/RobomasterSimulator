@@ -232,15 +232,34 @@ public class GameManager : NetworkBehaviour
     [ServerRpc]
     void ShootHandlerServerRpc(int shooterID, int shooterType, int robotID, ServerRpcParams serverRpcParams = default)
     {
+        RefereeController robot = RefereeControllerList[robotID];
+
         switch(shooterID){
             case 0:
-                RefereeControllerList[robotID].Heat0.Value += (shooterType == 0) ? 10 : 100;
+                robot.Heat0.Value += (shooterType == 0) ? 10 : 100;
                 break;
             case 1:
-                RefereeControllerList[robotID].Heat1.Value += (shooterType == 0) ? 10 : 100;
+                robot.Heat1.Value += (shooterType == 0) ? 10 : 100;
                 break;
             default:
                 Debug.LogWarning("[GameManager] Unknown shooter ID");
+                break;
+        }
+
+        switch(shooterType)
+        {
+            case 0:
+                robot.ConsumedAmmo0.Value ++;
+                robot.Ammo0.Value --;
+                robot.RealAmmo0.Value --;
+                break;
+            case 1:
+                robot.ConsumedAmmo1.Value ++;
+                robot.Ammo1.Value --;
+                robot.RealAmmo1.Value --;
+                break;
+            default:
+                Debug.LogWarning("[GameManager] Unknown shooter type");
                 break;
         }
     }

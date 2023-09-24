@@ -23,6 +23,8 @@ public class MatchInfoController : MonoBehaviour
     [SerializeField] private BarController RedOutpostHPBar;
     [SerializeField] private TMP_Text BlueOutpostHP;
     [SerializeField] private BarController BlueOutpostHPBar;
+
+    [SerializeField] private UnitInfoBar[] UnitInfoBars;
     
     [SerializeField] private TMP_Text RedCoin;
     [SerializeField] private TMP_Text BlueCoin;
@@ -82,5 +84,15 @@ public class MatchInfoController : MonoBehaviour
         // Red Coin
 
         // Blue Coin
+
+        
+        // Sync Observer UI
+        // if (ObserverUI != null)
+        // {
+        //     ObserverUI.SetID(robotClass.Value == RobotClass.Sentry ? "AI" : RobotID.ToString());
+        //     ObserverUI.SetHealth(HP.Value, HPLimit.Value);
+        //     ObserverUI.SetLevelInfo(true, Level.Value);
+        //     ObserverUI.SetBuff(ATKBuff.Value>0, CDBuff.Value>0, DEFBuff.Value>0, HealBuff.Value>0);
+        // }
     }
 }

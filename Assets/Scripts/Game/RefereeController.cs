@@ -38,8 +38,7 @@ public class RefereeController : NetworkBehaviour
     private LightbarController LightBar;
     private FPVController FPVCamera;
     private EnergyController EnergyCtl;
-    
-    [SerializeField] private TextMeshProUGUI ObserverUI;
+
     public NetworkVariable<int> RobotID       = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
     public NetworkVariable<RobotClass> robotClass = new NetworkVariable<RobotClass>(RobotClass.Infantry);
     public List<RobotTag> robotTags = new List<RobotTag>();
@@ -181,10 +180,6 @@ public class RefereeController : NetworkBehaviour
             LightBar.Warning = Warning.Value;
             LightBar.LightColor = faction.Value == Faction.Red ? 1 : 2;
         }
-
-        // Sync Observer UI
-        ObserverUI.text = "Player: " + (OwnerClientId) + "\n" + "HP: " + (HP.Value.ToString());
-    
     }
 
     private void FixedUpdate() 
@@ -208,6 +203,7 @@ public class RefereeController : NetworkBehaviour
 
                 FPVCamera.SetHeatLimit(Heat0Limit.Value, Heat1Limit.Value);
                 FPVCamera.SetHeat(Heat0.Value, Heat1.Value);
+                FPVCamera.SetAmmo(Shooter0Type.Value == 0? ConsumedAmmo0.Value : ConsumedAmmo1.Value, Shooter0Type.Value == 0? Ammo0.Value : Ammo1.Value, Shooter1Type.Value == 0? ConsumedAmmo0.Value : ConsumedAmmo1.Value, Shooter1Type.Value == 0? Ammo0.Value : Ammo1.Value);
 
                 FPVCamera.SetHealBuff(HealBuff.Value > 0, HealBuff.Value);
                 FPVCamera.SetDEFBuff(DEFBuff.Value > 0, DEFBuff.Value);
@@ -321,7 +317,7 @@ public class RefereeController : NetworkBehaviour
                     break;
             }
 
-            if (DEFBuff.Value > 0) _damage = _damage * DEFBuff.Value / 100;
+            if (DEFBuff.Value > 0) _damage = _damage * (1 - DEFBuff.Value / 100);
 
             if (_hp - _damage <= 0)
             {

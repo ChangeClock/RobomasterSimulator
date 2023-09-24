@@ -79,11 +79,11 @@ public class FPVController : MonoBehaviour
     [SerializeField] private GameObject[] LevelIcons;
     [SerializeField] private BarController EXPBar;
 
-    public void SetLevelInfo(int Level)
+    public void SetLevelInfo(int level)
     {
         for (int i = 0; i < LevelIcons.Length; i++)
         {
-            if (Level == i)
+            if (level == i)
             {
                 LevelIcons[i].SetActive(true);
             } else {

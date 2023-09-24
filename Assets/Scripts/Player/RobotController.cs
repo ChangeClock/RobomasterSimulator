@@ -108,7 +108,7 @@ public class RobotController : NetworkBehaviour
 
         if (!Enabled) return;
 
-        StarterAssets.StarterAssetsInputs _playerInputs = GetComponent<StarterAssets.StarterAssetsInputs>();
+        StarterAssetsInputs _playerInputs = GetComponent<StarterAssetsInputs>();
 
         _input[0] = _playerInputs.move.x;
         _input[1] = _playerInputs.move.y;
@@ -117,7 +117,9 @@ public class RobotController : NetworkBehaviour
         _input[4] = _playerInputs.shoot ? 1f : 0f;
         _input[5] = _playerInputs.spin ? 1f : 0f;
 
-        _playerInputs.shoot = false;
+        Debug.Log($"isShoot ? {_input[4]}");
+
+        // _playerInputs.shoot = false;
         _playerInputs.spin = false;
 
         // All input status

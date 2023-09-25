@@ -335,6 +335,29 @@ public class RefereeController : NetworkBehaviour
         }
     }
 
+    void TickAttacker()
+    {
+        if (AttackList.Count <= 0) return;
+
+        List<int> overtimeAttackers = new List<int>();
+
+        foreach (var _info in AttackList.Values)
+        {
+            _info.lastTime -= Time.deltaTime;
+            if (_info.lastTime <= 0)
+            {
+                overtimeAttackers.Add(_info.ID);
+            }
+        }
+
+        if (overtimeAttackers.Count <= 0) return;
+
+        foreach (var _id in overtimeAttackers)
+        {
+            AttackList.Remove(_id);
+        }
+    }
+
     void TickHealth()
     {
         if (HP.Value < HPLimit.Value && HealBuff.Value > 0)

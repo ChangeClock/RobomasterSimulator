@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 5705036636537845676}
   - component: {fileID: 1483886926190859406}
   - component: {fileID: 1123231135548719757}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: HPBar
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -85,7 +85,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5482783706786895419}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: CoinInfo
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -126,7 +126,7 @@ GameObject:
   - component: {fileID: 7397444308767198104}
   - component: {fileID: 8191831678977220806}
   - component: {fileID: 3151994439032679898}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: LabelIcon
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -199,7 +199,7 @@ GameObject:
   - component: {fileID: 9172241886643491132}
   - component: {fileID: 6084638294677456573}
   - component: {fileID: 2437009445729328090}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: LabelIcon
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -272,7 +272,7 @@ GameObject:
   - component: {fileID: 8235175471160159022}
   - component: {fileID: 2746242496451387750}
   - component: {fileID: 3395776796390681680}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: HP
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -407,7 +407,7 @@ GameObject:
   - component: {fileID: 4117928437383697173}
   - component: {fileID: 2216456837224306453}
   - component: {fileID: 2098450138384280901}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: Label
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -485,7 +485,7 @@ GameObject:
   - component: {fileID: 5855884447386880042}
   - component: {fileID: 7596825115756216594}
   - component: {fileID: 2225473181429500031}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: LabelIcon
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -558,7 +558,7 @@ GameObject:
   - component: {fileID: 7586977603801184633}
   - component: {fileID: 3811809754109484064}
   - component: {fileID: 4599127416464696370}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: RedCoin
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -693,7 +693,7 @@ GameObject:
   - component: {fileID: 1663743209861499415}
   - component: {fileID: 7975122745948803937}
   - component: {fileID: 662082005505462480}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: LabelIcon
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -764,7 +764,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5627047128415826264}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: RedSentryInfo
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -806,7 +806,7 @@ GameObject:
   - component: {fileID: 3954057090511815360}
   - component: {fileID: 2253181543123298000}
   - component: {fileID: 4561866917869306017}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: AmmoInfo
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -884,7 +884,7 @@ GameObject:
   - component: {fileID: 3907488997701006499}
   - component: {fileID: 5451558588277964925}
   - component: {fileID: 7048166703890185459}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: ShieldIcon
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -957,7 +957,7 @@ GameObject:
   - component: {fileID: 6271154567833075119}
   - component: {fileID: 6017965526448061478}
   - component: {fileID: 7636162122438475563}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: HP
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1090,7 +1090,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5628052786221504574}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: BlueOutpostInfo
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1129,7 +1129,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3516111482613611008}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: BlueSentryInfo
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1171,7 +1171,7 @@ GameObject:
   - component: {fileID: 5257082038013954245}
   - component: {fileID: 814884448469139370}
   - component: {fileID: 5523494998343639710}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: Ammo
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1306,7 +1306,7 @@ GameObject:
   - component: {fileID: 8122082447851613734}
   - component: {fileID: 8835751280471892530}
   - component: {fileID: 518465427338066705}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: HP
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1439,7 +1439,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2637386855971929729}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: BlueBaseInfo
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1480,7 +1480,7 @@ GameObject:
   - component: {fileID: 5975142967749158089}
   - component: {fileID: 8392016223164410953}
   - component: {fileID: 5091206089209447943}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: MatchInfo
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1557,7 +1557,7 @@ GameObject:
   - component: {fileID: 5872125182400864268}
   - component: {fileID: 2203065581273894432}
   - component: {fileID: 8227791851698197009}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: BlueLabel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1633,7 +1633,7 @@ GameObject:
   - component: {fileID: 1883129367294620668}
   - component: {fileID: 3610298844445490109}
   - component: {fileID: 4018767082473647625}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: Label
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1709,7 +1709,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3577054762416436054}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: RedBaseInfo
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1750,7 +1750,7 @@ GameObject:
   - component: {fileID: 808324896494500278}
   - component: {fileID: 2581738888495904832}
   - component: {fileID: 1253379010380598018}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: AmmoInfo
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1828,7 +1828,7 @@ GameObject:
   - component: {fileID: 3717648458434874000}
   - component: {fileID: 5925270107819129604}
   - component: {fileID: 4310646635116123746}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: RedLabel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1904,7 +1904,7 @@ GameObject:
   - component: {fileID: 2692909972606584600}
   - component: {fileID: 4451868506936659050}
   - component: {fileID: 3615518680935025679}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: Label
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1982,7 +1982,7 @@ GameObject:
   - component: {fileID: 8475381832094245987}
   - component: {fileID: 1002650709257105299}
   - component: {fileID: 9140366383880998024}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: HPBar
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2058,7 +2058,7 @@ GameObject:
   - component: {fileID: 7854267831728841807}
   - component: {fileID: 184947276214374563}
   - component: {fileID: 5743345039167355783}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: HP
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2193,7 +2193,7 @@ GameObject:
   - component: {fileID: 261385370672394637}
   - component: {fileID: 1423672012114056892}
   - component: {fileID: 7537811602841361968}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: Shield
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2328,7 +2328,7 @@ GameObject:
   - component: {fileID: 8430076412031883859}
   - component: {fileID: 3531033484213778646}
   - component: {fileID: 209113229353481999}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: Icon
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2401,7 +2401,7 @@ GameObject:
   - component: {fileID: 6064854941188793948}
   - component: {fileID: 4972513998135179205}
   - component: {fileID: 4765168031842041677}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: ShieldIcon
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2474,7 +2474,7 @@ GameObject:
   - component: {fileID: 814795689978463147}
   - component: {fileID: 6360575521706590040}
   - component: {fileID: 4940264156112628210}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: HP
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2608,7 +2608,8 @@ GameObject:
   m_Component:
   - component: {fileID: 6955374121857658465}
   - component: {fileID: 8731163411701609632}
-  m_Layer: 0
+  - component: {fileID: 4816493451738350937}
+  m_Layer: 5
   m_Name: GameStatusMenu
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2658,10 +2659,10 @@ MonoBehaviour:
   Time: {fileID: 352234654744545869}
   RedBaseHP: {fileID: 7636162122438475563}
   RedBaseShield: {fileID: 7537811602841361968}
-  RedBaseHPBar: {fileID: 5117892348637321145}
+  RedBaseHPBar: {fileID: 0}
   BlueBaseHP: {fileID: 3395776796390681680}
   BlueBaseShield: {fileID: 448372253045938334}
-  BlueBaseHPBar: {fileID: 4158621526157166641}
+  BlueBaseHPBar: {fileID: 0}
   RedSentryHP: {fileID: 0}
   RedSentryAmmo: {fileID: 0}
   RedSentryHPBar: {fileID: 0}
@@ -2669,11 +2670,30 @@ MonoBehaviour:
   BlueSentryAmmo: {fileID: 0}
   BlueSentryHPBar: {fileID: 0}
   RedOutpostHP: {fileID: 4940264156112628210}
-  RedOutpostHPBar: {fileID: 8375269513625593125}
+  RedOutpostHPBar: {fileID: 0}
   BlueOutpostHP: {fileID: 5743345039167355783}
-  BlueOutpostHPBar: {fileID: 3549976748120193910}
+  BlueOutpostHPBar: {fileID: 0}
+  UnitInfoBars: []
   RedCoin: {fileID: 4599127416464696370}
   BlueCoin: {fileID: 8584132852710842581}
+  MiniMap: {fileID: 0}
+  userBelong: 2
+--- !u!114 &4816493451738350937
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6496122114348768363}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  GlobalObjectIdHash: 951099334
+  AlwaysReplicateAsRoot: 0
+  DontDestroyWithOwner: 0
+  AutoObjectParentSync: 1
 --- !u!1 &6719350750007167626
 GameObject:
   m_ObjectHideFlags: 0
@@ -2685,7 +2705,7 @@ GameObject:
   - component: {fileID: 8688879735953913867}
   - component: {fileID: 3417551508003909952}
   - component: {fileID: 340457603447448542}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: AmmoIcon
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2758,7 +2778,7 @@ GameObject:
   - component: {fileID: 3402904348784105265}
   - component: {fileID: 8170879358161615702}
   - component: {fileID: 5677455652361738274}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: LabelName
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2893,7 +2913,7 @@ GameObject:
   - component: {fileID: 1150884111929811477}
   - component: {fileID: 7098024196730067672}
   - component: {fileID: 3175096821484031265}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: AmmoIcon
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2966,7 +2986,7 @@ GameObject:
   - component: {fileID: 1735827636684903338}
   - component: {fileID: 196555835591042561}
   - component: {fileID: 4669063335183216458}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: Background
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3045,7 +3065,7 @@ GameObject:
   - component: {fileID: 8231038754718001119}
   - component: {fileID: 1787440713772834349}
   - component: {fileID: 5164951063015825109}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: LabelName
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3180,7 +3200,7 @@ GameObject:
   - component: {fileID: 7665320685726667009}
   - component: {fileID: 7613917258088498129}
   - component: {fileID: 153089634316604013}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: LabelName
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3315,7 +3335,7 @@ GameObject:
   - component: {fileID: 7948154965581807034}
   - component: {fileID: 8775636804200964194}
   - component: {fileID: 1898122751388069128}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: HP
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3450,7 +3470,7 @@ GameObject:
   - component: {fileID: 3375286988164700858}
   - component: {fileID: 6436702835971137839}
   - component: {fileID: 6620563247750937918}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: LabelName
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3585,7 +3605,7 @@ GameObject:
   - component: {fileID: 2970684113940171115}
   - component: {fileID: 4536970317203245115}
   - component: {fileID: 6291688301466623292}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: Label
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3663,7 +3683,7 @@ GameObject:
   - component: {fileID: 1067210007317978765}
   - component: {fileID: 3968485572239547842}
   - component: {fileID: 7551764807902110710}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: ShieldInfo
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3739,7 +3759,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8630061319641253591}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: RedOutpostInfo
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3780,7 +3800,7 @@ GameObject:
   - component: {fileID: 4906322795617265064}
   - component: {fileID: 3830572650898782888}
   - component: {fileID: 3302706052737333215}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: ShieldInfo
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3858,7 +3878,7 @@ GameObject:
   - component: {fileID: 7942115296824781670}
   - component: {fileID: 1908456010298226224}
   - component: {fileID: 7863557484842259911}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: Ammo
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3993,7 +4013,7 @@ GameObject:
   - component: {fileID: 981707993543928411}
   - component: {fileID: 5470582157796104882}
   - component: {fileID: 448372253045938334}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: Shield
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4128,7 +4148,7 @@ GameObject:
   - component: {fileID: 2168689435463630767}
   - component: {fileID: 5798886239742457232}
   - component: {fileID: 8584132852710842581}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: BlueCoin
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4263,7 +4283,7 @@ GameObject:
   - component: {fileID: 8280005243812924930}
   - component: {fileID: 3215549433095464588}
   - component: {fileID: 352234654744545869}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: Time
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4551,18 +4571,6 @@ RectTransform:
     type: 3}
   m_PrefabInstance: {fileID: 1361801621245554929}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &5117892348637321145 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 6188069744928876360, guid: 33768307be506ab40aa70a1ed941a692,
-    type: 3}
-  m_PrefabInstance: {fileID: 1361801621245554929}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e62a4362bdb4c7c4582eb2ff1a4b867b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1001 &2439437632185041517
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -4737,18 +4745,6 @@ RectTransform:
     type: 3}
   m_PrefabInstance: {fileID: 2439437632185041517}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &8375269513625593125 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 6188069744928876360, guid: 33768307be506ab40aa70a1ed941a692,
-    type: 3}
-  m_PrefabInstance: {fileID: 2439437632185041517}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e62a4362bdb4c7c4582eb2ff1a4b867b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1001 &7252059488789355582
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -4892,18 +4888,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 33768307be506ab40aa70a1ed941a692, type: 3}
---- !u!114 &3549976748120193910 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 6188069744928876360, guid: 33768307be506ab40aa70a1ed941a692,
-    type: 3}
-  m_PrefabInstance: {fileID: 7252059488789355582}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e62a4362bdb4c7c4582eb2ff1a4b867b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!224 &6296485241335471762 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 3730641140165116588, guid: 33768307be506ab40aa70a1ed941a692,
@@ -5043,18 +5027,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 33768307be506ab40aa70a1ed941a692, type: 3}
---- !u!114 &4158621526157166641 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 6188069744928876360, guid: 33768307be506ab40aa70a1ed941a692,
-    type: 3}
-  m_PrefabInstance: {fileID: 7806449660217257849}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e62a4362bdb4c7c4582eb2ff1a4b867b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!224 &6887115174012513749 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 3730641140165116588, guid: 33768307be506ab40aa70a1ed941a692,

@@ -279,10 +279,29 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   FPV: {fileID: 0}
-  ObserverUI: {fileID: 537079560420152804}
   RobotID:
     m_InternalValue: 0
   robotClass:
+    m_InternalValue: 0
+  robotTags: 02000000
+  faction:
+    m_InternalValue: 2
+  Enabled:
+    m_InternalValue: 1
+  Immutable:
+    m_InternalValue: 0
+  Warning:
+    m_InternalValue: 0
+  OccupiedArea:
+    m_InternalValue: 0
+  Position: {x: 0, y: 0}
+  PowerLimit:
+    m_InternalValue: 0
+  Power:
+    m_InternalValue: 0
+  BufferLimit:
+    m_InternalValue: 0
+  Buffer:
     m_InternalValue: 0
   ShieldLimit:
     m_InternalValue: 0
@@ -292,38 +311,16 @@ MonoBehaviour:
     m_InternalValue: 500
   HP:
     m_InternalValue: 500
-  PowerLimit:
-    m_InternalValue: 0
-  Power:
-    m_InternalValue: 0
-  EnergyLimit:
-    m_InternalValue: 0
-  Energy:
-    m_InternalValue: 0
-  Enabled:
-    m_InternalValue: 1
   Reviving:
     m_InternalValue: 0
   MaxReviveProgress:
     m_InternalValue: 10
-  CurrentReviveProgress:
-    m_InternalValue: 0
-  Immutable:
-    m_InternalValue: 0
-  Warning:
-    m_InternalValue: 0
-  OccupiedArea:
-    m_InternalValue: 0
-  ATKBuff:
-    m_InternalValue: 0
-  DEFBuff:
-    m_InternalValue: 0
-  CDBuff:
-    m_InternalValue: 0
   ReviveProgressPerSec:
     m_InternalValue: 1
-  HealBuff:
+  CurrentReviveProgress:
     m_InternalValue: 0
+  ShooterEnabled:
+    m_InternalValue: 1
   Shooter0Enabled:
     m_InternalValue: 1
   Shooter0Type:
@@ -337,10 +334,6 @@ MonoBehaviour:
   CD0:
     m_InternalValue: 0
   Speed0Limit:
-    m_InternalValue: 0
-  Ammo0:
-    m_InternalValue: 0
-  RealAmmo0:
     m_InternalValue: 0
   Shooter1Enabled:
     m_InternalValue: 0
@@ -356,13 +349,27 @@ MonoBehaviour:
     m_InternalValue: 0
   Speed1Limit:
     m_InternalValue: 0
+  ConsumedAmmo0:
+    m_InternalValue: 0
+  Ammo0:
+    m_InternalValue: 0
+  RealAmmo0:
+    m_InternalValue: 0
+  ConsumedAmmo1:
+    m_InternalValue: 0
   Ammo1:
     m_InternalValue: 0
   RealAmmo1:
     m_InternalValue: 0
+  ATKBuff:
+    m_InternalValue: 0
+  DEFBuff:
+    m_InternalValue: 0
+  CDBuff:
+    m_InternalValue: 0
+  HealBuff:
+    m_InternalValue: 0
   defaultBuff: {fileID: 0}
-  chassisType: 0
-  gimbalType: 0
   Level:
     m_InternalValue: 0
   EXP:
@@ -373,6 +380,10 @@ MonoBehaviour:
     m_InternalValue: 0
   TimeToNextEXP:
     m_InternalValue: 0
+  ChassisPerformance: {fileID: 0}
+  GimbalPerformance0: {fileID: 0}
+  GimbalPerformance1: {fileID: 0}
+  EXPInfo: {fileID: 0}
 --- !u!1 &8650353939575776351
 GameObject:
   m_ObjectHideFlags: 0

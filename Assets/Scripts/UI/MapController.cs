@@ -53,15 +53,17 @@ public class MapController : MonoBehaviour
 
     public void SetPoint(int id, Vector2 location, float direction)
     {
-        if (UnitPoints.ContainsKey(id))
+        if (!UnitPoints.ContainsKey(id))
         {
-            UnitPoints[id].resetLastTime();
-            UnitPoints[id].point.transform.position = new Vector3(location.x, location.y, 0);
-            UnitPoints[id].point.GetComponent<UnitPointController>().SetDirection(direction);
-        } else {
-            GameObject _point = Instantiate(UnitPoint, new Vector3(location.x, location.y, 0), Quaternion.identity);
+            GameObject _point = Instantiate(UnitPoint, gameObject.transform);
             _point.GetComponent<UnitPointController>().SetID(id);
             UnitPoints.Add(id, new UnitPointInfo(_point, id));
         }
+        
+        UnitPoints[id].resetLastTime();
+        // Debug.Log($"[MapController] Position {location}");
+        UnitPoints[id].point.GetComponent<RectTransform>().anchoredPosition = location;
+        // Debug.Log($"[MapController] Position {UnitPoints[id].point.transform.position}");
+        UnitPoints[id].point.GetComponent<UnitPointController>().SetDirection(direction);
     }
 }

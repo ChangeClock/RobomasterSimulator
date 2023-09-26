@@ -85,17 +85,15 @@ public class GameManager : NetworkBehaviour
             // if (_referee.RobotID.Value == 2) Debug.Log($"{_referee.RobotID.Value} Robot Shooter0 Enabled? {_referee.Shooter0Enabled.Value}");
 
             //--------------------Status only when robot is enabled ----------------------//
-            if (_referee.Enabled.Value)
-            {
+            if (!_referee.Enabled.Value) continue;
 
             //--------------------Status only when game is running ----------------------//
-                if (isRunning) 
-                {
-                    // Time Update
-                    TimeLeft.Value -= Time.deltaTime;
+            if (isRunning) 
+            {
+                // Time Update
+                TimeLeft.Value -= Time.deltaTime;
 
-                    if (TimeLeft.Value <= 0.0f) FinishGame();
-                }
+                if (TimeLeft.Value <= 0.0f) FinishGame();
             }
 
         }

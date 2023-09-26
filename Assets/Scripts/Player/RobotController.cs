@@ -118,9 +118,9 @@ public class RobotController : NetworkBehaviour
         _input[4] = _playerInputs.shoot ? 1f : 0f;
         _input[5] = _playerInputs.spin ? 1f : 0f;
 
-        Debug.Log($"isShoot ? {_input[4]}");
+        // Debug.Log($"isShoot ? {_input[4]}");
 
-        // _playerInputs.shoot = false;
+        _playerInputs.shoot = false;
         _playerInputs.spin = false;
 
         // All input status

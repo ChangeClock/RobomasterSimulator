@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 9021552108191166101}
   - component: {fileID: 818066314266913338}
   - component: {fileID: 6365188252095868717}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: UnitPoint
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -40,8 +40,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -112.9, y: -31.9}
-  m_SizeDelta: {x: 10, y: 10}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 12, y: 12}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &9021552108191166101
 CanvasRenderer:
@@ -93,7 +93,7 @@ MonoBehaviour:
   Boarder: {fileID: 5898767806906068805}
   Arrow: {fileID: 5884178032200949612}
   ID: {fileID: 8823876119193589317}
-  Sentry: {fileID: 0}
+  Sentry: {fileID: 4433282706859226518}
 --- !u!1 &4433282706859226518
 GameObject:
   m_ObjectHideFlags: 0
@@ -105,7 +105,7 @@ GameObject:
   - component: {fileID: 5686595454575848654}
   - component: {fileID: 8010761037476408718}
   - component: {fileID: 2009647956487034309}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: Sentry
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -178,7 +178,7 @@ GameObject:
   - component: {fileID: 4793215159354678212}
   - component: {fileID: 3314857602783756862}
   - component: {fileID: 2581314183349747799}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: Arrow
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -204,7 +204,7 @@ RectTransform:
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 5, y: 5}
-  m_Pivot: {x: -1, y: 0.5}
+  m_Pivot: {x: -1.2, y: 0.5}
 --- !u!222 &3314857602783756862
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -251,7 +251,7 @@ GameObject:
   - component: {fileID: 7358336050212007752}
   - component: {fileID: 1357317906251501572}
   - component: {fileID: 4316750723829549790}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: Boarder
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -324,7 +324,7 @@ GameObject:
   - component: {fileID: 6498837648875305729}
   - component: {fileID: 4606337224147072376}
   - component: {fileID: 8823876119193589317}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: ID
   m_TagString: Untagged
   m_Icon: {fileID: 0}

@@ -28,6 +28,10 @@ public class UnitPointController : MonoBehaviour
 
     public void SetDirection(float angle)
     {
-        Arrow.transform.Rotate(0f, 0f, angle);
+        if (Mathf.Abs(Arrow.transform.eulerAngles.z - angle) <= 0.1f) return;
+
+        // Debug.Log($"[UnitPoint] angle delta {Arrow.transform.eulerAngles.z - angle}");
+
+        Arrow.transform.Rotate(0f, 0f, angle - Arrow.transform.eulerAngles.z);
     }
 }

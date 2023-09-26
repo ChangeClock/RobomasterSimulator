@@ -39,7 +39,7 @@ public class RefereeController : NetworkBehaviour
     private FPVController FPVCamera;
     private EnergyController EnergyCtl;
 
-    public NetworkVariable<int> RobotID       = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+    public NetworkVariable<int> RobotID = new NetworkVariable<int>(0);
     public NetworkVariable<RobotClass> robotClass = new NetworkVariable<RobotClass>(RobotClass.Infantry);
     public List<RobotTag> robotTags = new List<RobotTag>();
     public NetworkVariable<Faction> faction = new NetworkVariable<Faction>(Faction.Neu);
@@ -184,6 +184,9 @@ public class RefereeController : NetworkBehaviour
 
     private void FixedUpdate() 
     {
+        Position = new Vector2(gameObject.transform.position.x, gameObject.transform.position.z);
+        Direction = gameObject.transform.eulerAngles.y;
+
         if (IsOwner)
         {
             if (robotController != null)
@@ -245,16 +248,36 @@ public class RefereeController : NetworkBehaviour
         // TickBuffServerRpc();
     }
     
-    [Header("Status")]
+    [Header("Player Status")]
+    public NetworkVariable<bool> Enabled          = new NetworkVariable<bool>(true);
+    public NetworkVariable<bool> Immutable         = new NetworkVariable<bool>(false);
+    public NetworkVariable<int> Warning           = new NetworkVariable<int>(0);
+    public NetworkVariable<int> OccupiedArea      = new NetworkVariable<int>(0);
+    public Vector2 Position = Vector2.zero;
+    public float Direction = 0f;
+
+    [Header("Power")]
+    public NetworkVariable<float> PowerLimit        = new NetworkVariable<float>(0);
+    public NetworkVariable<float> Power             = new NetworkVariable<float>(0);
+    public NetworkVariable<float> BufferLimit       = new NetworkVariable<float>(0);
+    public NetworkVariable<float> Buffer            = new NetworkVariable<float>(0);
+
+    bool IsOverPower 
+    {
+        get { return Power.Value > PowerLimit.Value; }
+    }
+    
+    void TickPower()
+    {
+        Power.Value = EnergyCtl.GetPower();
+    }
+
+    [Header("Health")]
     // PowerLimit: -1 - Unlimited
-    public NetworkVariable<int> ShieldLimit       = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-    public NetworkVariable<int> Shield            = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-    public NetworkVariable<float> HPLimit           = new NetworkVariable<float>(500, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-    public NetworkVariable<float> HP                = new NetworkVariable<float>(500, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-    public NetworkVariable<float> PowerLimit        = new NetworkVariable<float>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-    public NetworkVariable<float> Power             = new NetworkVariable<float>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-    public NetworkVariable<float> BufferLimit       = new NetworkVariable<float>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-    public NetworkVariable<float> Buffer            = new NetworkVariable<float>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+    public NetworkVariable<int> ShieldLimit       = new NetworkVariable<int>(0);
+    public NetworkVariable<int> Shield            = new NetworkVariable<int>(0);
+    public NetworkVariable<float> HPLimit           = new NetworkVariable<float>(500);
+    public NetworkVariable<float> HP                = new NetworkVariable<float>(500);
     
     public class AttackerInfo {
         public int ID;
@@ -274,25 +297,18 @@ public class RefereeController : NetworkBehaviour
 
     public Dictionary<int, AttackerInfo> AttackList = new Dictionary<int, AttackerInfo>();
 
-    bool IsOverPower 
-    {
-        get { return Power.Value > PowerLimit.Value; }
-    }
-    
-    void TickPower()
-    {
-        Power.Value = EnergyCtl.GetPower();
-    }
-
     void DamageHandler(int damageType, float damage, int armorID, int attackerID)
     {
         if (!IsServer) return;
 
-        if (AttackList.ContainsKey(attackerID)) 
+        if (attackerID != 0)
         {
-            AttackList[attackerID].resetLastTime();
-        } else {
-            AttackList.Add(attackerID, new AttackerInfo(attackerID));
+            if (AttackList.ContainsKey(attackerID)) 
+            {
+                AttackList[attackerID].resetLastTime();
+            } else {
+                AttackList.Add(attackerID, new AttackerInfo(attackerID));
+            }
         }
 
         float _hp = HP.Value;
@@ -373,6 +389,13 @@ public class RefereeController : NetworkBehaviour
         }
     }
 
+
+    [Header("Revive")]
+    public NetworkVariable<bool> Reviving          = new NetworkVariable<bool>(false);
+    public NetworkVariable<int> MaxReviveProgress = new NetworkVariable<int>(10);
+    public NetworkVariable<int> ReviveProgressPerSec = new NetworkVariable<int>(1);
+    public NetworkVariable<float> CurrentReviveProgress = new NetworkVariable<float>(0);
+
     void TickRevive()
     {
         Debug.Log($"[RefereeController] Revive Progress {CurrentReviveProgress.Value} / {MaxReviveProgress.Value}");
@@ -418,48 +441,38 @@ public class RefereeController : NetworkBehaviour
         Shield.Value = 0;
     }
 
-    // Status
-    public NetworkVariable<bool> Enabled          = new NetworkVariable<bool>(true, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-    public NetworkVariable<bool> Reviving          = new NetworkVariable<bool>(false, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-    public NetworkVariable<int> MaxReviveProgress = new NetworkVariable<int>(10, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-    public NetworkVariable<int> ReviveProgressPerSec = new NetworkVariable<int>(1, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-    public NetworkVariable<float> CurrentReviveProgress = new NetworkVariable<float>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-    public NetworkVariable<bool> Immutable         = new NetworkVariable<bool>(false, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-    public NetworkVariable<int> Warning           = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-    public NetworkVariable<int> OccupiedArea      = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-
     # region Shooter related
     // Shooter Type: 0 - 17mm 1 - 42mm
     // Shooter Mode: 0 - None 1 - Boost 2 - CD 3 - Speed
     public NetworkVariable<bool> ShooterEnabled = new NetworkVariable<bool>(true);
 
     // Shooter 0
-    public NetworkVariable<bool> Shooter0Enabled  = new NetworkVariable<bool>(false, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-    public NetworkVariable<int> Shooter0Type      = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-    public NetworkVariable<int> Shooter0Mode      = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-    public NetworkVariable<float> Heat0Limit        = new NetworkVariable<float>(0f, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-    public NetworkVariable<float> Heat0             = new NetworkVariable<float>(0f, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-    public NetworkVariable<int> CD0               = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-    public NetworkVariable<int> Speed0Limit       = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+    public NetworkVariable<bool> Shooter0Enabled  = new NetworkVariable<bool>(false);
+    public NetworkVariable<int> Shooter0Type      = new NetworkVariable<int>(0);
+    public NetworkVariable<int> Shooter0Mode      = new NetworkVariable<int>(0);
+    public NetworkVariable<float> Heat0Limit        = new NetworkVariable<float>(0f);
+    public NetworkVariable<float> Heat0             = new NetworkVariable<float>(0f);
+    public NetworkVariable<int> CD0               = new NetworkVariable<int>(0);
+    public NetworkVariable<int> Speed0Limit       = new NetworkVariable<int>(0);
      // Shooter 1
-    public NetworkVariable<bool> Shooter1Enabled   = new NetworkVariable<bool>(false, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-    public NetworkVariable<int> Shooter1Type      = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-    public NetworkVariable<int> Shooter1Mode      = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-    public NetworkVariable<float> Heat1Limit        = new NetworkVariable<float>(0f, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-    public NetworkVariable<float> Heat1             = new NetworkVariable<float>(0f, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-    public NetworkVariable<int> CD1               = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-    public NetworkVariable<int> Speed1Limit       = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+    public NetworkVariable<bool> Shooter1Enabled   = new NetworkVariable<bool>(false);
+    public NetworkVariable<int> Shooter1Type      = new NetworkVariable<int>(0);
+    public NetworkVariable<int> Shooter1Mode      = new NetworkVariable<int>(0);
+    public NetworkVariable<float> Heat1Limit        = new NetworkVariable<float>(0f);
+    public NetworkVariable<float> Heat1             = new NetworkVariable<float>(0f);
+    public NetworkVariable<int> CD1               = new NetworkVariable<int>(0);
+    public NetworkVariable<int> Speed1Limit       = new NetworkVariable<int>(0);
 
     // Ammo: 0 - 17mm 1 - 42 mm
     // Ammo0 - 17mm
-    public NetworkVariable<int> ConsumedAmmo0     = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-    public NetworkVariable<int> Ammo0             = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-    public NetworkVariable<int> RealAmmo0         = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+    public NetworkVariable<int> ConsumedAmmo0     = new NetworkVariable<int>(0);
+    public NetworkVariable<int> Ammo0             = new NetworkVariable<int>(0);
+    public NetworkVariable<int> RealAmmo0         = new NetworkVariable<int>(0);
 
     // Ammo1 - 42mm
-    public NetworkVariable<int> ConsumedAmmo1     = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-    public NetworkVariable<int> Ammo1             = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-    public NetworkVariable<int> RealAmmo1         = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+    public NetworkVariable<int> ConsumedAmmo1     = new NetworkVariable<int>(0);
+    public NetworkVariable<int> Ammo1             = new NetworkVariable<int>(0);
+    public NetworkVariable<int> RealAmmo1         = new NetworkVariable<int>(0);
 
 
     void TriggerHandler(int ID, Vector3 Position, Vector3 Velocity)
@@ -660,10 +673,10 @@ public class RefereeController : NetworkBehaviour
 
     #region EXP related
 
-    public NetworkVariable<int> Level             = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-    public NetworkVariable<int> EXP               = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-    public NetworkVariable<int> EXPToNextLevel    = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-    public NetworkVariable<int> EXPValue          = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+    public NetworkVariable<int> Level             = new NetworkVariable<int>(0);
+    public NetworkVariable<int> EXP               = new NetworkVariable<int>(0);
+    public NetworkVariable<int> EXPToNextLevel    = new NetworkVariable<int>(0);
+    public NetworkVariable<int> EXPValue          = new NetworkVariable<int>(0);
     public NetworkVariable<float> TimeToNextEXP = new NetworkVariable<float>(0.0f);
 
     public RobotPerformanceSO ChassisPerformance;

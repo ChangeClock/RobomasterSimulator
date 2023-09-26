@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 3917595213565712216}
   - component: {fileID: 4303221901828124577}
   - component: {fileID: 8155975012937693124}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: DivisionLine
   m_TagString: DivLines
   m_Icon: {fileID: 0}

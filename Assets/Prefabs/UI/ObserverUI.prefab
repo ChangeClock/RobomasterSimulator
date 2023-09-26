@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 7318229915118569611}
   - component: {fileID: 4117618796227465250}
   - component: {fileID: 1122116676327245229}
-  m_Layer: 7
+  m_Layer: 5
   m_Name: BuffInfo
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -87,7 +87,7 @@ GameObject:
   - component: {fileID: 6753400671938594150}
   - component: {fileID: 1218004192471122479}
   - component: {fileID: 125791298708303905}
-  m_Layer: 7
+  m_Layer: 5
   m_Name: Level2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -160,7 +160,7 @@ GameObject:
   - component: {fileID: 7752246769008477086}
   - component: {fileID: 1474015972267735507}
   - component: {fileID: 6020687511101856248}
-  m_Layer: 7
+  m_Layer: 5
   m_Name: DEF
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -233,7 +233,7 @@ GameObject:
   - component: {fileID: 2552556616961407500}
   - component: {fileID: 7911119573170571512}
   - component: {fileID: 8779458302945459491}
-  m_Layer: 7
+  m_Layer: 5
   m_Name: Level3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -306,7 +306,7 @@ GameObject:
   - component: {fileID: 6432409876172411720}
   - component: {fileID: 987193857009189049}
   - component: {fileID: 3125627396998356772}
-  m_Layer: 7
+  m_Layer: 5
   m_Name: LevelInfo
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -385,7 +385,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3175205835123611209}
   - component: {fileID: 8105769288834431389}
-  m_Layer: 7
+  m_Layer: 5
   m_Name: Level0
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -431,7 +431,7 @@ GameObject:
   - component: {fileID: 8466583462263740137}
   - component: {fileID: 5300889247706775284}
   - component: {fileID: 8397375394305061384}
-  m_Layer: 7
+  m_Layer: 5
   m_Name: Text (TMP)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -570,7 +570,7 @@ GameObject:
   - component: {fileID: 3730368842317049299}
   - component: {fileID: 8630752538698019221}
   - component: {fileID: 3913479459875301960}
-  m_Layer: 7
+  m_Layer: 5
   m_Name: ObserverUI
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -741,7 +741,7 @@ GameObject:
   - component: {fileID: 1375014071829531095}
   - component: {fileID: 5192964834575915949}
   - component: {fileID: 6669903896094062261}
-  m_Layer: 7
+  m_Layer: 5
   m_Name: CD
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -814,7 +814,7 @@ GameObject:
   - component: {fileID: 126810551880365081}
   - component: {fileID: 5581296156442222906}
   - component: {fileID: 1370970973563059667}
-  m_Layer: 7
+  m_Layer: 5
   m_Name: ATK
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -887,7 +887,7 @@ GameObject:
   - component: {fileID: 1745995872846505366}
   - component: {fileID: 3054352129657135449}
   - component: {fileID: 828390990105846043}
-  m_Layer: 7
+  m_Layer: 5
   m_Name: ID
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -964,7 +964,7 @@ GameObject:
   - component: {fileID: 3884165620466571162}
   - component: {fileID: 8848896573368352301}
   - component: {fileID: 4792635555583741544}
-  m_Layer: 7
+  m_Layer: 5
   m_Name: HEAL
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1037,7 +1037,7 @@ GameObject:
   - component: {fileID: 613416312512122822}
   - component: {fileID: 2406562964112534634}
   - component: {fileID: 9209719826600199779}
-  m_Layer: 7
+  m_Layer: 5
   m_Name: Level1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1115,7 +1115,7 @@ PrefabInstance:
     - target: {fileID: 1806931625412939003, guid: 33768307be506ab40aa70a1ed941a692,
         type: 3}
       propertyPath: m_Layer
-      value: 7
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 3730641140165116588, guid: 33768307be506ab40aa70a1ed941a692,
         type: 3}
@@ -1225,7 +1225,7 @@ PrefabInstance:
     - target: {fileID: 4283189303945714096, guid: 33768307be506ab40aa70a1ed941a692,
         type: 3}
       propertyPath: m_Layer
-      value: 7
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 8048267184432608501, guid: 33768307be506ab40aa70a1ed941a692,
         type: 3}
@@ -1245,7 +1245,7 @@ PrefabInstance:
     - target: {fileID: 8311582209535507407, guid: 33768307be506ab40aa70a1ed941a692,
         type: 3}
       propertyPath: m_Layer
-      value: 7
+      value: 5
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

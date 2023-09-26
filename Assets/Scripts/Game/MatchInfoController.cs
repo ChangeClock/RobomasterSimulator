@@ -1,8 +1,9 @@
 using System;
+using Unity.Netcode;
 using UnityEngine;
 using TMPro;
 
-public class MatchInfoController : MonoBehaviour
+public class MatchInfoController : NetworkBehaviour
 {
     private GameManager gameManager;
 
@@ -28,6 +29,9 @@ public class MatchInfoController : MonoBehaviour
     
     [SerializeField] private TMP_Text RedCoin;
     [SerializeField] private TMP_Text BlueCoin;
+
+    [SerializeField] private MapController MiniMap;
+    [SerializeField] private Faction userBelong = Faction.Neu;
 
     void Start()
     {
@@ -94,5 +98,30 @@ public class MatchInfoController : MonoBehaviour
         //     ObserverUI.SetLevelInfo(true, Level.Value);
         //     ObserverUI.SetBuff(ATKBuff.Value>0, CDBuff.Value>0, DEFBuff.Value>0, HealBuff.Value>0);
         // }
+
+        // Update Mini Map
+        if (NetworkManager.Singleton.LocalClient.PlayerObject != null) 
+        {
+            if (NetworkManager.Singleton.LocalClient.PlayerObject.TryGetComponent<RefereeController>(out RefereeController referee))
+            {
+                userBelong = referee.faction.Value;
+            } else {
+                userBelong = Faction.Neu;
+            }
+        }
+
+        foreach (var _unit in gameManager.RefereeControllerList.Values)
+        {
+            if (_unit.robotTags.Contains(RobotTag.Building)) continue;
+
+            // Debug.Log($"[MatchInfo] userBelong {userBelong} _unit faction {_unit.faction}");
+
+            if (userBelong == Faction.Neu || userBelong == _unit.faction.Value)
+            {
+                // Debug.Log($"[MatchInfo] Position {_unit.Position}");
+                // Debug.Log($"[MatchInfo] Direction {_unit.Direction}");
+                MiniMap.SetPoint(_unit.RobotID.Value, _unit.Position, - _unit.Direction);
+            }
+        }
     }
 }

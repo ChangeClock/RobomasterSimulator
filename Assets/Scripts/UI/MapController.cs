@@ -51,7 +51,7 @@ public class MapController : MonoBehaviour
         }
     }
 
-    public void SetPoint(int id, Vector2 location, float direction)
+    public void SetPoint(int id, Faction faction, Vector2 location, float direction)
     {
         if (!UnitPoints.ContainsKey(id))
         {
@@ -65,5 +65,7 @@ public class MapController : MonoBehaviour
         UnitPoints[id].point.GetComponent<RectTransform>().anchoredPosition = location;
         // Debug.Log($"[MapController] Position {UnitPoints[id].point.transform.position}");
         UnitPoints[id].point.GetComponent<UnitPointController>().SetDirection(direction);
+
+        UnitPoints[id].point.GetComponent<UnitPointController>().SetColor(faction == Faction.Red ? Color.red : Color.blue);
     }
 }

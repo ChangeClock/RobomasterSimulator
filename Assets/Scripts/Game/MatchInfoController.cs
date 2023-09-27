@@ -120,7 +120,7 @@ public class MatchInfoController : NetworkBehaviour
             {
                 // Debug.Log($"[MatchInfo] Position {_unit.Position}");
                 // Debug.Log($"[MatchInfo] Direction {_unit.Direction}");
-                MiniMap.SetPoint(_unit.RobotID.Value, _unit.Position, - _unit.Direction);
+                MiniMap.SetPoint(_unit.RobotID.Value, _unit.faction.Value, _unit.Position, - _unit.Direction);
             }
         }
     }

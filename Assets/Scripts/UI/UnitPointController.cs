@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using UnityEngine.UI;
 using TMPro;
 
 public class UnitPointController : MonoBehaviour 
@@ -24,6 +25,12 @@ public class UnitPointController : MonoBehaviour
             Sentry.SetActive(false);
             ID.text = id.ToString();
         }
+    }
+
+    public void SetColor(Color color)
+    {
+        gameObject.GetComponent<RawImage>().color = color;
+        Arrow.GetComponent<RawImage>().color = color;
     }
 
     public void SetDirection(float angle)

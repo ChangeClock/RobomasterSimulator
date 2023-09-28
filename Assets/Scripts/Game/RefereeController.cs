@@ -36,6 +36,7 @@ public class RefereeController : NetworkBehaviour
     private ShooterController[] Shooters;
     private RFIDController RFID;
     private LightbarController LightBar;
+    private UWBController UWB;
     private FPVController FPVCamera;
     private EnergyController EnergyCtl;
 
@@ -113,6 +114,8 @@ public class RefereeController : NetworkBehaviour
         if (RFID != null) RFID.OnDetect += DetectHandler;
 
         LightBar = this.gameObject.GetComponentInChildren<LightbarController>();
+    
+        UWB = this.gameObject.GetComponentInChildren<UWBController>();
     }
 
     void OnDisable()
@@ -165,6 +168,7 @@ public class RefereeController : NetworkBehaviour
                         break;
                 }
             }
+            _counter++;
         }
 
         // TODO: need to sync the disable status to control the light
@@ -180,13 +184,17 @@ public class RefereeController : NetworkBehaviour
             LightBar.Warning = Warning.Value;
             LightBar.LightColor = faction.Value == Faction.Red ? 1 : 2;
         }
+
+        if (UWB != null)
+        {
+            // Debug.Log($"[RefereeController] {UWB.Position}, {UWB.Direction}");
+            Position = UWB.Position;
+            Direction = UWB.Direction;
+        }
     }
 
     private void FixedUpdate() 
     {
-        Position = new Vector2(gameObject.transform.position.x, gameObject.transform.position.z);
-        Direction = gameObject.transform.eulerAngles.y;
-
         if (IsOwner)
         {
             if (robotController != null)
@@ -204,8 +212,8 @@ public class RefereeController : NetworkBehaviour
                 FPVCamera.SetHPLimit(HPLimit.Value);
                 FPVCamera.SetHP(HP.Value);
 
-                FPVCamera.SetHeatLimit(Heat0Limit.Value, Heat1Limit.Value);
-                FPVCamera.SetHeat(Heat0.Value, Heat1.Value);
+                FPVCamera.SetHeat0(Heat0.Value, Heat0Limit.Value);
+                FPVCamera.SetHeat1(Heat1.Value, Heat1Limit.Value);
                 FPVCamera.SetAmmo(Shooter0Type.Value == 0? ConsumedAmmo0.Value : ConsumedAmmo1.Value, Shooter0Type.Value == 0? Ammo0.Value : Ammo1.Value, Shooter1Type.Value == 0? ConsumedAmmo0.Value : ConsumedAmmo1.Value, Shooter1Type.Value == 0? Ammo0.Value : Ammo1.Value);
 
                 FPVCamera.SetHealBuff(HealBuff.Value > 0, HealBuff.Value);

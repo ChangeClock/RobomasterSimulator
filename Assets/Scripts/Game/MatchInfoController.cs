@@ -32,6 +32,7 @@ public class MatchInfoController : NetworkBehaviour
 
     [SerializeField] private MapController MiniMap;
     [SerializeField] private Faction userBelong = Faction.Neu;
+    [SerializeField] private int userID = 0;
 
     void Start()
     {
@@ -105,8 +106,10 @@ public class MatchInfoController : NetworkBehaviour
             if (NetworkManager.Singleton.LocalClient.PlayerObject.TryGetComponent<RefereeController>(out RefereeController referee))
             {
                 userBelong = referee.faction.Value;
+                userID = referee.RobotID.Value;
             } else {
                 userBelong = Faction.Neu;
+                userID = 0;
             }
         }
 
@@ -116,7 +119,10 @@ public class MatchInfoController : NetworkBehaviour
 
             // Debug.Log($"[MatchInfo] userBelong {userBelong} _unit faction {_unit.faction}");
 
-            if (userBelong == Faction.Neu || userBelong == _unit.faction.Value)
+            if (userBelong == _unit.faction.Value && userID == _unit.RobotID.Value)
+            {
+                MiniMap.SetPoint(_unit.RobotID.Value, Faction.Self, _unit.Position, - _unit.Direction);
+            } else if (userBelong == Faction.Neu || userBelong == _unit.faction.Value)
             {
                 // Debug.Log($"[MatchInfo] Position {_unit.Position}");
                 // Debug.Log($"[MatchInfo] Direction {_unit.Direction}");

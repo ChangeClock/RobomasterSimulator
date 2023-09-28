@@ -147,6 +147,9 @@ public class FPVController : MonoBehaviour
     [SerializeField] private TextMeshProUGUI Shooter1Ammo;
     [SerializeField] private BarController Shooter1Heat;
 
+    [SerializeField] private GameObject BlurBackground;
+    [SerializeField] private GameObject OverHeat;
+
     public void SetShooterInfo(bool Shooter0Enable, bool Shooter1Enable)
     {
         Shooter0Info.SetActive(Shooter0Enable);
@@ -159,15 +162,26 @@ public class FPVController : MonoBehaviour
         Shooter1Ammo.text = shooter1Ammo.ToString() + "/" + shooter1AmmoLimit.ToString();
     }
 
-    public void SetHeat(float heat0, float heat1)
+    public void SetHeat0(float heat0, float limit0)
     {
         Shooter0Heat.SetValue(heat0);
-        Shooter1Heat.SetValue(heat1);
+        Shooter0Heat.SetMaxValue(limit0);
+        if (heat0 < limit0 / 2)
+        {
+            Shooter0Heat.SetColor(Color.white);
+        } else if (heat0 >= limit0 / 2 && heat0 < limit0 * 3/4) {
+            Shooter0Heat.SetColor(Color.yellow);
+        } else {
+            Shooter0Heat.SetColor(Color.red);
+        }
+
+        BlurBackground.SetActive(heat0 > limit0);
+        OverHeat.SetActive(heat0 > limit0);
     }
 
-    public void SetHeatLimit(float limit0, float limit1)
+    public void SetHeat1(float heat1, float limit1)
     {
-        Shooter0Heat.SetMaxValue(limit0);
+        Shooter1Heat.SetValue(heat1);
         Shooter1Heat.SetMaxValue(limit1);
     }
 

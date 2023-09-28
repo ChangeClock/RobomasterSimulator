@@ -66,6 +66,19 @@ public class MapController : MonoBehaviour
         // Debug.Log($"[MapController] Position {UnitPoints[id].point.transform.position}");
         UnitPoints[id].point.GetComponent<UnitPointController>().SetDirection(direction);
 
-        UnitPoints[id].point.GetComponent<UnitPointController>().SetColor(faction == Faction.Red ? Color.red : Color.blue);
+        switch (faction)
+        {
+            case Faction.Self:
+                UnitPoints[id].point.GetComponent<UnitPointController>().SetColor(Color.green);
+                break;
+            case Faction.Red:
+                UnitPoints[id].point.GetComponent<UnitPointController>().SetColor(Color.red);
+                break;
+            case Faction.Blue:
+                UnitPoints[id].point.GetComponent<UnitPointController>().SetColor(Color.blue);
+                break;
+            default:
+                break;
+        }
     }
 }

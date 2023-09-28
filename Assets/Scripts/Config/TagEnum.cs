@@ -2,6 +2,7 @@ public enum Faction
 {
     Red,
     Blue,
+    Self,
     Neu,
 }
 

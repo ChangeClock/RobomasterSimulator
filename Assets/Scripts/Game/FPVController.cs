@@ -1,21 +1,31 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using UnityEngine.Networking;
 using TMPro;
 
 public class FPVController : MonoBehaviour
 {
+    private RefereeController referee;
+
     [SerializeField] private Camera FPVCamera;
     [SerializeField] private GameObject PlayerUI;
 
-    // This is used to disable vision on Aero side
-    [SerializeField] public bool Enabled = true;
-    [SerializeField] public int Warning = 0;
-
     void Start()
     {
+        referee = gameObject.GetComponentInParent<RefereeController>();
     
+        if (referee != null)
+        {
+            PurchaseRevive.onClick.AddListener(() => referee.Revive(1));
+            FreeRevive.onClick.AddListener(() => referee.Revive(0));
+        }
+    }
+
+    void OnEnable()
+    {
+        
     }
 
     // Update is called once per frame
@@ -29,6 +39,24 @@ public class FPVController : MonoBehaviour
         FPVCamera.enabled = true;
         PlayerUI.SetActive(true);
     }
+
+    // // Vision and Warning status
+    // [SerializeField] private GameObject OverLay;
+    // [SerializeField] private GameObject Info;
+    // [SerializeField] private RawImage InfoBackground;
+    // [SerializeField] private TextMeshProUGUI InfoContent;
+
+    // // 1: 黄牌
+    // public void SetWarning(int mode, Faction faction, int id, )
+    // {
+    //     OverLay.SetActive(enable);
+    //     if ()
+    // }
+
+    // public void SetVision(bool enable)
+    // {
+    //     OverLay.SetActive(enable);
+    // }
 
     #region RoleStatus
 
@@ -70,6 +98,51 @@ public class FPVController : MonoBehaviour
     {
         HPLimit.text = hplimit.ToString("N0");
         HPBar.SetMaxValue(hplimit);
+    }
+
+    #endregion
+
+    #region ReviveStatus 
+
+    [SerializeField] private GameObject GrayScale;
+    [SerializeField] private GameObject ReviveWindow;
+    [SerializeField] private TextMeshProUGUI TimeToRevive;
+    [SerializeField] private Slider ReviveProgress;
+    [SerializeField] private TextMeshProUGUI RevivePrice;
+    [SerializeField] private GameObject PayRevivePrice;
+    [SerializeField] private GameObject InsufficientFund;
+    [SerializeField] private Button PurchaseRevive;
+    [SerializeField] private Button FreeRevive;
+
+    public void SetGreyScale(bool enable)
+    {
+        GrayScale.SetActive(enable);
+    }
+
+    public void SetReviveWindow(bool enable)
+    {
+        ReviveWindow.SetActive(enable);
+    }
+
+    public void SetReviveProgress(float current, float max, float time)
+    {
+        ReviveProgress.maxValue = max;
+        ReviveProgress.value = current;
+        TimeToRevive.text = time.ToString("N0");
+    }
+
+    public void SetPurchaseRevive(bool enable, int price)
+    {
+        RevivePrice.text = price.ToString();
+
+        PurchaseRevive.interactable = enable;
+        PayRevivePrice.SetActive(enable);
+        InsufficientFund.SetActive(!enable);
+    }
+
+    public void SetFreeRevive(bool enable)
+    {
+        FreeRevive.interactable = enable;
     }
 
     #endregion

@@ -47,6 +47,7 @@ public class RefereeController : NetworkBehaviour
 
     [Header("Player")]
     private RobotController robotController;
+    private StarterAssetsInputs playerInput;
 
     public override void OnNetworkSpawn()
     {
@@ -63,6 +64,8 @@ public class RefereeController : NetworkBehaviour
 
             robotController = this.gameObject.GetComponent<RobotController>();
             robotController.Enabled = true;
+
+            playerInput = this.gameObject.GetComponent<StarterAssetsInputs>();
         
             FPVCamera = this.gameObject.GetComponentInChildren<FPVController>();
             
@@ -201,16 +204,24 @@ public class RefereeController : NetworkBehaviour
             {
                 robotController.Enabled = Enabled.Value;
             }
+
+            if (playerInput != null)
+            {
+                playerInput.cursorLocked = Enabled.Value;
+            }
                 
             if (FPVCamera != null)
             {
-                FPVCamera.Enabled = Enabled.Value;
-                FPVCamera.Warning = Warning.Value;
-
                 FPVCamera.SetRoleInfo(faction.Value, RobotID.Value);
 
                 FPVCamera.SetHPLimit(HPLimit.Value);
                 FPVCamera.SetHP(HP.Value);
+
+                FPVCamera.SetGreyScale(!Enabled.Value);
+                FPVCamera.SetReviveWindow(Reviving.Value);
+                FPVCamera.SetReviveProgress(CurrentReviveProgress.Value, MaxReviveProgress.Value, (MaxReviveProgress.Value - CurrentReviveProgress.Value) / ReviveProgressPerSec.Value);
+                // FPVCamera.SetPurchaseRevive();
+                FPVCamera.SetFreeRevive(CurrentReviveProgress.Value >= MaxReviveProgress.Value);
 
                 FPVCamera.SetHeat0(Heat0.Value, Heat0Limit.Value);
                 FPVCamera.SetHeat1(Heat1.Value, Heat1Limit.Value);
@@ -343,6 +354,8 @@ public class RefereeController : NetworkBehaviour
 
             if (DEFBuff.Value > 0) _damage = _damage * (1 - DEFBuff.Value / 100);
 
+            // TODO: Real Damage
+
             if (_hp - _damage <= 0)
             {
                 HP.Value = 0;
@@ -406,20 +419,36 @@ public class RefereeController : NetworkBehaviour
 
     void TickRevive()
     {
-        Debug.Log($"[RefereeController] Revive Progress {CurrentReviveProgress.Value} / {MaxReviveProgress.Value}");
+        // Debug.Log($"[RefereeController] Revive Progress {CurrentReviveProgress.Value} / {MaxReviveProgress.Value}");
 
-        CurrentReviveProgress.Value += ReviveProgressPerSec.Value * Time.deltaTime;
+        if (CurrentReviveProgress.Value < MaxReviveProgress.Value) CurrentReviveProgress.Value += ReviveProgressPerSec.Value * Time.deltaTime;
+    }
 
-        if (CurrentReviveProgress.Value >= MaxReviveProgress.Value)
+    public void Revive(int mode)
+    {
+        ReviveServerRPC(mode);
+    }
+
+    [ServerRpc]
+    void ReviveServerRPC(int mode, ServerRpcParams serverRpcParams = default)
+    {
+        switch (mode)
         {
-            Debug.Log($"Robot {RobotID.Value} revived!");
-            Reviving.Value = false;
-            CurrentReviveProgress.Value = 0;
-            HP.Value = HPLimit.Value * 10 / 100;
-            Enabled.Value = true;
+            case 0:
+                if (CurrentReviveProgress.Value < MaxReviveProgress.Value) return;
+                
+                Reviving.Value = false;
+                CurrentReviveProgress.Value = 0;
+                HP.Value = HPLimit.Value * 10 / 100;
+                Enabled.Value = true;
 
-            OnRevived(RobotID.Value);
-            // AddBuff(ReviveBuff);
+                OnRevived(RobotID.Value);
+                break;
+            case 1:
+                // TODO: Pay to win
+                break;
+            default:
+                break;
         }
     }
 
@@ -712,9 +741,9 @@ public class RefereeController : NetworkBehaviour
         if (EXP.Value >= EXPInfo.expToNextLevel[Level.Value] && EXPInfo.expToNextLevel[Level.Value] >= 0)
         {
             // Don't zero the current EXP, just minus the EXP needed to next level
-            EXPToNextLevel.Value = EXPInfo.expToNextLevel[Level.Value];
             EXP.Value -= EXPInfo.expToNextLevel[Level.Value];
             Level.Value += 1;
+            EXPToNextLevel.Value = EXPInfo.expToNextLevel[Level.Value];
 
             EXPValue.Value = EXPInfo.expValue[Level.Value];
 

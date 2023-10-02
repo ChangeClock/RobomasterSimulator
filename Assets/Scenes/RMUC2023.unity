@@ -1240,6 +1240,11 @@ PrefabInstance:
       propertyPath: m_TagString
       value: Ground
       objectReference: {fileID: 0}
+    - target: {fileID: 6220863064758060534, guid: 936e51ca6ceaa2649816feed50cfedb8,
+        type: 3}
+      propertyPath: 'damage.Array.data[2]'
+      value: 300
+      objectReference: {fileID: 0}
     - target: {fileID: 6706196871322063457, guid: 936e51ca6ceaa2649816feed50cfedb8,
         type: 3}
       propertyPath: m_ConnectedAnchor.x

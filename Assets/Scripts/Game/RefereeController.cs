@@ -649,6 +649,8 @@ public class RefereeController : NetworkBehaviour
 
         BuffEffectSO newBuffStat = Instantiate(defaultBuff);
 
+        Debug.Log($"[RefereeController] activeBuff Counts {activeBuffs.Count}");
+
         if (activeBuffs.Count > 0)
         {
             var _activeBuffsCache = activeBuffs.Values;

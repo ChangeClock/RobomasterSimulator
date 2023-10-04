@@ -16,7 +16,6 @@ public class ClassSelectionMenu : MonoBehaviour
     [SerializeField] private Button[] Oberver;
 
     // [SerializeField] public NetworkPrefabsList[] prefabList;
-    [SerializeField] public GameObject[] prefabList;
 
     void Start()
     {

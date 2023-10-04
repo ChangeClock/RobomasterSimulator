@@ -9,6 +9,9 @@ public class SpawnManager : NetworkBehaviour
     
     [SerializeField] public GameObject[] prefabList;
 
+    [SerializeField] private Transform[] redSpawnPoints;
+    [SerializeField] private Transform[] blueSpawnPoints;
+
     void Start()
     {
 
@@ -25,13 +28,13 @@ public class SpawnManager : NetworkBehaviour
         switch(role)
         {
             case 1:
-                player = Instantiate(prefabList[id+1], Vector3.right * -110 + Vector3.up * 5, Quaternion.identity);
+                player = Instantiate(prefabList[id+1], redSpawnPoints[id].position, redSpawnPoints[id].rotation);
                 referee = player.GetComponent<RefereeController>();
                 referee.RobotID.Value = id + 1;
                 referee.faction.Value = Faction.Red;
                 break;
             case 2:
-                player = Instantiate(prefabList[id+1], Vector3.right * -110 + Vector3.up * 5, Quaternion.identity);
+                player = Instantiate(prefabList[id+1], blueSpawnPoints[id].position, blueSpawnPoints[id].rotation);
                 referee = player.GetComponent<RefereeController>();
                 referee.RobotID.Value = id + 21;
                 referee.faction.Value = Faction.Blue;

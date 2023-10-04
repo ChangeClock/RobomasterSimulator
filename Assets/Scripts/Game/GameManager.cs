@@ -39,6 +39,8 @@ public class GameManager : NetworkBehaviour
     [SerializeField] private RobotPerformanceSO SentryPerformance;
 
     [Header("Buff")]
+    [SerializeField] private BuffEffectSO DefaultBuff;
+    [SerializeField] private BuffEffectSO SentryDefaultBuff;
     [SerializeField] private BuffEffectSO ReviveBuff;
     [SerializeField] private BuffEffectSO PurchaseReviveBuff;
 
@@ -199,6 +201,14 @@ public class GameManager : NetworkBehaviour
                 Debug.Log($"[GameManager] {robotID} referee added to gamemanager");
                 RefereeControllerList.Add(_referee.RobotID.Value, _referee);
                 
+                if (_referee.robotClass.Value == RobotClass.Sentry)
+                {
+                    _referee.defaultBuff = SentryDefaultBuff;
+                } else if (!_referee.robotTags.Contains(RobotTag.Building))
+                {
+                    _referee.defaultBuff = DefaultBuff;
+                }
+
                 ChangePerformanceServerRpc(robotID);
 
                 return;

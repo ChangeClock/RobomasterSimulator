@@ -45,7 +45,7 @@ public class AreaController : NetworkBehaviour
             {
                 foreach (var _buff in BuffList)
                 {
-                    if (_buff.buffDuration > 0.0f)
+                    if (_buff.buffDuration >= 0.0f)
                     {
                         _referee.AddBuff(_buff);
                     }

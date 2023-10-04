@@ -1113,10 +1113,42 @@ MonoBehaviour:
   RedSentry: {fileID: 0}
   BlueSentry: {fileID: 0}
   HasFirstBlood: 0
+  HeroExpInfo: {fileID: 11400000, guid: 4d42d946df5a8f74f904dc57a42e9709, type: 2}
+  InfantryExpInfo: {fileID: 11400000, guid: 6985133290e676344a9bb852606b6ce0, type: 2}
+  EngineerExpInfo: {fileID: 11400000, guid: 7723b419b52ed2a42ba413a7a285e4c2, type: 2}
+  SentryExpInfo: {fileID: 11400000, guid: 019fde6af1b252941904248d1339ba1a, type: 2}
+  HeroChassisPerformance:
+  - {fileID: 11400000, guid: 6a8a221461b85b749bc11f6e88d456ba, type: 2}
+  - {fileID: 11400000, guid: 35083ab94b1b038488111fa4d78012aa, type: 2}
+  GimbalPerformance_17mm:
+  - {fileID: 11400000, guid: 89fdd6d4545f6844da665850b4749428, type: 2}
+  - {fileID: 11400000, guid: bf15ef93232f7384d8a60e24fff131ac, type: 2}
+  - {fileID: 11400000, guid: 6c9527cb7cce8874a8a33992bc6dcf90, type: 2}
+  InfantryChassisPerformance:
+  - {fileID: 11400000, guid: 85b84e66c86486e45a888629e6ffb9cc, type: 2}
+  - {fileID: 11400000, guid: 996ef31c89685894089f56be6b8e6577, type: 2}
+  - {fileID: 11400000, guid: 0229b9700e6158d488fdbe3863268c73, type: 2}
+  GimbalPerformance_42mm:
+  - {fileID: 11400000, guid: b798f5a26b584cf48a6f51cf7da4794a, type: 2}
+  - {fileID: 11400000, guid: 8bbffe397f03ccf42a4807e4696615b3, type: 2}
+  EngineerPerformance: {fileID: 11400000, guid: 059b25e907ec03c4cb0d722a375d2c3c,
+    type: 2}
+  SentryPerformance: {fileID: 11400000, guid: 5ad5b6398b39426479b77a63baaf8bad, type: 2}
   ReviveBuff: {fileID: 11400000, guid: 4b060836a2d65814ebccca40134036a4, type: 2}
   PurchaseReviveBuff: {fileID: 0}
   RedPatrolPoints: []
   BluePatrolPoints: []
+  RedRepairStation: {fileID: 0}
+  RedSilverMinePoint: {fileID: 0}
+  RedGoldMinePoint: {fileID: 0}
+  BlueRepairStation: {fileID: 0}
+  BlueSilverMinePoint: {fileID: 0}
+  BlueGoldMinePoint: {fileID: 0}
+  RedCoin:
+    m_InternalValue: 0
+  BlueCoin:
+    m_InternalValue: 0
+  HasFirstGold: 0
 --- !u!4 &405277223
 Transform:
   m_ObjectHideFlags: 0

@@ -12,9 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3449f0b231aa6d649b93f3ae28d67858, type: 3}
   m_Name: Infantry-Balance
   m_EditorClassIdentifier: 
-  maxHealth: []
-  maxLinearVelocity: []
-  maxAngularVelocity: []
-  maxHeat: []
-  cooldown: []
-  projectileVelocity: []
+  maxHealth:
+  - 300
+  - 400
+  - 500
+  maxPower: 3c0000005000000064000000
+  maxHeat: 
+  coolDown: 
+  shootSpeed: 

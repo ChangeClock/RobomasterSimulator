@@ -12,6 +12,9 @@ public class RefereeController : NetworkBehaviour
     public delegate void SpawnAction(int robotID);
     public static event SpawnAction OnSpawn;
 
+    // public delegate void LevelupAction(int robotID);
+    // public static event LevelupAction OnLevelup;
+
     public delegate void DamageAction(int damageType, float damage, int armorID, int attackerID,int robotID);
     public static event DamageAction OnDamage;
 
@@ -33,7 +36,7 @@ public class RefereeController : NetworkBehaviour
     [Header("Referee")]
     [SerializeField]private GameObject FPV;
     private ArmorController[] Armors;
-    private ShooterController[] Shooters;
+    public Dictionary<int, ShooterController> ShooterControllerList = new Dictionary<int, ShooterController>();
     private RFIDController RFID;
     private LightbarController LightBar;
     private UWBController UWB;
@@ -51,37 +54,56 @@ public class RefereeController : NetworkBehaviour
 
     public override void OnNetworkSpawn()
     {
-        if (IsServer)
-        {
-            EXPToNextLevel.Value = EXPInfo.expToNextLevel[Level.Value];
-            EXPValue.Value = EXPInfo.expValue[Level.Value];
-        }
-
         // Debug.Log("Client:" + NetworkManager.Singleton.LocalClientId + "IsOwner?" + IsOwner);
         if (IsOwner) 
         {
-            FPV.SetActive(true);
+            if (!robotTags.Contains(RobotTag.Building)) FPV.SetActive(true);
+
+            ShooterController[] Shooters = this.gameObject.GetComponentsInChildren<ShooterController>();
+            foreach(var _shooter in Shooters)
+            {
+                if(_shooter != null)
+                {
+                    int id = _shooter.ID;
+                    bool enabled = _shooter.Enabled.Value;
+
+                    if (ShooterControllerList.ContainsKey(id))
+                    {
+                        Debug.LogError("[RefereeController] Duplicated shooter id!");
+                        continue;
+                    }
+
+                    ShooterControllerList.Add(id, _shooter);
+
+                    _shooter.gameObject.GetComponent<NetworkObject>().SpawnAsPlayerObject(this.gameObject.GetComponent<NetworkObject>().OwnerClientId);
+                    _shooter.Enabled.Value = enabled;
+                    _shooter.OnTrigger += TriggerHandler;
+                }
+            }
 
             robotController = this.gameObject.GetComponent<RobotController>();
-            robotController.Enabled = true;
+            if (robotController != null) robotController.Enabled = true;
 
             playerInput = this.gameObject.GetComponent<StarterAssetsInputs>();
         
             FPVCamera = this.gameObject.GetComponentInChildren<FPVController>();
-            
-            FPVCamera.SetShooterInfo(Shooter0Enabled.Value, Shooter1Enabled.Value);
-            
-            FPVCamera.TurnOnCamera();
+            if (FPVCamera != null)
+            {
+                FPVCamera.TurnOnCamera();
+                FPVCamera.SetRoleInfo(faction.Value, RobotID.Value);
+            }
+        }
 
-            FPVCamera.SetRoleInfo(faction.Value, RobotID.Value);
+        if (IsServer)
+        {
+            OnSpawn(RobotID.Value);
+            Debug.Log($"[RefereeController] {RobotID.Value} Spawned");
         }
     }
 
     void Start()
     {
         if (!IsServer) return;
-        Debug.Log($"[RefereeController] {RobotID.Value} Spawned");
-        OnSpawn(RobotID.Value);
     }
 
     void OnEnable()
@@ -97,8 +119,7 @@ public class RefereeController : NetworkBehaviour
             }
         }
 
-        Shooters = this.gameObject.GetComponentsInChildren<ShooterController>();
-        foreach(ShooterController _shooter in Shooters)
+        foreach(var _shooter in ShooterControllerList.Values)
         {
             if(_shooter != null)
             {
@@ -129,7 +150,7 @@ public class RefereeController : NetworkBehaviour
             _armor.OnHit -= DamageHandler;
         }
 
-        foreach(ShooterController _shooter in Shooters)
+        foreach(ShooterController _shooter in ShooterControllerList.Values)
         {
             if(_shooter != null)
             {
@@ -150,28 +171,6 @@ public class RefereeController : NetworkBehaviour
                 _armor.Enabled = Enabled.Value;
                 _armor.LightColor = faction.Value == Faction.Red ? 1 : 2;
             }
-        }
-
-        // TODO: Need to sync the heat
-        int _counter = 0;
-        foreach(ShooterController _shooter in Shooters)
-        {
-            if(_shooter != null)
-            {
-                switch(_counter)
-                {
-                    case 0:
-                        _shooter.SetEnabled(Shooter0Enabled.Value);
-                        break;
-                    case 1:
-                        _shooter.SetEnabled(Shooter1Enabled.Value);
-                        break;
-                    default:
-                        Debug.LogError("Unknown shooter ID");
-                        break;
-                }
-            }
-            _counter++;
         }
 
         // TODO: need to sync the disable status to control the light
@@ -223,9 +222,26 @@ public class RefereeController : NetworkBehaviour
                 // FPVCamera.SetPurchaseRevive();
                 FPVCamera.SetFreeRevive(CurrentReviveProgress.Value >= MaxReviveProgress.Value);
 
-                FPVCamera.SetHeat0(Heat0.Value, Heat0Limit.Value);
-                FPVCamera.SetHeat1(Heat1.Value, Heat1Limit.Value);
-                FPVCamera.SetAmmo(Shooter0Type.Value == 0? ConsumedAmmo0.Value : ConsumedAmmo1.Value, Shooter0Type.Value == 0? Ammo0.Value : Ammo1.Value, Shooter1Type.Value == 0? ConsumedAmmo0.Value : ConsumedAmmo1.Value, Shooter1Type.Value == 0? Ammo0.Value : Ammo1.Value);
+                // FPVCamera.SetHeat0(Heat0.Value, Heat0Limit.Value);
+                // FPVCamera.SetHeat1(Heat1.Value, Heat1Limit.Value);
+                // FPVCamera.SetAmmo(Shooter0Type.Value == 0? ConsumedAmmo0.Value : ConsumedAmmo1.Value, Shooter0Type.Value == 0? Ammo0.Value : Ammo1.Value, Shooter1Type.Value == 0? ConsumedAmmo0.Value : ConsumedAmmo1.Value, Shooter1Type.Value == 0? Ammo0.Value : Ammo1.Value);
+
+                foreach (var _shooter in ShooterControllerList.Values)
+                {
+                    if (!_shooter.Enabled.Value) continue;
+
+                    switch (_shooter.Mode.Value)
+                    {
+                        case 0:
+                            _shooter.SetAmmo(ConsumedAmmo0.Value, Ammo0.Value);
+                            break;
+                        case 1:
+                            _shooter.SetAmmo(ConsumedAmmo1.Value, Ammo1.Value);
+                            break;
+                        default:
+                            break;
+                    }
+                }
 
                 FPVCamera.SetHealBuff(HealBuff.Value > 0, HealBuff.Value);
                 FPVCamera.SetDEFBuff(DEFBuff.Value > 0, DEFBuff.Value);
@@ -272,6 +288,7 @@ public class RefereeController : NetworkBehaviour
     public NetworkVariable<bool> Immutable         = new NetworkVariable<bool>(false);
     public NetworkVariable<int> Warning           = new NetworkVariable<int>(0);
     public NetworkVariable<int> OccupiedArea      = new NetworkVariable<int>(0);
+    
     public Vector2 Position = Vector2.zero;
     public float Direction = 0f;
 
@@ -289,6 +306,19 @@ public class RefereeController : NetworkBehaviour
     void TickPower()
     {
         Power.Value = EnergyCtl.GetPower();
+        float overPowerK = (Power.Value - PowerLimit.Value) / PowerLimit.Value;
+        float timeScale = Time.deltaTime / 0.1f;
+
+        if (overPowerK <= 0.1f & overPowerK > 0)
+        {
+            RefereeDamage(0.1f * HPLimit.Value * timeScale);
+        } else if (overPowerK <= 0.2f & overPowerK > 0.1f)
+        {
+            RefereeDamage(0.2f * HPLimit.Value * timeScale);
+        } else if (overPowerK > 0.2f)
+        {
+            RefereeDamage(0.4f * HPLimit.Value * timeScale);
+        }
     }
 
     [Header("Health")]
@@ -340,8 +370,11 @@ public class RefereeController : NetworkBehaviour
                 case 1:
                 case 2:
                     // TODO: 42mm sniper doesn't get affected by atkBuff
-                    int atkBuff = gameManager.RefereeControllerList[attackerID].ATKBuff.Value;
-                    if (atkBuff > 0) _damage = _damage * atkBuff;
+                    if (gameManager.RefereeControllerList.ContainsKey(attackerID))
+                    {
+                        int atkBuff = gameManager.RefereeControllerList[attackerID].ATKBuff.Value;
+                        if (atkBuff > 0) _damage = _damage * atkBuff;
+                    }
 
                     break;
                 case 3:
@@ -409,7 +442,6 @@ public class RefereeController : NetworkBehaviour
             }
         }
     }
-
 
     [Header("Revive")]
     public NetworkVariable<bool> Reviving          = new NetworkVariable<bool>(false);
@@ -483,23 +515,6 @@ public class RefereeController : NetworkBehaviour
     // Shooter Mode: 0 - None 1 - Boost 2 - CD 3 - Speed
     public NetworkVariable<bool> ShooterEnabled = new NetworkVariable<bool>(true);
 
-    // Shooter 0
-    public NetworkVariable<bool> Shooter0Enabled  = new NetworkVariable<bool>(false);
-    public NetworkVariable<int> Shooter0Type      = new NetworkVariable<int>(0);
-    public NetworkVariable<int> Shooter0Mode      = new NetworkVariable<int>(0);
-    public NetworkVariable<float> Heat0Limit        = new NetworkVariable<float>(0f);
-    public NetworkVariable<float> Heat0             = new NetworkVariable<float>(0f);
-    public NetworkVariable<int> CD0               = new NetworkVariable<int>(0);
-    public NetworkVariable<int> Speed0Limit       = new NetworkVariable<int>(0);
-     // Shooter 1
-    public NetworkVariable<bool> Shooter1Enabled   = new NetworkVariable<bool>(false);
-    public NetworkVariable<int> Shooter1Type      = new NetworkVariable<int>(0);
-    public NetworkVariable<int> Shooter1Mode      = new NetworkVariable<int>(0);
-    public NetworkVariable<float> Heat1Limit        = new NetworkVariable<float>(0f);
-    public NetworkVariable<float> Heat1             = new NetworkVariable<float>(0f);
-    public NetworkVariable<int> CD1               = new NetworkVariable<int>(0);
-    public NetworkVariable<int> Speed1Limit       = new NetworkVariable<int>(0);
-
     // Ammo: 0 - 17mm 1 - 42 mm
     // Ammo0 - 17mm
     public NetworkVariable<int> ConsumedAmmo0     = new NetworkVariable<int>(0);
@@ -511,31 +526,41 @@ public class RefereeController : NetworkBehaviour
     public NetworkVariable<int> Ammo1             = new NetworkVariable<int>(0);
     public NetworkVariable<int> RealAmmo1         = new NetworkVariable<int>(0);
 
-
     void TriggerHandler(int ID, Vector3 Position, Vector3 Velocity)
     {
         // TODO: handle trigger events
 
         // First judge whether the unit is disabled or not
-        if (!Enabled.Value) return;
+        if (!Enabled.Value || !ShooterEnabled.Value || !ShooterControllerList.ContainsKey(ID)) return;
 
-        // Judge whether there is free ammo, both real ammo and ammo in referee system
-        if (ID == 0)
+        ShooterController shooter = ShooterControllerList[ID];
+
+        switch (shooter.Type.Value)
         {
-            if (Shooter0Type.Value == 0 && (Ammo0.Value <= 0 || RealAmmo0.Value <= 0)) return;
-            if (Shooter0Type.Value == 1 && (Ammo1.Value <= 0 || RealAmmo1.Value <= 0)) return;
+            case 0:
+                if (Ammo0.Value <= 0 || RealAmmo0.Value <= 0) return;
+                
+                shooter.Heat.Value += 10;
+                
+                ConsumedAmmo0.Value ++;
+                Ammo0.Value --;
+                RealAmmo0.Value --;
+                break;
+            case 1:
+                if (Ammo1.Value <= 0 || RealAmmo1.Value <= 0) return;
+
+                shooter.Heat.Value += 100;
+
+                ConsumedAmmo1.Value ++;
+                Ammo1.Value --;
+                RealAmmo1.Value --;
+                break;
+            default:
+                Debug.LogWarning("[GameManager] Unknown shooter ID");
+                break;
         }
 
-        if (ID == 1)
-        {
-            if (Shooter1Type.Value == 0 && (Ammo0.Value <= 0 || RealAmmo0.Value <= 0)) return;
-            if (Shooter1Type.Value == 1 && (Ammo1.Value <= 0 || RealAmmo1.Value <= 0)) return;
-        }
-
-        // Debug.Log("[RefereeController] OnShoot");
-
-        // Free Fire!
-        OnShoot(ID, ID == 0 ? Shooter0Type.Value : Shooter1Type.Value, RobotID.Value, Position, Velocity);
+        OnShoot(ID, shooter.Type.Value, RobotID.Value, Position, Velocity);
     }
 
     void TickHeat()
@@ -543,42 +568,24 @@ public class RefereeController : NetworkBehaviour
         int CDFactor = 1;
         if (CDBuff.Value > 0) CDFactor = CDBuff.Value;
 
-        if (Shooter0Enabled.Value & Heat0.Value > 0)
+        foreach (var _shooter in ShooterControllerList.Values)
         {
-            // Shooter 0 overheating
-            if (Heat0.Value > Heat0Limit.Value & Heat0.Value <= 2*Heat0Limit.Value)
+            if (!_shooter.Enabled.Value || _shooter.Heat.Value <= 0) continue;
+
+            if (_shooter.Heat.Value > _shooter.HeatLimit.Value & _shooter.Heat.Value <= 2*_shooter.HeatLimit.Value)
             {
-                RefereeDamage((Heat0.Value - Heat0Limit.Value) / 250 / 10 * HPLimit.Value);
-            } else if (Heat0.Value >= 2*Heat0Limit.Value) {
-                RefereeDamage((Heat0.Value - 2*Heat0Limit.Value) / 250 * HPLimit.Value);
-                Heat0.Value = 2*Heat0Limit.Value;
+                RefereeDamage((_shooter.Heat.Value - _shooter.HeatLimit.Value) / 250 / 10 * HPLimit.Value);
+            } else if (_shooter.Heat.Value >= 2*_shooter.HeatLimit.Value) {
+                RefereeDamage((_shooter.Heat.Value - 2*_shooter.HeatLimit.Value) / 250 * HPLimit.Value);
+                _shooter.Heat.Value = 2*_shooter.HeatLimit.Value;
             }
             
             // Shooter 0 CD
-            if (Heat0.Value >= CD0.Value * CDFactor * Time.deltaTime) 
+            if (_shooter.Heat.Value >= _shooter.CD.Value * CDFactor * Time.deltaTime) 
             {
-                Heat0.Value -= CD0.Value * CDFactor * Time.deltaTime;
+                _shooter.Heat.Value -= _shooter.CD.Value * CDFactor * Time.deltaTime;
             } else {
-                Heat0.Value = 0;
-            }
-        }
-
-        if (Shooter1Enabled.Value & Heat1.Value > 0)
-        {
-            // Shooter 1 overheating
-            if (Heat1.Value > Heat1Limit.Value & Heat1.Value <= 2*Heat1Limit.Value)
-            {
-                RefereeDamage((Heat1.Value - Heat1Limit.Value) / 250 / 10 * HPLimit.Value);
-            } else if (Heat1.Value >= 2*Heat1Limit.Value) {
-                RefereeDamage((Heat1.Value - 2*Heat1Limit.Value) / 250 * HPLimit.Value);
-                Heat1.Value = 2*Heat1Limit.Value;
-            }
-
-            if (Heat1.Value >= CD1.Value * CDFactor * Time.deltaTime) 
-            {
-                Heat1.Value -= CD1.Value * CDFactor * Time.deltaTime;
-            } else {
-                Heat1.Value = 0;
+                _shooter.Heat.Value = 0;
             }
         }
     }
@@ -716,9 +723,8 @@ public class RefereeController : NetworkBehaviour
     public NetworkVariable<int> EXPValue          = new NetworkVariable<int>(0);
     public NetworkVariable<float> TimeToNextEXP = new NetworkVariable<float>(0.0f);
 
+    public NetworkVariable<int> ChassisMode = new NetworkVariable<int>(0);
     public RobotPerformanceSO ChassisPerformance;
-    public RobotPerformanceSO GimbalPerformance0;
-    public RobotPerformanceSO GimbalPerformance1;
 
     public ExpInfoSO EXPInfo;
 
@@ -734,8 +740,6 @@ public class RefereeController : NetworkBehaviour
         }
         
         // Add up EXP but don't level up if the performance are not chosen yet
-        if (ChassisPerformance == null || GimbalPerformance0 == null) return;
-        if (Shooter1Enabled.Value && GimbalPerformance1 == null) return;
 
         // Level up
         if (EXP.Value >= EXPInfo.expToNextLevel[Level.Value] && EXPInfo.expToNextLevel[Level.Value] >= 0)
@@ -747,20 +751,22 @@ public class RefereeController : NetworkBehaviour
 
             EXPValue.Value = EXPInfo.expValue[Level.Value];
 
-            float _recoverHP = ChassisPerformance.maxHealth[Level.Value] - HPLimit.Value;
-            HPLimit.Value = ChassisPerformance.maxHealth[Level.Value];
-            HP.Value += _recoverHP;
-            PowerLimit.Value = ChassisPerformance.maxPower[Level.Value];
-
-            Heat0Limit.Value = GimbalPerformance0.maxHeat[Level.Value];
-            CD0.Value = GimbalPerformance0.coolDown[Level.Value];
-            Speed0Limit.Value = GimbalPerformance0.shootSpeed[Level.Value];
-
-            if (Shooter1Enabled.Value)
+            if (ChassisPerformance != null)
             {
-                Heat1Limit.Value = GimbalPerformance1.maxHeat[Level.Value];
-                CD1.Value = GimbalPerformance1.coolDown[Level.Value];
-                Speed1Limit.Value = GimbalPerformance1.shootSpeed[Level.Value];
+                float _recoverHP = ChassisPerformance.maxHealth[Level.Value] - HPLimit.Value;
+                HPLimit.Value = ChassisPerformance.maxHealth[Level.Value];
+                HP.Value += _recoverHP;
+                PowerLimit.Value = ChassisPerformance.maxPower[Level.Value];
+            }
+
+            foreach (var _shooter in ShooterControllerList.Values)
+            {
+                _shooter.Level.Value = Level.Value;
+                if (_shooter.GimbalPerformance == null) continue;
+
+                _shooter.HeatLimit.Value = _shooter.GimbalPerformance.maxHeat[Level.Value];
+                _shooter.CD.Value = _shooter.GimbalPerformance.coolDown[Level.Value];
+                _shooter.SpeedLimit.Value = _shooter.GimbalPerformance.shootSpeed[Level.Value];
             }
         }
     }

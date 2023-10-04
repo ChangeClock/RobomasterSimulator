@@ -9,13 +9,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3638868b60ea87c44b2b147d83fc8e17, type: 3}
-  m_Name: HomeBuff
+  m_Script: {fileID: 11500000, guid: 3449f0b231aa6d649b93f3ae28d67858, type: 3}
+  m_Name: Sentry
   m_EditorClassIdentifier: 
-  buffDuration: 0
-  DEFBuff: 0
-  ATKBuff: 0
-  CDBuff: 0
-  speedBoost: 1
-  ReviveProgressPerSec: 4
-  HealBuff: 25
+  maxHealth:
+  - 1000
+  maxPower: 96000000
+  maxHeat: f0000000
+  coolDown: 50000000
+  shootSpeed: 1e000000

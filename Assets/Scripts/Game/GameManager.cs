@@ -25,6 +25,18 @@ public class GameManager : NetworkBehaviour
 
     [Header("EXP")]
     [SerializeField] private bool HasFirstBlood = false;
+    [SerializeField] private ExpInfoSO HeroExpInfo;
+    [SerializeField] private ExpInfoSO InfantryExpInfo;
+    [SerializeField] private ExpInfoSO EngineerExpInfo;
+    [SerializeField] private ExpInfoSO SentryExpInfo;
+
+    [Header("Performance")]
+    [SerializeField] private RobotPerformanceSO[] HeroChassisPerformance;
+    [SerializeField] private RobotPerformanceSO[] GimbalPerformance_17mm;
+    [SerializeField] private RobotPerformanceSO[] InfantryChassisPerformance;
+    [SerializeField] private RobotPerformanceSO[] GimbalPerformance_42mm;
+    [SerializeField] private RobotPerformanceSO EngineerPerformance;
+    [SerializeField] private RobotPerformanceSO SentryPerformance;
 
     [Header("Buff")]
     [SerializeField] private BuffEffectSO ReviveBuff;
@@ -33,6 +45,17 @@ public class GameManager : NetworkBehaviour
     [Header("Area")]
     [SerializeField] private AreaController[] RedPatrolPoints;
     [SerializeField] private AreaController[] BluePatrolPoints;
+    [SerializeField] private AreaController RedRepairStation;
+    [SerializeField] private AreaController RedSilverMinePoint;
+    [SerializeField] private AreaController RedGoldMinePoint;
+    [SerializeField] private AreaController BlueRepairStation;
+    [SerializeField] private AreaController BlueSilverMinePoint;
+    [SerializeField] private AreaController BlueGoldMinePoint;
+
+    [Header("Coin")]
+    [SerializeField] public NetworkVariable<int> RedCoin = new NetworkVariable<int>(0);
+    [SerializeField] public NetworkVariable<int> BlueCoin = new NetworkVariable<int>(0);
+    [SerializeField] public bool HasFirstGold = false;
 
     // [Header("EXPInfo")]
     // [SerializeField] private ExpInfoSO HeroExpInfo;
@@ -44,6 +67,7 @@ public class GameManager : NetworkBehaviour
         RefereeController.OnShoot += ShootUpload;
         RefereeController.OnOccupy += OccupyUpload;
         RefereeController.OnSpawn += SpawnUpload;
+        // RefereeController.OnLevelup += LevelupUpload;
         RefereeController.OnRevived += ReviveUpload;
         RefereeController.OnDeath += DeathUpload;
     }
@@ -54,6 +78,7 @@ public class GameManager : NetworkBehaviour
         RefereeController.OnShoot -= ShootUpload;
         RefereeController.OnOccupy -= OccupyUpload;
         RefereeController.OnSpawn -= SpawnUpload;
+        // RefereeController.OnLevelup -= LevelupUpload;
         RefereeController.OnRevived -= ReviveUpload;
         RefereeController.OnDeath -= DeathUpload;
     }
@@ -166,15 +191,93 @@ public class GameManager : NetworkBehaviour
 
         RefereeController[] _list = GameObject.FindObjectsByType<RefereeController>(FindObjectsSortMode.None);
         Debug.Log($"[GameManager] List Length: {_list.Length}");
+        
         foreach (RefereeController _referee in _list)
         {
             if (_referee.RobotID.Value == robotID)
             {
                 Debug.Log($"[GameManager] {robotID} referee added to gamemanager");
                 RefereeControllerList.Add(_referee.RobotID.Value, _referee);
+                
+                ChangePerformanceServerRpc(robotID);
+
                 return;
             }
         }
+    }
+
+    void ChangePerformanceUpload(int robotID)
+    {
+        ChangePerformanceServerRpc(robotID);
+    }
+
+    [ServerRpc]
+    void ChangePerformanceServerRpc(int robotID, ServerRpcParams serverRpcParams = default)
+    {
+        RefereeController referee = RefereeControllerList[robotID];
+
+        switch (referee.robotClass.Value)
+        {
+            case RobotClass.Hero:
+                SetUnitPerformance(referee, HeroChassisPerformance[referee.ChassisMode.Value]);
+                SetUnitEXPInfo(referee, HeroExpInfo);
+                break;
+            case RobotClass.Infantry:
+                SetUnitPerformance(referee, InfantryChassisPerformance[referee.ChassisMode.Value]);
+                SetUnitEXPInfo(referee, InfantryExpInfo);
+                break;
+            case RobotClass.Engineer:
+                SetUnitPerformance(referee, EngineerPerformance);
+                SetUnitEXPInfo(referee, EngineerExpInfo);
+                break;
+            case RobotClass.Sentry:
+                SetUnitPerformance(referee, SentryPerformance);
+                SetUnitEXPInfo(referee, SentryExpInfo);
+                break;
+            default:
+                break;
+        }
+
+        foreach (var _shooter in referee.ShooterControllerList.Values)
+        {
+            if (!_shooter.Enabled.Value) continue;
+
+            switch (_shooter.Type.Value)
+            {
+                case 0:
+                    SetShooterPerformance(_shooter, GimbalPerformance_17mm[_shooter.Mode.Value]);
+                    break;
+                case 1:
+                    SetShooterPerformance(_shooter, GimbalPerformance_42mm[_shooter.Mode.Value]);
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
+
+    void SetUnitEXPInfo(RefereeController referee, ExpInfoSO expInfo)
+    {
+        referee.EXPInfo = expInfo;
+        referee.EXPToNextLevel.Value = expInfo.expToNextLevel[referee.Level.Value];
+        referee.EXPValue.Value = expInfo.expValue[referee.Level.Value];
+    }
+
+    void SetUnitPerformance(RefereeController referee, RobotPerformanceSO performance)
+    {
+        referee.ChassisPerformance = performance;
+        float _recoverHP = performance.maxHealth[referee.Level.Value] - referee.HPLimit.Value;
+        referee.HPLimit.Value = performance.maxHealth[referee.Level.Value];
+        referee.HP.Value += _recoverHP;
+        referee.PowerLimit.Value = performance.maxPower[referee.Level.Value];
+    }
+
+    void SetShooterPerformance(ShooterController shooter, RobotPerformanceSO performance)
+    {
+        shooter.GimbalPerformance = performance;
+        shooter.HeatLimit.Value = performance.maxHeat[shooter.Level.Value];
+        shooter.CD.Value = performance.coolDown[shooter.Level.Value];
+        shooter.SpeedLimit.Value = performance.shootSpeed[shooter.Level.Value];
     }
 
     void RefereeDamage(float damage, int robotID)
@@ -230,36 +333,7 @@ public class GameManager : NetworkBehaviour
     [ServerRpc]
     void ShootHandlerServerRpc(int shooterID, int shooterType, int robotID, ServerRpcParams serverRpcParams = default)
     {
-        RefereeController robot = RefereeControllerList[robotID];
 
-        switch(shooterID){
-            case 0:
-                robot.Heat0.Value += (shooterType == 0) ? 10 : 100;
-                break;
-            case 1:
-                robot.Heat1.Value += (shooterType == 0) ? 10 : 100;
-                break;
-            default:
-                Debug.LogWarning("[GameManager] Unknown shooter ID");
-                break;
-        }
-
-        switch(shooterType)
-        {
-            case 0:
-                robot.ConsumedAmmo0.Value ++;
-                robot.Ammo0.Value --;
-                robot.RealAmmo0.Value --;
-                break;
-            case 1:
-                robot.ConsumedAmmo1.Value ++;
-                robot.Ammo1.Value --;
-                robot.RealAmmo1.Value --;
-                break;
-            default:
-                Debug.LogWarning("[GameManager] Unknown shooter type");
-                break;
-        }
     }
 
     void OccupyUpload(int areaID, int robotID)

@@ -10,11 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 3449f0b231aa6d649b93f3ae28d67858, type: 3}
-  m_Name: Hero
+  m_Name: 42mm-Boost
   m_EditorClassIdentifier: 
   maxHealth: []
-  maxLinearVelocity: []
-  maxAngularVelocity: []
-  maxHeat: []
-  cooldown: []
-  projectileVelocity: []
+  maxPower: 
+  maxHeat: c80000005e010000f4010000
+  coolDown: 280000005000000078000000
+  shootSpeed: 0a0000000a0000000a000000

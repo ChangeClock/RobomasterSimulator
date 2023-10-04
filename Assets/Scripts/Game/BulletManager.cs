@@ -25,8 +25,6 @@ public class BulletManager : NetworkBehaviour
 
     void Shoot(int shooterID, int shooterType, int robotID, Vector3 userPosition, Vector3 shootVelocity)
     {
-        // 封装过多，需要改
-
         Quaternion userDirection = Quaternion.Euler(shootVelocity.x, shootVelocity.y, shootVelocity.z);
 
         GameObject _bullet;
@@ -49,31 +47,5 @@ public class BulletManager : NetworkBehaviour
         _bullet.SetActive(true);
         _bullet.GetComponent<NetworkObject>().Spawn();
         _bullet.GetComponent<BulletController>().attackerID.Value = robotID;
-
-
-        // if(IsServer)
-        // {
-        //     Debug.Log("[BulletManager] Shoot on Server Side");
-        //     BulletSyncClientRpc(shooterType, i, userPosition, shootVelocity);
-        // }
     }
-
-    // [ClientRpc]
-    // void BulletSyncClientRpc(int shooterType, int bulletID, Vector3 userPosition, Vector3 shootVelocity)
-    // {
-    //     Quaternion userDirection = Quaternion.Euler(shootVelocity.x, shootVelocity.y, shootVelocity.z);
-    //     GameObject bullet = bulletsList[shooterType][bulletID];
-    //     if (!bullet.activeInHierarchy)
-    //         {
-    //             bullet.transform.position = userPosition;
-    //             bullet.transform.rotation = userDirection;
-    //             bullet.GetComponent<Rigidbody>().isKinematic = false;
-    //             bullet.GetComponent<Rigidbody>().velocity = shootVelocity;
-    //             bullet.SetActive(true);
-
-    //             Debug.Log("[BulletManager] Bullet Sync on Client Side");
-
-    //             return;
-    //         }
-    // }
 }

@@ -210,54 +210,6 @@ public class FPVController : MonoBehaviour
 
     #endregion
 
-    [SerializeField] private GameObject Shooter0Info;
-    [SerializeField] private TextMeshProUGUI Shooter0Speed;
-    [SerializeField] private TextMeshProUGUI Shooter0Ammo;
-    [SerializeField] private BarController Shooter0Heat;
-
-    [SerializeField] private GameObject Shooter1Info;
-    [SerializeField] private TextMeshProUGUI Shooter1Speed;
-    [SerializeField] private TextMeshProUGUI Shooter1Ammo;
-    [SerializeField] private BarController Shooter1Heat;
-
-    [SerializeField] private GameObject BlurBackground;
-    [SerializeField] private GameObject OverHeat;
-
-    public void SetShooterInfo(bool Shooter0Enable, bool Shooter1Enable)
-    {
-        Shooter0Info.SetActive(Shooter0Enable);
-        Shooter1Info.SetActive(Shooter1Enable);
-    }
-
-    public void SetAmmo(int shooter0Ammo, int shooter0AmmoLimit, int shooter1Ammo, int shooter1AmmoLimit)
-    {
-        Shooter0Ammo.text = shooter0Ammo.ToString() + "/" + shooter0AmmoLimit.ToString();
-        Shooter1Ammo.text = shooter1Ammo.ToString() + "/" + shooter1AmmoLimit.ToString();
-    }
-
-    public void SetHeat0(float heat0, float limit0)
-    {
-        Shooter0Heat.SetValue(heat0);
-        Shooter0Heat.SetMaxValue(limit0);
-        if (heat0 < limit0 / 2)
-        {
-            Shooter0Heat.SetColor(Color.white);
-        } else if (heat0 >= limit0 / 2 && heat0 < limit0 * 3/4) {
-            Shooter0Heat.SetColor(Color.yellow);
-        } else {
-            Shooter0Heat.SetColor(Color.red);
-        }
-
-        BlurBackground.SetActive(heat0 > limit0);
-        OverHeat.SetActive(heat0 > limit0);
-    }
-
-    public void SetHeat1(float heat1, float limit1)
-    {
-        Shooter1Heat.SetValue(heat1);
-        Shooter1Heat.SetMaxValue(limit1);
-    }
-
     [SerializeField] private BarController BufferBar;
     [SerializeField] private TextMeshProUGUI Power;
     

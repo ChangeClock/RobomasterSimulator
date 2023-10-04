@@ -6,4 +6,11 @@ public class RMUC2023_BaseController : RefereeController
     {
         base.ShieldOff();
     }
+
+    public override void Reset()
+    {
+        base.Reset();
+
+        Immutable.Value = true;
+    }
 }

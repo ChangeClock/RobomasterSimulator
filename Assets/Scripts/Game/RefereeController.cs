@@ -519,12 +519,14 @@ public class RefereeController : NetworkBehaviour
     // Ammo0 - 17mm
     public NetworkVariable<int> ConsumedAmmo0     = new NetworkVariable<int>(0);
     public NetworkVariable<int> Ammo0             = new NetworkVariable<int>(0);
-    public NetworkVariable<int> RealAmmo0         = new NetworkVariable<int>(0);
+    public NetworkVariable<int> RealAmmo0         = new NetworkVariable<int>(350);
+    public NetworkVariable<int> RealAmmo0Limit         = new NetworkVariable<int>(350);
 
     // Ammo1 - 42mm
     public NetworkVariable<int> ConsumedAmmo1     = new NetworkVariable<int>(0);
     public NetworkVariable<int> Ammo1             = new NetworkVariable<int>(0);
-    public NetworkVariable<int> RealAmmo1         = new NetworkVariable<int>(0);
+    public NetworkVariable<int> RealAmmo1         = new NetworkVariable<int>(100);
+    public NetworkVariable<int> RealAmmo1Limit         = new NetworkVariable<int>(100);
 
     void TriggerHandler(int ID, Vector3 Position, Vector3 Velocity)
     {
@@ -649,7 +651,7 @@ public class RefereeController : NetworkBehaviour
 
         BuffEffectSO newBuffStat = Instantiate(defaultBuff);
 
-        Debug.Log($"[RefereeController] activeBuff Counts {activeBuffs.Count}");
+        // Debug.Log($"[RefereeController] activeBuff Counts {activeBuffs.Count}");
 
         if (activeBuffs.Count > 0)
         {
@@ -700,7 +702,7 @@ public class RefereeController : NetworkBehaviour
 
         ReviveProgressPerSec.Value = newBuffStat.ReviveProgressPerSec;
 
-        if (!Enabled.Value) return; 
+        if (!Enabled.Value) return;
 
         HealBuff.Value = newBuffStat.HealBuff;
         DEFBuff.Value = newBuffStat.DEFBuff;
@@ -774,4 +776,47 @@ public class RefereeController : NetworkBehaviour
     }
 
     #endregion
+
+    public virtual void Reset()
+    {
+        Level.Value = 0;
+        EXP.Value = 0;
+        EXPToNextLevel.Value = EXPInfo.expToNextLevel[Level.Value];
+        EXPValue.Value = EXPInfo.expValue[Level.Value];
+        TimeToNextEXP.Value = 0;
+
+        Reviving.Value = false;
+        MaxReviveProgress.Value = 10;
+        ReviveProgressPerSec.Value = defaultBuff.ReviveProgressPerSec;
+        CurrentReviveProgress.Value = 0;
+
+        HPLimit.Value = ChassisPerformance.maxHealth[Level.Value];
+        HP.Value = HPLimit.Value;
+        Shield.Value = ShieldLimit.Value;
+        PowerLimit.Value = ChassisPerformance.maxPower[Level.Value];
+        
+        ATKBuff.Value = defaultBuff.ATKBuff;
+        DEFBuff.Value = defaultBuff.DEFBuff;
+        CDBuff.Value = defaultBuff.CDBuff;
+        HealBuff.Value = defaultBuff.HealBuff;
+
+        ConsumedAmmo0.Value = 0;
+        Ammo0.Value = 0;
+        RealAmmo0.Value = RealAmmo0Limit.Value;
+        ConsumedAmmo1.Value = 0;
+        Ammo1.Value = 0;
+        RealAmmo1.Value = RealAmmo1Limit.Value;
+
+        foreach(var _shooter in ShooterControllerList.Values)
+        {
+            _shooter.Reset();
+        }
+
+        ShooterEnabled.Value = true;
+
+        Enabled.Value = true;
+        Warning.Value = 0;
+        OccupiedArea.Value = 0;
+        // Immutable value reset in override method according to game logic
+    }
 }

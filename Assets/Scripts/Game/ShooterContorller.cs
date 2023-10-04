@@ -91,4 +91,14 @@ public class ShooterController : NetworkBehaviour
     {
         // Round heat bar
     }
+
+    public void Reset()
+    {
+        Level.Value = 0;
+
+        Heat.Value = 0;
+        HeatLimit.Value = GimbalPerformance.maxHeat[Level.Value];
+        CD.Value = GimbalPerformance.coolDown[Level.Value];
+        SpeedLimit.Value = GimbalPerformance.shootSpeed[Level.Value];
+    }
 }

@@ -222,7 +222,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8371258415751619808}
   - component: {fileID: 3485877124579255061}
-  - component: {fileID: 2477847404441921329}
+  - component: {fileID: 5911050439747147768}
   m_Layer: 0
   m_Name: Outpost
   m_TagString: Untagged
@@ -266,7 +266,7 @@ MonoBehaviour:
   AlwaysReplicateAsRoot: 0
   DontDestroyWithOwner: 0
   AutoObjectParentSync: 1
---- !u!114 &2477847404441921329
+--- !u!114 &5911050439747147768
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -275,17 +275,17 @@ MonoBehaviour:
   m_GameObject: {fileID: 4769907718567287211}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c588dc8e7f3394e6ba6dc7fcf0bb7644, type: 3}
+  m_Script: {fileID: 11500000, guid: 277f4aaa39a10e445a199eb0199b621c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   FPV: {fileID: 0}
   RobotID:
     m_InternalValue: 0
   robotClass:
-    m_InternalValue: 0
+    m_InternalValue: 6
   robotTags: 02000000
   faction:
-    m_InternalValue: 2
+    m_InternalValue: 3
   Enabled:
     m_InternalValue: 1
   Immutable:
@@ -295,6 +295,7 @@ MonoBehaviour:
   OccupiedArea:
     m_InternalValue: 0
   Position: {x: 0, y: 0}
+  Direction: 0
   PowerLimit:
     m_InternalValue: 0
   Power:
@@ -308,9 +309,9 @@ MonoBehaviour:
   Shield:
     m_InternalValue: 0
   HPLimit:
-    m_InternalValue: 500
+    m_InternalValue: 1500
   HP:
-    m_InternalValue: 500
+    m_InternalValue: 1500
   Reviving:
     m_InternalValue: 0
   MaxReviveProgress:
@@ -321,46 +322,22 @@ MonoBehaviour:
     m_InternalValue: 0
   ShooterEnabled:
     m_InternalValue: 1
-  Shooter0Enabled:
-    m_InternalValue: 1
-  Shooter0Type:
-    m_InternalValue: 0
-  Shooter0Mode:
-    m_InternalValue: 0
-  Heat0Limit:
-    m_InternalValue: 0
-  Heat0:
-    m_InternalValue: 0
-  CD0:
-    m_InternalValue: 0
-  Speed0Limit:
-    m_InternalValue: 0
-  Shooter1Enabled:
-    m_InternalValue: 0
-  Shooter1Type:
-    m_InternalValue: 0
-  Shooter1Mode:
-    m_InternalValue: 0
-  Heat1Limit:
-    m_InternalValue: 0
-  Heat1:
-    m_InternalValue: 0
-  CD1:
-    m_InternalValue: 0
-  Speed1Limit:
-    m_InternalValue: 0
   ConsumedAmmo0:
     m_InternalValue: 0
   Ammo0:
     m_InternalValue: 0
   RealAmmo0:
-    m_InternalValue: 0
+    m_InternalValue: 350
+  RealAmmo0Limit:
+    m_InternalValue: 350
   ConsumedAmmo1:
     m_InternalValue: 0
   Ammo1:
     m_InternalValue: 0
   RealAmmo1:
-    m_InternalValue: 0
+    m_InternalValue: 100
+  RealAmmo1Limit:
+    m_InternalValue: 100
   ATKBuff:
     m_InternalValue: 0
   DEFBuff:
@@ -380,10 +357,11 @@ MonoBehaviour:
     m_InternalValue: 0
   TimeToNextEXP:
     m_InternalValue: 0
+  ChassisMode:
+    m_InternalValue: 0
   ChassisPerformance: {fileID: 0}
-  GimbalPerformance0: {fileID: 0}
-  GimbalPerformance1: {fileID: 0}
   EXPInfo: {fileID: 0}
+  SpinJoint: {fileID: 0}
 --- !u!1 &8650353939575776351
 GameObject:
   m_ObjectHideFlags: 0

@@ -43,6 +43,7 @@ public class GameManager : NetworkBehaviour
     [SerializeField] private BuffEffectSO SentryDefaultBuff;
     [SerializeField] private BuffEffectSO ReviveBuff;
     [SerializeField] private BuffEffectSO PurchaseReviveBuff;
+    [SerializeField] private BuffEffectSO HeroSnipeBuff;
 
     [Header("Area")]
     [SerializeField] private AreaController[] RedPatrolPoints;
@@ -343,7 +344,22 @@ public class GameManager : NetworkBehaviour
     [ServerRpc]
     void ShootHandlerServerRpc(int shooterID, int shooterType, int robotID, ServerRpcParams serverRpcParams = default)
     {
+        RefereeController referee = RefereeControllerList[shooterID];
 
+        if (referee.robotClass.Value == RobotClass.Hero & referee.HasBuff(HeroSnipeBuff))
+        {
+            switch (referee.faction.Value)
+            {
+                case Faction.Red:
+                    RedCoin.Value += 10;
+                    break;
+                case Faction.Blue:
+                    BlueCoin.Value += 10;
+                    break;
+                default :
+                    break;
+            }
+        }
     }
 
     void OccupyUpload(int areaID, int robotID)

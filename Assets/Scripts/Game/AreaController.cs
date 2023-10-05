@@ -5,23 +5,23 @@ using UnityEngine;
 
 public class AreaController : NetworkBehaviour
 {
-    [SerializeField] private NetworkVariable<int> ID = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+    [SerializeField] public NetworkVariable<int> ID = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
     // 0: not occupied 1: Blue 2: Red
-    [SerializeField] private NetworkVariable<bool> Enabled = new NetworkVariable<bool>(false, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-    [SerializeField] private bool printLog = false;
+    [SerializeField] public NetworkVariable<bool> Enabled = new NetworkVariable<bool>(false, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+    [SerializeField] public bool printLog = false;
     
-    [SerializeField] private NetworkVariable<Faction> belongFaction = new NetworkVariable<Faction>(Faction.Neu);
-    [SerializeField] private NetworkVariable<bool> isControlPoint = new NetworkVariable<bool>(false, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-    [SerializeField] private NetworkVariable<bool> Occupied = new NetworkVariable<bool>(false, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-    [SerializeField] private NetworkVariable<Faction> controllingFaction = new NetworkVariable<Faction>(Faction.Neu);
+    [SerializeField] public NetworkVariable<Faction> belongFaction = new NetworkVariable<Faction>(Faction.Neu);
+    [SerializeField] public NetworkVariable<bool> isControlPoint = new NetworkVariable<bool>(false, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+    [SerializeField] public NetworkVariable<bool> Occupied = new NetworkVariable<bool>(false, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+    [SerializeField] public NetworkVariable<Faction> controllingFaction = new NetworkVariable<Faction>(Faction.Neu);
 
-    [SerializeField] private NetworkVariable<float> MaxControlProgress = new NetworkVariable<float>(100.0f);
-    [SerializeField] private NetworkVariable<float> ControlProgress = new NetworkVariable<float>(0.0f);
-    [SerializeField] private NetworkVariable<float> ControlProgressPerSecond = new NetworkVariable<float>(1.0f);
+    [SerializeField] public NetworkVariable<float> MaxControlProgress = new NetworkVariable<float>(100.0f);
+    [SerializeField] public NetworkVariable<float> ControlProgress = new NetworkVariable<float>(0.0f);
+    [SerializeField] public NetworkVariable<float> ControlProgressPerSecond = new NetworkVariable<float>(1.0f);
 
     [SerializeField] private BuffEffectSO[] BuffList;
 
-    private Dictionary<int, RefereeController> RobotsInArea = new Dictionary<int, RefereeController>();
+    public Dictionary<int, RefereeController> RobotsInArea = new Dictionary<int, RefereeController>();
 
     void Start()
     {

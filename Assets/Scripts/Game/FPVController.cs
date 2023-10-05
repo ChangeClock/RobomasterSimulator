@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using UnityEngine.Networking;
+using UnityEngine.InputSystem;
 using TMPro;
 
 public class FPVController : MonoBehaviour
@@ -23,9 +23,19 @@ public class FPVController : MonoBehaviour
         }
     }
 
+    void Awake() 
+    {
+        SettingMenuAction.performed += context => ToggleSettingMenu();    
+    }
+
     void OnEnable()
     {
-        
+        SettingMenuAction.Enable();
+    }
+
+    void OnDisable()
+    {
+        SettingMenuAction.Disable();
     }
 
     // Update is called once per frame
@@ -69,10 +79,12 @@ public class FPVController : MonoBehaviour
             case Faction.Red:
                 HPBar.SetColor(Color.red);
                 ID.text = robotID.ToString();
+                Role.text = "R" + robotID.ToString();
                 break;
             case Faction.Blue:
                 HPBar.SetColor(Color.blue);
                 ID.text = (robotID - 20).ToString();
+                Role.text = "B" + robotID.ToString();
                 break;
             default:
                 Debug.LogError("[FPVController] Unknown faction");
@@ -238,14 +250,31 @@ public class FPVController : MonoBehaviour
                 break;
         }
     }
- 
-    // public override void OnStartLocalPlayer()
-    // {
-    //     if (IsLocalPlayer)
-    //     {
-    //         FPVCamera.enabled = true;
-    //     }
-    // }
+
+    #region Setting Menu
+
+    [SerializeField] private InputAction SettingMenuAction;
+    [SerializeField] private GameObject SettingMenu;
+    [SerializeField] private Button Ready;
+    [SerializeField] private TMP_Text Role;
+    [SerializeField] private GameObject ChassisPerformance;
+    [SerializeField] private TMP_Dropdown ChassisMode;
+    [SerializeField] private GameObject Shooter1Performance;
+    [SerializeField] private TMP_Dropdown Shooter1Mode;
+    [SerializeField] private GameObject Shooter2Performance;
+    [SerializeField] private TMP_Dropdown Shooter2Mode;
+
+    void ToggleSettingMenu()
+    {
+        SettingMenu.SetActive(!SettingMenu.activeSelf);
+    }
+
+    void SetPerformance(RobotClass robotClass)
+    {
+
+    }
+
+    #endregion
 
     // Start is called before the first frame update
 }

@@ -688,7 +688,7 @@ public class RefereeController : NetworkBehaviour
                 }
 
                 _buffInfo.lastTime += Time.deltaTime;
-                if (_buffInfo.lastTime > _buff.buffDuration) overtimeBuff.Add(_buff);
+                if (_buffInfo.lastTime * 1000 > _buff.buffDuration) overtimeBuff.Add(_buff);
             }
 
             if (overtimeBuff.Count > 0)

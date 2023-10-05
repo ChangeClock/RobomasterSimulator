@@ -9,7 +9,7 @@ public class BuffEffectSO : ScriptableObject
     public int buffDuration = 0; // ms
     public int DEFBuff = 0; // %
     public int ATKBuff = 0; // %
-    public int CDBuff = 0; // %
+    public int CDBuff = 0; // magnitude
     public int ReviveProgressPerSec = 0; // %
     public int HealBuff = 0; // %
 }

@@ -344,7 +344,7 @@ public class GameManager : NetworkBehaviour
     [ServerRpc]
     void ShootHandlerServerRpc(int shooterID, int shooterType, int robotID, ServerRpcParams serverRpcParams = default)
     {
-        RefereeController referee = RefereeControllerList[shooterID];
+        RefereeController referee = RefereeControllerList[robotID];
 
         if (referee.robotClass.Value == RobotClass.Hero & referee.HasBuff(HeroSnipeBuff))
         {

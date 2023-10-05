@@ -5,6 +5,8 @@ using UnityEngine;
 
 public class AreaController : NetworkBehaviour
 {
+    public Dictionary<int, RefereeController> RobotsInArea = new Dictionary<int, RefereeController>();
+
     [SerializeField] public NetworkVariable<int> ID = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
     // 0: not occupied 1: Blue 2: Red
     [SerializeField] public NetworkVariable<bool> Enabled = new NetworkVariable<bool>(false, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
@@ -20,8 +22,6 @@ public class AreaController : NetworkBehaviour
     [SerializeField] public NetworkVariable<float> ControlProgressPerSecond = new NetworkVariable<float>(1.0f);
 
     [SerializeField] private BuffEffectSO[] BuffList;
-
-    public Dictionary<int, RefereeController> RobotsInArea = new Dictionary<int, RefereeController>();
 
     void Start()
     {
@@ -39,10 +39,19 @@ public class AreaController : NetworkBehaviour
 
         if (printLog) Debug.Log($"[AreaController] {ID} Area contains {RobotsInArea.Count} robots");
 
+        Occupied.Value = RobotsInArea.Count > 0;
+
         if (RobotsInArea.Count > 0)
         {
+            bool isControlled = false;
+
             foreach (var _referee in RobotsInArea.Values)
             {
+                // Gain control when the area is not under control
+                if (controllingFaction.Value == Faction.Neu) controllingFaction.Value = _referee.faction.Value;
+
+                if (isControlPoint.Value & controllingFaction.Value != _referee.faction.Value) continue;
+
                 foreach (var _buff in BuffList)
                 {
                     if (_buff.buffDuration >= 0.0f)
@@ -50,8 +59,14 @@ public class AreaController : NetworkBehaviour
                         _referee.AddBuff(_buff);
                     }
                 }
+
+                isControlled = true;
             }
+
+            // When there's no more orignal control faction robot in area, lose control
+            if (!isControlled) controllingFaction.Value = Faction.Neu;
         }
+
     }
 
     private void OnTriggerEnter(Collider other)
@@ -73,12 +88,10 @@ public class AreaController : NetworkBehaviour
             return;
         }
 
-        if (isControlPoint.Value && Occupied.Value && controllingFaction.Value != robot.faction.Value)
+        if (isControlPoint.Value && !Occupied.Value)
         {
-            return;
+            controllingFaction.Value = robot.faction.Value;
         }
-
-        controllingFaction.Value = robot.faction.Value;
 
         if (!RobotsInArea.ContainsKey(robot.RobotID.Value))
         {
@@ -107,6 +120,11 @@ public class AreaController : NetworkBehaviour
         {
             RobotsInArea.Remove(robot.RobotID.Value);
         }
+    }
+
+    public bool ContainsRobot(int robotID)
+    {
+        return RobotsInArea.ContainsKey(robotID);
     }
 
 }

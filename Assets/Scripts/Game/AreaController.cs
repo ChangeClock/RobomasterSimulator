@@ -66,7 +66,6 @@ public class AreaController : NetworkBehaviour
             // When there's no more orignal control faction robot in area, lose control
             if (!isControlled) controllingFaction.Value = Faction.Neu;
         }
-
     }
 
     private void OnTriggerEnter(Collider other)

@@ -13,8 +13,7 @@ public class WheelController : MonoBehaviour
     private Vector3 lastPos;
 
     [SerializeField] private float power = 0.0f; 
-    [SerializeField] private float torque = 50.0f;
-    [SerializeField] private float powerLimit = 10.0f;
+    [SerializeField] private float torque = 800.0f;
 
     public bool printLog = false;
 
@@ -52,15 +51,6 @@ public class WheelController : MonoBehaviour
         float wheelForce = power / displacement;
         lastPos = transform.position;
 
-        // if (power > powerLimit) 
-        // {
-        //     wheelForce = powerLimit / displacement;
-        // } else if (power < -powerLimit) {
-        //     wheelForce = -powerLimit / displacement;
-        // } else {
-        //     wheelForce = power / displacement;
-        // }
-
         if (printLog) Debug.Log($"power {displacement * wheelForce}");
 
         Vector3 direction = wheelForceDirection.x * transform.forward + wheelForceDirection.y * transform.up - wheelForceDirection.z * transform.right;
@@ -85,16 +75,6 @@ public class WheelController : MonoBehaviour
     public float GetPower()
     {
         return power;
-    }
-
-    public void SetPowerLimit(float var)
-    {
-        powerLimit = var;
-    }
-
-    public float GetPowerLimit()
-    {
-        return powerLimit;
     }
 
     // TODO：检测压力情况，模拟摩擦力大小变化，影响加力大小/上限

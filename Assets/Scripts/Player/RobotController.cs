@@ -13,7 +13,7 @@ public class RobotController : NetworkBehaviour
     // private PlayerInputs _input;
     private float[] _input = new float[6];
     [SerializeField] private InputAction Boost;
-    [SerializeField] private float BoostFactor = 3;
+    [SerializeField] private float BoostPower = 240;
 
     [Header("Chassis")]
     private Transform Base;
@@ -218,7 +218,7 @@ public class RobotController : NetworkBehaviour
         wheelForce[3] = vx+vy-vw;
 
         float _factor = 1;
-        if ((Boost.ReadValue<float>() > 0)) _factor = BoostFactor;
+        if ((Boost.ReadValue<float>() > 0)) _factor = BoostPower / gameObject.GetComponent<RefereeController>().PowerLimit.Value;
         _factor = _factor * gameObject.GetComponent<RefereeController>().PowerLimit.Value / wheels.Length;
 
         for (int i=0; i< wheels.Length; i++)

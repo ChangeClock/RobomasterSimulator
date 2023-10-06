@@ -301,6 +301,7 @@ MonoBehaviour:
       m_Action: Boost
       m_Flags: 0
     m_Flags: 0
+  BoostPower: 240
   moveControllerParameters:
   - 0.02
   - 0
@@ -949,7 +950,7 @@ PrefabInstance:
     - target: {fileID: -5817844055581765899, guid: 0e4733cbf01fe9b4483f9deb92a3f87d,
         type: 3}
       propertyPath: torque
-      value: 100
+      value: 500
       objectReference: {fileID: 0}
     - target: {fileID: 2034366288620811480, guid: 0e4733cbf01fe9b4483f9deb92a3f87d,
         type: 3}
@@ -1361,7 +1362,7 @@ PrefabInstance:
     - target: {fileID: -5817844055581765899, guid: 0e4733cbf01fe9b4483f9deb92a3f87d,
         type: 3}
       propertyPath: torque
-      value: 100
+      value: 500
       objectReference: {fileID: 0}
     - target: {fileID: 2034366288620811480, guid: 0e4733cbf01fe9b4483f9deb92a3f87d,
         type: 3}
@@ -1906,7 +1907,7 @@ PrefabInstance:
     - target: {fileID: -5817844055581765899, guid: 0e4733cbf01fe9b4483f9deb92a3f87d,
         type: 3}
       propertyPath: torque
-      value: 100
+      value: 500
       objectReference: {fileID: 0}
     - target: {fileID: -5817844055581765899, guid: 0e4733cbf01fe9b4483f9deb92a3f87d,
         type: 3}
@@ -2637,7 +2638,7 @@ PrefabInstance:
     - target: {fileID: -5817844055581765899, guid: 0e4733cbf01fe9b4483f9deb92a3f87d,
         type: 3}
       propertyPath: torque
-      value: 100
+      value: 500
       objectReference: {fileID: 0}
     - target: {fileID: -5817844055581765899, guid: 0e4733cbf01fe9b4483f9deb92a3f87d,
         type: 3}

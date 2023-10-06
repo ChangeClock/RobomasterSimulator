@@ -90,18 +90,6 @@ public class RefereeController : NetworkBehaviour
             if (robotController != null) robotController.Enabled = true;
 
             playerInput = this.gameObject.GetComponent<StarterAssetsInputs>();      
-            
-            gameManager = GameObject.FindAnyObjectByType<GameManager>();
-
-            Armors = this.gameObject.GetComponentsInChildren<ArmorController>();
-        
-            RFID = this.gameObject.GetComponentInChildren<RFIDController>();
-        
-            LightBar = this.gameObject.GetComponentInChildren<LightbarController>();
-    
-            UWB = this.gameObject.GetComponentInChildren<UWBController>();
-        
-            Wheels = this.gameObject.GetComponentsInChildren<WheelController>();
         }
 
         if (IsServer)
@@ -109,6 +97,21 @@ public class RefereeController : NetworkBehaviour
             OnSpawn(RobotID.Value);
             Debug.Log($"[RefereeController] {RobotID.Value} Spawned");
         }
+    }
+
+    void Awake()
+    {
+        gameManager = GameObject.FindAnyObjectByType<GameManager>();
+
+        Armors = this.gameObject.GetComponentsInChildren<ArmorController>();
+    
+        RFID = this.gameObject.GetComponentInChildren<RFIDController>();
+    
+        LightBar = this.gameObject.GetComponentInChildren<LightbarController>();
+
+        UWB = this.gameObject.GetComponentInChildren<UWBController>();
+    
+        Wheels = this.gameObject.GetComponentsInChildren<WheelController>();
     }
 
     void Start()
@@ -133,13 +136,6 @@ public class RefereeController : NetworkBehaviour
                 _shooter.OnTrigger += TriggerHandler;
             }
         }
-
-        // EnergyCtl = this.gameObject.GetComponent<EnergyController>();
-        // if (EnergyCtl != null)
-        // {
-        //     EnergyCtl.SetMaxPower(PowerLimit.Value);
-        //     EnergyCtl.SetMaxBuffer(BufferLimit.Value);
-        // }
 
         if (RFID != null) RFID.OnDetect += DetectHandler;        
     }
@@ -268,7 +264,7 @@ public class RefereeController : NetworkBehaviour
 
         if (IsServer)
         {
-            if (PowerLimit.Value >= 0) TickPower();
+            if (PowerLimit.Value > 0) TickPower();
 
             if (Reviving.Value) TickRevive();
 
@@ -314,7 +310,6 @@ public class RefereeController : NetworkBehaviour
 
         foreach (WheelController wheel in Wheels)
         {
-            wheel.SetPowerLimit(PowerLimit.Value / Wheels.Length);
             realPower += Mathf.Abs(wheel.GetPower());
         }
 

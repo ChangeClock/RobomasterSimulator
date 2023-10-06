@@ -29,33 +29,7 @@ public class EnergyController : NetworkBehaviour
 
     void FixedUpdate()
     {
-        Power = 0.0f;
-
-        foreach (WheelController wheel in wheels)
-        {
-            Power += Mathf.Abs(wheel.GetPower());
-        }
-
-        float _deltaPower = (MaxPower - Power) * Time.deltaTime;
-
-        if (_deltaPower < 0)
-        {
-            if (Energy > 0)
-            {
-                Energy += _deltaPower;
-            } else if (Buffer > 0) {
-                Buffer += _deltaPower;
-            } else {
-                // Call overpower events for refreecontroller
-            }
-        } else {
-            if (Buffer < MaxBuffer)
-            {
-                Buffer += _deltaPower;
-            } else if (Energy < MaxEnergy) {
-                Energy += _deltaPower;
-            }
-        }
+        
     }
 
     public void SetMaxPower(float var)

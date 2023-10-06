@@ -34,14 +34,14 @@ public class RefereeController : NetworkBehaviour
     // public DataTransmission.RobotStatus Status = new DataTransmission.RobotStatus();
 
     [Header("Referee")]
-    [SerializeField]private GameObject FPV;
     private ArmorController[] Armors;
     public Dictionary<int, ShooterController> ShooterControllerList = new Dictionary<int, ShooterController>();
     private RFIDController RFID;
     private LightbarController LightBar;
     private UWBController UWB;
     private FPVController FPVCamera;
-    private EnergyController EnergyCtl;
+    // private EnergyController EnergyCtl;
+    private WheelController[] Wheels;
 
     public NetworkVariable<int> RobotID = new NetworkVariable<int>(0);
     public NetworkVariable<RobotClass> robotClass = new NetworkVariable<RobotClass>(RobotClass.Infantry);
@@ -56,8 +56,13 @@ public class RefereeController : NetworkBehaviour
     {
         // Debug.Log("Client:" + NetworkManager.Singleton.LocalClientId + "IsOwner?" + IsOwner);
         if (IsOwner) 
-        {
-            if (!robotTags.Contains(RobotTag.Building)) FPV.SetActive(true);
+        {            
+            FPVCamera = this.gameObject.GetComponentInChildren<FPVController>();
+            if (FPVCamera != null & !robotTags.Contains(RobotTag.Building))
+            {
+                FPVCamera.TurnOnCamera();
+                FPVCamera.SetRoleInfo(faction.Value, RobotID.Value);
+            }  
 
             ShooterController[] Shooters = this.gameObject.GetComponentsInChildren<ShooterController>();
             foreach(var _shooter in Shooters)
@@ -84,14 +89,19 @@ public class RefereeController : NetworkBehaviour
             robotController = this.gameObject.GetComponent<RobotController>();
             if (robotController != null) robotController.Enabled = true;
 
-            playerInput = this.gameObject.GetComponent<StarterAssetsInputs>();
+            playerInput = this.gameObject.GetComponent<StarterAssetsInputs>();      
+            
+            gameManager = GameObject.FindAnyObjectByType<GameManager>();
+
+            Armors = this.gameObject.GetComponentsInChildren<ArmorController>();
         
-            FPVCamera = this.gameObject.GetComponentInChildren<FPVController>();
-            if (FPVCamera != null)
-            {
-                FPVCamera.TurnOnCamera();
-                FPVCamera.SetRoleInfo(faction.Value, RobotID.Value);
-            }
+            RFID = this.gameObject.GetComponentInChildren<RFIDController>();
+        
+            LightBar = this.gameObject.GetComponentInChildren<LightbarController>();
+    
+            UWB = this.gameObject.GetComponentInChildren<UWBController>();
+        
+            Wheels = this.gameObject.GetComponentsInChildren<WheelController>();
         }
 
         if (IsServer)
@@ -108,9 +118,6 @@ public class RefereeController : NetworkBehaviour
 
     void OnEnable()
     {
-        gameManager = GameObject.FindAnyObjectByType<GameManager>();
-
-        Armors = this.gameObject.GetComponentsInChildren<ArmorController>();
         foreach(ArmorController _armor in Armors)
         {
             if(_armor != null) 
@@ -127,19 +134,14 @@ public class RefereeController : NetworkBehaviour
             }
         }
 
-        EnergyCtl = this.gameObject.GetComponent<EnergyController>();
-        if (EnergyCtl != null)
-        {
-            EnergyCtl.SetMaxPower(PowerLimit.Value);
-            EnergyCtl.SetMaxBuffer(BufferLimit.Value);
-        }
+        // EnergyCtl = this.gameObject.GetComponent<EnergyController>();
+        // if (EnergyCtl != null)
+        // {
+        //     EnergyCtl.SetMaxPower(PowerLimit.Value);
+        //     EnergyCtl.SetMaxBuffer(BufferLimit.Value);
+        // }
 
-        RFID = this.gameObject.GetComponentInChildren<RFIDController>();
-        if (RFID != null) RFID.OnDetect += DetectHandler;
-
-        LightBar = this.gameObject.GetComponentInChildren<LightbarController>();
-    
-        UWB = this.gameObject.GetComponentInChildren<UWBController>();
+        if (RFID != null) RFID.OnDetect += DetectHandler;        
     }
 
     void OnDisable()
@@ -258,14 +260,15 @@ public class RefereeController : NetworkBehaviour
                     FPVCamera.SetPower(Power.Value);
                 }
 
-                FPVCamera.SetMaxBuffer(EnergyCtl.GetMaxBuffer());
-                FPVCamera.SetBuffer(EnergyCtl.GetBuffer());
+                FPVCamera.SetBuffer(Buffer.Value, BufferLimit.Value);
+
+                FPVCamera.SetEnergy(Energy.Value, EnergyLimit.Value);
             }
         }
 
         if (IsServer)
         {
-            if (EnergyCtl != null) TickPower();
+            if (PowerLimit.Value >= 0) TickPower();
 
             if (Reviving.Value) TickRevive();
 
@@ -297,6 +300,8 @@ public class RefereeController : NetworkBehaviour
     public NetworkVariable<float> Power             = new NetworkVariable<float>(0);
     public NetworkVariable<float> BufferLimit       = new NetworkVariable<float>(0);
     public NetworkVariable<float> Buffer            = new NetworkVariable<float>(0);
+    public NetworkVariable<float> EnergyLimit       = new NetworkVariable<float>(1900.0f);
+    public NetworkVariable<float> Energy            = new NetworkVariable<float>(0);
 
     bool IsOverPower 
     {
@@ -305,19 +310,54 @@ public class RefereeController : NetworkBehaviour
     
     void TickPower()
     {
-        Power.Value = EnergyCtl.GetPower();
-        float overPowerK = (Power.Value - PowerLimit.Value) / PowerLimit.Value;
-        float timeScale = Time.deltaTime / 0.1f;
+        float realPower = 0.0f;
 
-        if (overPowerK <= 0.1f & overPowerK > 0)
+        foreach (WheelController wheel in Wheels)
         {
-            RefereeDamage(0.1f * HPLimit.Value * timeScale);
-        } else if (overPowerK <= 0.2f & overPowerK > 0.1f)
+            wheel.SetPowerLimit(PowerLimit.Value / Wheels.Length);
+            realPower += Mathf.Abs(wheel.GetPower());
+        }
+
+        float _deltaPower = (PowerLimit.Value - realPower) * Time.deltaTime;
+
+        if (_deltaPower < 0)
         {
-            RefereeDamage(0.2f * HPLimit.Value * timeScale);
-        } else if (overPowerK > 0.2f)
-        {
-            RefereeDamage(0.4f * HPLimit.Value * timeScale);
+            if (Energy.Value > 0)
+            {
+                Energy.Value += _deltaPower;
+                Power.Value = PowerLimit.Value;
+            } else if (Buffer.Value > 0) {
+                Buffer.Value += _deltaPower;
+                Power.Value = realPower;
+            } else {
+                // Call overpower events for refreecontroller
+                Power.Value = realPower;
+
+                float overPowerK = (Power.Value - PowerLimit.Value) / PowerLimit.Value;
+                float timeScale = Time.deltaTime / 0.1f;
+
+                if (overPowerK <= 0.1f & overPowerK > 0)
+                {
+                    RefereeDamage(0.1f * HPLimit.Value * timeScale);
+                } else if (overPowerK <= 0.2f & overPowerK > 0.1f)
+                {
+                    RefereeDamage(0.2f * HPLimit.Value * timeScale);
+                } else if (overPowerK > 0.2f)
+                {
+                    RefereeDamage(0.4f * HPLimit.Value * timeScale);
+                }
+            }
+        } else {
+            if (Buffer.Value < BufferLimit.Value)
+            {
+                Buffer.Value += _deltaPower;
+                Power.Value = PowerLimit.Value;
+            } else if (Energy.Value < EnergyLimit.Value) {
+                Energy.Value += _deltaPower;
+                Power.Value = PowerLimit.Value;
+            } else {
+                Power.Value = realPower;
+            }
         }
     }
 

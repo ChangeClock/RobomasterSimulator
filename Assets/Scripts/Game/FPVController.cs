@@ -222,16 +222,19 @@ public class FPVController : MonoBehaviour
 
     #endregion
 
+    [SerializeField] private BarController EnergyBar;
     [SerializeField] private BarController BufferBar;
     [SerializeField] private TextMeshProUGUI Power;
     
-    public void SetMaxBuffer(float bufferLimit)
+    public void SetEnergy(float var, float max)
     {
-        BufferBar.SetMaxValue(bufferLimit);
+        EnergyBar.SetMaxValue(max);
+        EnergyBar.SetValue(var);
     }
 
-    public void SetBuffer(float var)
+    public void SetBuffer(float var, float max)
     {
+        BufferBar.SetMaxValue(max);
         BufferBar.SetValue(var);
     }
 

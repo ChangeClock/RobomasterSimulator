@@ -181,6 +181,7 @@ MonoBehaviour:
   DEFBuffValue: {fileID: 983274916627582963}
   CDBuffValue: {fileID: 5130540093173843751}
   ATKBuffValue: {fileID: 1603100158960178334}
+  EnergyBar: {fileID: 4228661966058551138}
   BufferBar: {fileID: 5808076517676159921}
   Power: {fileID: 1472291558729242939}
   SettingMenuAction:
@@ -1197,6 +1198,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &4228661966058551138 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8914388603340731813, guid: a320c4d18d384e443a9bc130e7f7a5ee,
+    type: 3}
+  m_PrefabInstance: {fileID: 4690917457986437831}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8152aa71efd08c443ad091dba99ff293, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!114 &4499546605159845749 stripped

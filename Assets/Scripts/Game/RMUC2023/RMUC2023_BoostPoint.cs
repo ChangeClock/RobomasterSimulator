@@ -21,7 +21,11 @@ public class RMUC2023_BoostPoint : AreaController
         {
             foreach (var _referee in RobotsInArea.Values)
             {
-                if(_referee.HasBuff(PreBoostBuff)) _referee.AddBuff(BoostBuff);
+                if(_referee.HasBuff(PreBoostBuff))
+                { 
+                    _referee.AddBuff(BoostBuff);
+                    _referee.Buffer.Value = 250f;
+                }
             }
         }
     }    

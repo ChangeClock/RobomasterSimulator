@@ -12,6 +12,8 @@ public class RobotController : NetworkBehaviour
 
     // private PlayerInputs _input;
     private float[] _input = new float[6];
+    [SerializeField] private InputAction Boost;
+    [SerializeField] private float BoostFactor = 3;
 
     [Header("Chassis")]
     private Transform Base;
@@ -101,6 +103,16 @@ public class RobotController : NetworkBehaviour
             pitchJoint = pitchComponent.GetComponent<HingeJoint>();
             pitchMotor = pitchJoint.motor;
         }
+    }
+
+    void OnEnable()
+    {
+        Boost.Enable();
+    }
+
+    void OnDisable()
+    {
+        Boost.Disable();
     }
 
     void Update()
@@ -205,9 +217,13 @@ public class RobotController : NetworkBehaviour
         wheelForce[2] = vx-vy+vw;
         wheelForce[3] = vx+vy-vw;
 
-        for (int i=0; i<4; i++)
+        float _factor = 1;
+        if ((Boost.ReadValue<float>() > 0)) _factor = BoostFactor;
+        _factor = _factor * gameObject.GetComponent<RefereeController>().PowerLimit.Value / wheels.Length;
+
+        for (int i=0; i< wheels.Length; i++)
         {
-            wheels[i].GetComponent<WheelController>().SetPower(wheelForce[i]  * wheels[i].GetComponent<WheelController>().GetPowerLimit());
+            wheels[i].GetComponent<WheelController>().SetPower(wheelForce[i] * _factor);
         
         }
     }

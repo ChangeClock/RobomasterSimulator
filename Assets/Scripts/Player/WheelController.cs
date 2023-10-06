@@ -13,7 +13,7 @@ public class WheelController : MonoBehaviour
     private Vector3 lastPos;
 
     [SerializeField] private float power = 0.0f; 
-    [SerializeField] private float torque = 100.0f;
+    [SerializeField] private float torque = 50.0f;
     [SerializeField] private float powerLimit = 10.0f;
 
     public bool printLog = false;
@@ -48,18 +48,18 @@ public class WheelController : MonoBehaviour
 
     private void FixedUpdate()
     {
-        float displacement = Vector3.Distance(transform.position, lastPos) + 1.0f;
-        float wheelForce = 0.0f;
+        float displacement = 100 * Vector3.Distance(transform.position, lastPos) + 1.0f;
+        float wheelForce = power / displacement;
         lastPos = transform.position;
 
-        if (power > powerLimit) 
-        {
-            wheelForce = powerLimit / displacement;
-        } else if (power < -powerLimit) {
-            wheelForce = -powerLimit / displacement;
-        } else {
-            wheelForce = power / displacement;
-        }
+        // if (power > powerLimit) 
+        // {
+        //     wheelForce = powerLimit / displacement;
+        // } else if (power < -powerLimit) {
+        //     wheelForce = -powerLimit / displacement;
+        // } else {
+        //     wheelForce = power / displacement;
+        // }
 
         if (printLog) Debug.Log($"power {displacement * wheelForce}");
 

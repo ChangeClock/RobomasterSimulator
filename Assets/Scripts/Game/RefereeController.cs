@@ -31,6 +31,12 @@ public class RefereeController : NetworkBehaviour
     public delegate void OccupyAction(int areaID, int robotID);
     public static event OccupyAction OnOccupy;
 
+    public delegate void ReadyAction(int robotID);
+    public static event ReadyAction OnReady;
+
+    public delegate void ChangePerformanceAction(int robotID, int chassisMode, int shooter1Mode, int shooter2Mode);
+    public static event ChangePerformanceAction OnPerformanceChange;
+
     // public DataTransmission.RobotStatus Status = new DataTransmission.RobotStatus();
 
     [Header("Referee")]
@@ -47,17 +53,23 @@ public class RefereeController : NetworkBehaviour
     public NetworkVariable<RobotClass> robotClass = new NetworkVariable<RobotClass>(RobotClass.Infantry);
     public List<RobotTag> robotTags = new List<RobotTag>();
     public NetworkVariable<Faction> faction = new NetworkVariable<Faction>(Faction.Neu);
+    public NetworkVariable<bool> Ready = new NetworkVariable<bool>(false);
 
     [Header("Player")]
     private RobotController robotController;
     private StarterAssetsInputs playerInput;
 
     public override void OnNetworkSpawn()
-    {
+    {        
+        if (IsServer)
+        {
+            OnSpawn(RobotID.Value);
+            Debug.Log($"[RefereeController] {RobotID.Value} Spawned");
+        }
+
         // Debug.Log("Client:" + NetworkManager.Singleton.LocalClientId + "IsOwner?" + IsOwner);
         if (IsOwner) 
         {            
-            FPVCamera = this.gameObject.GetComponentInChildren<FPVController>();
             if (FPVCamera != null & !robotTags.Contains(RobotTag.Building))
             {
                 FPVCamera.TurnOnCamera();
@@ -65,6 +77,8 @@ public class RefereeController : NetworkBehaviour
             }  
 
             ShooterController[] Shooters = this.gameObject.GetComponentsInChildren<ShooterController>();
+            int shooter1Mode = 0;
+            int shooter2Mode = 0;
             foreach(var _shooter in Shooters)
             {
                 if(_shooter != null)
@@ -83,25 +97,35 @@ public class RefereeController : NetworkBehaviour
                     _shooter.gameObject.GetComponent<NetworkObject>().SpawnAsPlayerObject(this.gameObject.GetComponent<NetworkObject>().OwnerClientId);
                     _shooter.Enabled.Value = enabled;
                     _shooter.OnTrigger += TriggerHandler;
+
+                    switch (id)
+                    {
+                        case 0:
+                            shooter1Mode = _shooter.Mode.Value;
+                            break;
+                        case 2:
+                            shooter2Mode = _shooter.Mode.Value;
+                            break;
+                        default:
+                            break;
+                    }
                 }
             }
+
+            OnPerformanceChange(RobotID.Value, ChassisMode.Value, shooter1Mode, shooter2Mode);
 
             robotController = this.gameObject.GetComponent<RobotController>();
             if (robotController != null) robotController.Enabled = true;
 
             playerInput = this.gameObject.GetComponent<StarterAssetsInputs>();      
         }
-
-        if (IsServer)
-        {
-            OnSpawn(RobotID.Value);
-            Debug.Log($"[RefereeController] {RobotID.Value} Spawned");
-        }
     }
 
     void Awake()
     {
         gameManager = GameObject.FindAnyObjectByType<GameManager>();
+            
+        FPVCamera = this.gameObject.GetComponentInChildren<FPVController>();
 
         Armors = this.gameObject.GetComponentsInChildren<ArmorController>();
     
@@ -114,9 +138,9 @@ public class RefereeController : NetworkBehaviour
         Wheels = this.gameObject.GetComponentsInChildren<WheelController>();
     }
 
-    void Start()
+    protected virtual void Start()
     {
-        if (!IsServer) return;
+
     }
 
     void OnEnable()
@@ -136,6 +160,8 @@ public class RefereeController : NetworkBehaviour
                 _shooter.OnTrigger += TriggerHandler;
             }
         }
+
+        if (FPVCamera != null) FPVCamera.OnPerfChange += PerfChangeHandler;
 
         if (RFID != null) RFID.OnDetect += DetectHandler;        
     }
@@ -159,7 +185,7 @@ public class RefereeController : NetworkBehaviour
         if (RFID != null) RFID.OnDetect -= DetectHandler;
     }
 
-    void Update()
+    protected virtual void Update()
     {
         // Sync Armor related Status
         foreach(ArmorController _armor in Armors)
@@ -808,6 +834,11 @@ public class RefereeController : NetworkBehaviour
                 _shooter.SpeedLimit.Value = _shooter.GimbalPerformance.shootSpeed[Level.Value];
             }
         }
+    }
+
+    void PerfChangeHandler(int chassisMode, int shooter1Mode, int shooter2Mode)
+    {
+        OnPerformanceChange(RobotID.Value, chassisMode, shooter1Mode, shooter2Mode);
     }
 
     #endregion

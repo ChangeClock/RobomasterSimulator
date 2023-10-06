@@ -206,10 +206,34 @@ MonoBehaviour:
   Role: {fileID: 2454440470314661397}
   ChassisPerformance: {fileID: 6783698074169314719}
   ChassisMode: {fileID: 7494943490129497439}
+  InfantryChassisOptions:
+  - m_Text: Power
+    m_Image: {fileID: 0}
+  - m_Text: HP
+    m_Image: {fileID: 0}
+  - m_Text: Balance
+    m_Image: {fileID: 0}
+  HeroChassisOptions:
+  - m_Text: Power
+    m_Image: {fileID: 0}
+  - m_Text: HP
+    m_Image: {fileID: 0}
   Shooter1Performance: {fileID: 1762761852825703344}
   Shooter1Mode: {fileID: 5699654351330225787}
   Shooter2Performance: {fileID: 8565329598785691033}
   Shooter2Mode: {fileID: 1305337837653048914}
+  Options_17mm:
+  - m_Text: Boost
+    m_Image: {fileID: 0}
+  - m_Text: CoolDown
+    m_Image: {fileID: 0}
+  - m_Text: ShootSpeed
+    m_Image: {fileID: 0}
+  Options_42mm:
+  - m_Text: Boost
+    m_Image: {fileID: 0}
+  - m_Text: ShootSpeed
+    m_Image: {fileID: 0}
 --- !u!54 &3201802606071057446
 Rigidbody:
   m_ObjectHideFlags: 0

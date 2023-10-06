@@ -223,6 +223,7 @@ GameObject:
   - component: {fileID: 8371258415751619808}
   - component: {fileID: 3485877124579255061}
   - component: {fileID: 5911050439747147768}
+  - component: {fileID: 2558978296497977392}
   m_Layer: 0
   m_Name: Outpost
   m_TagString: Untagged
@@ -278,7 +279,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 277f4aaa39a10e445a199eb0199b621c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  FPV: {fileID: 0}
   RobotID:
     m_InternalValue: 0
   robotClass:
@@ -303,6 +303,10 @@ MonoBehaviour:
   BufferLimit:
     m_InternalValue: 0
   Buffer:
+    m_InternalValue: 0
+  EnergyLimit:
+    m_InternalValue: 1900
+  Energy:
     m_InternalValue: 0
   ShieldLimit:
     m_InternalValue: 0
@@ -361,7 +365,68 @@ MonoBehaviour:
     m_InternalValue: 0
   ChassisPerformance: {fileID: 0}
   EXPInfo: {fileID: 0}
-  SpinJoint: {fileID: 0}
+  SpinJoint: {fileID: 6706196871322063457}
+  TargetVelocity: 144
+  InitialRotation: {x: 0, y: 0, z: 0, w: 0}
+  Suppressed:
+    m_InternalValue: 0
+  Stopped:
+    m_InternalValue: 0
+--- !u!114 &2558978296497977392
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4769907718567287211}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cca18b1aff5bb3e498b69d39cea4db5d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  interpolationBackTime: 0.1
+  extrapolationMode: 1
+  useExtrapolationTimeLimit: 1
+  extrapolationTimeLimit: 5
+  useExtrapolationDistanceLimit: 0
+  extrapolationDistanceLimit: 20
+  sendPositionThreshold: 0
+  sendRotationThreshold: 0
+  sendScaleThreshold: 0
+  sendVelocityThreshold: 0
+  sendAngularVelocityThreshold: 0
+  receivedPositionThreshold: 0
+  receivedRotationThreshold: 0
+  snapPositionThreshold: 0
+  snapRotationThreshold: 0
+  snapScaleThreshold: 0
+  positionLerpSpeed: 0.85
+  rotationLerpSpeed: 0.85
+  scaleLerpSpeed: 0.85
+  timeCorrectionSpeed: 0.1
+  snapTimeThreshold: 3
+  syncPosition: 0
+  syncRotation: 0
+  syncScale: 0
+  syncVelocity: 0
+  syncAngularVelocity: 0
+  isPositionCompressed: 0
+  isRotationCompressed: 0
+  isScaleCompressed: 0
+  isVelocityCompressed: 0
+  isAngularVelocityCompressed: 0
+  automaticallyResetTime: 1
+  isSmoothingAuthorityChanges: 0
+  transformSource: 0
+  whenToUpdateTransform: 0
+  sendRate: 30
+  networkChannel: 
+  childObjectToSync: {fileID: 4837945682605433801}
+  setVelocityInsteadOfPositionOnNonOwners: 0
+  maxPositionDifferenceForVelocitySyncing: 10
+  useLocalTransformOnly: 0
+  ownerChangeIndicator: 1
+  receivedStatesCounter: 0
 --- !u!1 &8650353939575776351
 GameObject:
   m_ObjectHideFlags: 0

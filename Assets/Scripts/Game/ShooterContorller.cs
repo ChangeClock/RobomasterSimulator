@@ -25,7 +25,8 @@ public class ShooterController : NetworkBehaviour
     public NetworkVariable<int> Type      = new NetworkVariable<int>(0);
     // public int Type = 0;
 
-    // // Shooter Mode: 0 - None 1 - Boost 2 - CD 3 - Speed
+    // Shooter 17mm Mode: 0 - None 1 - Boost 2 - CD 3 - Speed
+    // Shooter 42mm Mode: 0 - None 1 - Boost 2 - Speed
     public NetworkVariable<int> Mode      = new NetworkVariable<int>(0);
     // public int Mode = 0;
 
@@ -79,7 +80,7 @@ public class ShooterController : NetworkBehaviour
         if (!Enabled.Value) return;
 
         // Debug.Log("[ShooterController] PullTrigger");
-        OnTrigger(ID, ShootPoint.transform.position, ShootPoint.transform.right * Speed);
+        OnTrigger(ID, ShootPoint.transform.position, ShootPoint.transform.right * SpeedLimit.Value * 10);
     }
 
     public void SetAmmo(int ammo, int ammoLimit)

@@ -21,14 +21,16 @@ public class AreaController : NetworkBehaviour
     [SerializeField] public NetworkVariable<float> ControlProgress = new NetworkVariable<float>(0.0f);
     [SerializeField] public NetworkVariable<float> ControlProgressPerSecond = new NetworkVariable<float>(1.0f);
 
+    [SerializeField] public List<RobotTag> TagList = new List<RobotTag>();
+
     [SerializeField] private BuffEffectSO[] BuffList;
 
-    void Start()
+    protected virtual void Start()
     {
        
     }
 
-    void FixedUpdate()
+    protected virtual void FixedUpdate()
     {
         if (!IsServer)
         {
@@ -68,7 +70,7 @@ public class AreaController : NetworkBehaviour
         }
     }
 
-    private void OnTriggerEnter(Collider other)
+    protected virtual void OnTriggerEnter(Collider other)
     {
         if (!IsServer)
         {
@@ -80,6 +82,17 @@ public class AreaController : NetworkBehaviour
         if (robot == null)
         {
             return;
+        }
+
+        if (TagList.Count > 0)
+        {
+            bool allowed = false;
+            foreach (var tag in TagList)
+            {
+                if (robot.robotTags.Contains(tag)) allowed = true;
+            }
+
+            if (!allowed) return;
         }
 
         if (belongFaction.Value != Faction.Neu && belongFaction.Value != robot.faction.Value)
@@ -101,7 +114,7 @@ public class AreaController : NetworkBehaviour
 
     }
 
-    private void OnTriggerExit(Collider other)
+    protected virtual void OnTriggerExit(Collider other)
     {
         if (!IsServer)
         {

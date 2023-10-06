@@ -20,6 +20,9 @@ public class FPVController : MonoBehaviour
         {
             PurchaseRevive.onClick.AddListener(() => referee.Revive(1));
             FreeRevive.onClick.AddListener(() => referee.Revive(0));
+            ChassisMode.onValueChanged.AddListener(delegate {SetPerformance(ChassisMode);});
+            Shooter1Mode.onValueChanged.AddListener(delegate {SetPerformance(Shooter1Mode);});
+            Shooter2Mode.onValueChanged.AddListener(delegate {SetPerformance(Shooter2Mode);});
         }
     }
 
@@ -262,19 +265,102 @@ public class FPVController : MonoBehaviour
     [SerializeField] private TMP_Text Role;
     [SerializeField] private GameObject ChassisPerformance;
     [SerializeField] private TMP_Dropdown ChassisMode;
+    [SerializeField] private List<TMP_Dropdown.OptionData> InfantryChassisOptions;
+    [SerializeField] private List<TMP_Dropdown.OptionData> HeroChassisOptions;
     [SerializeField] private GameObject Shooter1Performance;
     [SerializeField] private TMP_Dropdown Shooter1Mode;
     [SerializeField] private GameObject Shooter2Performance;
     [SerializeField] private TMP_Dropdown Shooter2Mode;
+    [SerializeField] private List<TMP_Dropdown.OptionData> Options_17mm;
+    [SerializeField] private List<TMP_Dropdown.OptionData> Options_42mm;
+
+    public delegate void ChangePerfRequest(int chassisMode, int shooter1Mode, int shooter2Mode);
+    public event ChangePerfRequest OnPerfChange;
 
     void ToggleSettingMenu()
     {
         SettingMenu.SetActive(!SettingMenu.activeSelf);
-    }
 
-    void SetPerformance(RobotClass robotClass)
+        Shooter1Performance.SetActive(referee.ShooterControllerList.ContainsKey(0));
+
+        Shooter2Performance.SetActive(referee.ShooterControllerList.ContainsKey(1));
+
+        switch (referee.robotClass.Value)
+        {
+            case RobotClass.Hero:
+                ChassisPerformance.SetActive(true);
+                ChassisMode.options = HeroChassisOptions;
+                ChassisMode.value = referee.ChassisMode.Value;
+                break;
+            case RobotClass.Infantry:
+                ChassisPerformance.SetActive(true);
+                ChassisMode.options = InfantryChassisOptions;
+                ChassisMode.value = referee.ChassisMode.Value;
+                break;
+            default:
+                ChassisPerformance.SetActive(false);
+                break;    
+        }
+
+        if (referee.ShooterControllerList.ContainsKey(0))
+        {
+            Shooter1Performance.SetActive(true);
+
+            if (referee.ShooterControllerList[0].Enabled.Value)
+            {
+                Shooter1Mode.interactable = true;
+
+                switch(referee.ShooterControllerList[0].Type.Value)
+                {
+                    case 0:
+                        Shooter1Mode.options = Options_17mm;
+                        break;
+                    case 1:
+                        Shooter1Mode.options = Options_42mm;
+                        break;
+                    default:
+                        Shooter1Mode.interactable = false;
+                        break;
+                }
+
+                Shooter1Mode.value = referee.ShooterControllerList[0].Mode.Value;
+            } else {
+                Shooter1Mode.interactable = false;
+            }
+        }
+
+        if (referee.ShooterControllerList.ContainsKey(1))
+        {
+            Shooter2Performance.SetActive(true);
+
+            if (referee.ShooterControllerList[1].Enabled.Value)
+            {
+                Shooter2Mode.interactable = true;
+
+                switch(referee.ShooterControllerList[1].Type.Value)
+                {
+                    case 0:
+                        Shooter2Mode.options = Options_17mm;
+                        break;
+                    case 1:
+                        Shooter2Mode.options = Options_42mm;
+                        break;
+                    default:
+                        Shooter2Mode.interactable = false;
+                        break;
+                }
+
+                Shooter2Mode.value = referee.ShooterControllerList[1].Mode.Value;
+            } else {
+                Shooter2Mode.interactable = false;
+            }
+        }
+    }   
+
+    void SetPerformance(TMP_Dropdown change)
     {
-
+        Debug.Log($"[FPVController] chassis: {ChassisMode.value}, shooter1: {Shooter1Mode.value}, shooter2: {Shooter2Mode.value}");
+        OnPerfChange(ChassisMode.value, Shooter1Mode.value, Shooter2Mode.value);
     }
 
     #endregion

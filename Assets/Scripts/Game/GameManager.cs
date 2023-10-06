@@ -10,8 +10,8 @@ public class GameManager : NetworkBehaviour
     [Header("Game Status")]
     // 0 - Not started 1 - ready 2 - checking 3 - running 4 - ending
     [SerializeField] public NetworkVariable<int> GameStatus = new NetworkVariable<int>(0);
-    [SerializeField] public NetworkVariable<float> TimeLeft = new NetworkVariable<float>(0.0f);
-    [SerializeField] private bool isRunning = false;
+    [SerializeField] public NetworkVariable<float> TimeLeft = new NetworkVariable<float>(420.0f);
+    [SerializeField] public NetworkVariable<bool> isRunning = new NetworkVariable<bool>(false);
 
     [SerializeField] public RefereeController RedBase;
     [SerializeField] public RefereeController BlueBase;
@@ -24,7 +24,7 @@ public class GameManager : NetworkBehaviour
     public Dictionary<int, RefereeController> RefereeControllerList = new Dictionary<int, RefereeController>();
 
     [Header("EXP")]
-    [SerializeField] private bool HasFirstBlood = false;
+    [SerializeField] public NetworkVariable<bool> HasFirstBlood = new NetworkVariable<bool>(false);
     [SerializeField] private ExpInfoSO HeroExpInfo;
     [SerializeField] private ExpInfoSO InfantryExpInfo;
     [SerializeField] private ExpInfoSO EngineerExpInfo;
@@ -43,7 +43,6 @@ public class GameManager : NetworkBehaviour
     [SerializeField] private BuffEffectSO SentryDefaultBuff;
     [SerializeField] private BuffEffectSO ReviveBuff;
     [SerializeField] private BuffEffectSO PurchaseReviveBuff;
-    [SerializeField] private BuffEffectSO HeroSnipeBuff;
 
     [Header("Area")]
     [SerializeField] private AreaController[] RedPatrolPoints;
@@ -58,7 +57,7 @@ public class GameManager : NetworkBehaviour
     [Header("Coin")]
     [SerializeField] public NetworkVariable<int> RedCoin = new NetworkVariable<int>(0);
     [SerializeField] public NetworkVariable<int> BlueCoin = new NetworkVariable<int>(0);
-    [SerializeField] public bool HasFirstGold = false;
+    [SerializeField] public NetworkVariable<bool> HasFirstGold = new NetworkVariable<bool>(false);
 
     // [Header("EXPInfo")]
     // [SerializeField] private ExpInfoSO HeroExpInfo;
@@ -71,6 +70,7 @@ public class GameManager : NetworkBehaviour
         RefereeController.OnOccupy += OccupyUpload;
         RefereeController.OnSpawn += SpawnUpload;
         // RefereeController.OnLevelup += LevelupUpload;
+        RefereeController.OnPerformanceChange += ChangePerformanceUpload;
         RefereeController.OnRevived += ReviveUpload;
         RefereeController.OnDeath += DeathUpload;
     }
@@ -82,6 +82,7 @@ public class GameManager : NetworkBehaviour
         RefereeController.OnOccupy -= OccupyUpload;
         RefereeController.OnSpawn -= SpawnUpload;
         // RefereeController.OnLevelup -= LevelupUpload;
+        RefereeController.OnPerformanceChange -= ChangePerformanceUpload;
         RefereeController.OnRevived -= ReviveUpload;
         RefereeController.OnDeath -= DeathUpload;
     }
@@ -91,44 +92,22 @@ public class GameManager : NetworkBehaviour
         if (!IsServer) return;
     }
 
-    /**
-    * These status need to be updated on fixed interval
-    * 1. Game Info
-    */
+    protected virtual void Update()
+    {
+        if (!IsServer) return;
+    }
 
-    void FixedUpdate()
+    protected virtual void FixedUpdate()
     {
         if (!IsServer) return;
 
-        // Debug.Log(RefereeControllerList.Count);
-
-        String IDList = "";
-
-        foreach(var _referee in RefereeControllerList.Values)
+        if (isRunning.Value) 
         {
-            // ---------------Basic Status---------------//
-            
-            IDList += _referee.RobotID.Value + " ";
+            // Time Update
+            TimeLeft.Value -= Time.deltaTime;
 
-            // if (_referee.RobotID.Value == 2) Debug.Log($"{_referee.RobotID.Value} Robot Shooter0 Enabled? {_referee.Shooter0Enabled.Value}");
-
-            //--------------------Status only when robot is enabled ----------------------//
-            if (!_referee.Enabled.Value) continue;
-
-            //--------------------Status only when game is running ----------------------//
-            if (isRunning) 
-            {
-                // Time Update
-                TimeLeft.Value -= Time.deltaTime;
-
-                if (TimeLeft.Value <= 0.0f) FinishGame();
-            }
-
+            if (TimeLeft.Value <= 0.0f) FinishGame();
         }
-
-        // Debug.Log("[GameManager] IDList: " + IDList);
-
-        // Debug.Log("[GameController] HP: "+ RobotStatusList[18].GetHP());
     }
 
     public void BaseShieldOff(Faction faction)
@@ -150,14 +129,34 @@ public class GameManager : NetworkBehaviour
 
     public void FinishGame(Faction faction = Faction.Neu)
     {
-        isRunning = false;
+        isRunning.Value = false;
+
+        // RedBase.Reset();
+        // BlueBase.Reset();
+        // RedOutpost.Reset();
+        // BlueOutpost.Reset();
+
+        foreach(var _referee in RefereeControllerList.Values)
+        {
+            _referee.Reset();
+        }
 
         // TODO: Reset robot status, play ending
     }
 
     public void StartGame()
     {
-        isRunning = true;
+        HasFirstBlood.Value = false;
+        HasFirstGold.Value = false;
+
+        foreach(var _referee in RefereeControllerList.Values)
+        {
+            _referee.Reset();
+        }
+
+        TimeLeft.Value = 420.0f;
+
+        isRunning.Value = true;
 
         // TODO: bring robot to their spawnpoint, reset HP, EXP, Level, Ammo, Heat, Energy
 
@@ -210,56 +209,62 @@ public class GameManager : NetworkBehaviour
                     _referee.defaultBuff = DefaultBuff;
                 }
 
-                ChangePerformanceServerRpc(robotID);
-
                 return;
             }
         }
     }
 
-    void ChangePerformanceUpload(int robotID)
+    void ChangePerformanceUpload(int robotID, int chassisMode, int shooter1Mode, int shooter2Mode)
     {
-        ChangePerformanceServerRpc(robotID);
+        ChangePerformanceServerRpc(robotID, chassisMode, shooter1Mode, shooter2Mode);
     }
 
     [ServerRpc]
-    void ChangePerformanceServerRpc(int robotID, ServerRpcParams serverRpcParams = default)
+    void ChangePerformanceServerRpc(int robotID, int chassisMode, int shooter1Mode, int shooter2Mode, ServerRpcParams serverRpcParams = default)
     {
         RefereeController referee = RefereeControllerList[robotID];
+
+        if (isRunning.Value) return;
 
         switch (referee.robotClass.Value)
         {
             case RobotClass.Hero:
-                SetUnitPerformance(referee, HeroChassisPerformance[referee.ChassisMode.Value]);
+                SetUnitPerformance(referee, chassisMode, HeroChassisPerformance[chassisMode]);
                 SetUnitEXPInfo(referee, HeroExpInfo);
                 break;
             case RobotClass.Infantry:
-                SetUnitPerformance(referee, InfantryChassisPerformance[referee.ChassisMode.Value]);
+                SetUnitPerformance(referee, chassisMode, InfantryChassisPerformance[chassisMode]);
                 SetUnitEXPInfo(referee, InfantryExpInfo);
                 break;
             case RobotClass.Engineer:
-                SetUnitPerformance(referee, EngineerPerformance);
+                SetUnitPerformance(referee, chassisMode, EngineerPerformance);
                 SetUnitEXPInfo(referee, EngineerExpInfo);
                 break;
             case RobotClass.Sentry:
-                SetUnitPerformance(referee, SentryPerformance);
+                SetUnitPerformance(referee, chassisMode, SentryPerformance);
                 SetUnitEXPInfo(referee, SentryExpInfo);
                 break;
             default:
                 break;
         }
+        
+        int _mode;
 
         foreach (var _shooter in referee.ShooterControllerList.Values)
         {
             if (!_shooter.Enabled.Value) continue;
 
+            _mode = 0;
+            if (_shooter.ID == 0) _mode = shooter1Mode;
+            if (_shooter.ID == 1) _mode = shooter2Mode;
+
             switch (_shooter.Type.Value)
             {
                 case 0:
-                    SetShooterPerformance(_shooter, GimbalPerformance_17mm[_shooter.Mode.Value]);
+                    SetShooterPerformance(_shooter, _mode, GimbalPerformance_17mm[_mode]);
                     break;
                 case 1:
-                    SetShooterPerformance(_shooter, GimbalPerformance_42mm[_shooter.Mode.Value]);
+                    SetShooterPerformance(_shooter, _mode, GimbalPerformance_42mm[_mode]);
                     break;
                 default:
                     break;
@@ -274,8 +279,10 @@ public class GameManager : NetworkBehaviour
         referee.EXPValue.Value = expInfo.expValue[referee.Level.Value];
     }
 
-    void SetUnitPerformance(RefereeController referee, RobotPerformanceSO performance)
+    void SetUnitPerformance(RefereeController referee, int mode, RobotPerformanceSO performance)
     {
+        Debug.Log($"[GameManager] mode: {mode}, maxHealth: {performance.maxHealth[referee.Level.Value]}, level: {referee.Level.Value}");
+        referee.ChassisMode.Value = mode;
         referee.ChassisPerformance = performance;
         float _recoverHP = performance.maxHealth[referee.Level.Value] - referee.HPLimit.Value;
         referee.HPLimit.Value = performance.maxHealth[referee.Level.Value];
@@ -283,8 +290,9 @@ public class GameManager : NetworkBehaviour
         referee.PowerLimit.Value = performance.maxPower[referee.Level.Value];
     }
 
-    void SetShooterPerformance(ShooterController shooter, RobotPerformanceSO performance)
+    void SetShooterPerformance(ShooterController shooter, int mode, RobotPerformanceSO performance)
     {
+        shooter.Mode.Value = mode;
         shooter.GimbalPerformance = performance;
         shooter.HeatLimit.Value = performance.maxHeat[shooter.Level.Value];
         shooter.CD.Value = performance.coolDown[shooter.Level.Value];
@@ -342,24 +350,9 @@ public class GameManager : NetworkBehaviour
     }
 
     [ServerRpc]
-    void ShootHandlerServerRpc(int shooterID, int shooterType, int robotID, ServerRpcParams serverRpcParams = default)
+    protected virtual void ShootHandlerServerRpc(int shooterID, int shooterType, int robotID, ServerRpcParams serverRpcParams = default)
     {
-        RefereeController referee = RefereeControllerList[robotID];
-
-        if (referee.robotClass.Value == RobotClass.Hero & referee.HasBuff(HeroSnipeBuff))
-        {
-            switch (referee.faction.Value)
-            {
-                case Faction.Red:
-                    RedCoin.Value += 10;
-                    break;
-                case Faction.Blue:
-                    BlueCoin.Value += 10;
-                    break;
-                default :
-                    break;
-            }
-        }
+        
     }
 
     void OccupyUpload(int areaID, int robotID)
@@ -438,10 +431,10 @@ public class GameManager : NetworkBehaviour
         {
             foreach (var _id in Victim.AttackList.Keys)
             {
-                if (RefereeControllerList[_id].faction.Value != Victim.faction.Value) RefereeControllerList[_id].EXP.Value += (_id == attackerID) ? Victim.EXP.Value + (HasFirstBlood ? 50 : 0) : Victim.EXP.Value / 4;
+                if (RefereeControllerList[_id].faction.Value != Victim.faction.Value) RefereeControllerList[_id].EXP.Value += (_id == attackerID) ? Victim.EXP.Value + (HasFirstBlood.Value ? 50 : 0) : Victim.EXP.Value / 4;
             }
         } else {
-            int _expInTotal = Victim.EXPValue.Value + (HasFirstBlood ? 50 : 0);
+            int _expInTotal = Victim.EXPValue.Value + (HasFirstBlood.Value ? 50 : 0);
             List<int> _idList = new List<int>();
 
             foreach (var _referee in RefereeControllerList.Values)
@@ -458,9 +451,9 @@ public class GameManager : NetworkBehaviour
             }
         }
 
-        if (!HasFirstBlood)
+        if (!HasFirstBlood.Value)
         {
-            HasFirstBlood = true;
+            HasFirstBlood.Value = true;
         }
     }
 

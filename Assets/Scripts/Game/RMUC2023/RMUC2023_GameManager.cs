@@ -54,11 +54,8 @@ public class RMUC2023_GameManager : GameManager
 
         if (isRunning.Value)
         {
-            if (TimeLeft.Value < 240)
-            {
-                RedOutpost.Stopped.Value = true;
-                BlueOutpost.Stopped.Value = true;
-            }
+            if ((TimeLeft.Value < 240) & !RedOutpost.Stopped.Value & RedOutpost.Enabled.Value) RedOutpost.Stop();
+            if ((TimeLeft.Value < 240) & !BlueOutpost.Stopped.Value & BlueOutpost.Enabled.Value) BlueOutpost.Stop();
 
             if (TimeLeft.Value >= 240)
             {
@@ -88,6 +85,68 @@ public class RMUC2023_GameManager : GameManager
                     }
                 }
             }
+        }
+    }
+
+    protected override void OnTimeLeftChange(float oldTime, float newTime)
+    {
+        
+        if (oldTime >= 30.0f && newTime < 30.0f) 
+        {
+            // Big Buff
+        }
+        if (oldTime >= 60.0f && newTime < 60.0f) 
+        {
+            RedCoin.Value += 150;
+            BlueCoin.Value += 150;
+        }
+        if (oldTime >= 74.0f && newTime < 74.0f) 
+        {
+            // Stop Big Buff
+        }
+        if (oldTime >= 104.0f && newTime < 104.0f)
+        {
+            // Big Buff
+        }
+        if (oldTime >= 120.0f && newTime < 120.0f)
+        {
+            RedCoin.Value += 50;
+            BlueCoin.Value += 50;
+        }
+        if (oldTime >= 150.0f && newTime < 150.0f)
+        {
+            // Stop Big Buff
+        }
+        if (oldTime >= 180.0f && newTime < 180.0f)
+        {
+            RedCoin.Value += 50;
+            BlueCoin.Value += 50;
+            // Big Buff
+        }
+        if (oldTime >= 240.0f && newTime < 240.0f)
+        {
+            RedCoin.Value += 50;
+            BlueCoin.Value += 50;
+            // Stop Big Buff
+        }
+        if (oldTime >= 270.0f && newTime < 270.0f)
+        {
+            // Small Buff
+        }
+        if (oldTime >= 300.0f && newTime < 300.0f)
+        {
+            RedCoin.Value += 50;
+            BlueCoin.Value += 50;
+        }
+        if (oldTime >= 330.0f && newTime < 330.0f)
+        {
+            // Stop Small Buff
+        }
+        if (oldTime >= 360.0f && newTime < 360.0f)
+        {
+            RedCoin.Value += 50;
+            BlueCoin.Value += 50;
+            // Small Buff
         }
     }
 

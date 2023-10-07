@@ -305,7 +305,7 @@ public class RefereeController : NetworkBehaviour
 
             if (!Enabled.Value) return;
 
-            if (EXPInfo != null) TickEXP();
+            if (EXPInfo != null & robotTags.Contains(RobotTag.GrowingUnit)) TickEXP();
 
             TickHealth();
         }
@@ -359,7 +359,7 @@ public class RefereeController : NetworkBehaviour
 
     bool IsOverPower 
     {
-        get { return Power.Value > PowerLimit.Value; }
+        get { return (PowerLimit.Value < 0) ? false : (Power.Value > PowerLimit.Value); }
     }
     
     void TickPower()

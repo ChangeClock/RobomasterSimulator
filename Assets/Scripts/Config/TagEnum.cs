@@ -41,5 +41,6 @@ public enum RobotTag
     GroundUnit,
     Building,
     CombatUnit,
-    GrowingUnit
+    GrowingUnit,
+    Miner,
 }

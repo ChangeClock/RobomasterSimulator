@@ -105,11 +105,17 @@ public class GameManager : NetworkBehaviour
 
         if (isRunning.Value) 
         {
+            OnTimeLeftChange(TimeLeft.Value, TimeLeft.Value - Time.deltaTime);
             // Time Update
             TimeLeft.Value -= Time.deltaTime;
 
             if (TimeLeft.Value <= 0.0f) FinishGame();
         }
+    }
+
+    protected virtual void OnTimeLeftChange(float oldTime, float newTime)
+    {
+
     }
 
     public void BaseShieldOff(Faction faction)
@@ -146,7 +152,7 @@ public class GameManager : NetworkBehaviour
         // TODO: Reset robot status, play ending
     }
 
-    public void StartGame()
+    public virtual void StartGame()
     {
         HasFirstBlood.Value = false;
         HasFirstGold.Value = false;
@@ -500,6 +506,20 @@ public class GameManager : NetworkBehaviour
     [ServerRpc]
     void ReadyHandlerServerRpc(int id, ServerRpcParams serverRpcParams = default)
     {
-        
+        RefereeController referee = RefereeControllerList[id];
+
+        if (isRunning.Value) return;
+
+        bool allReady = true;
+
+        foreach (var _referee in RefereeControllerList.Values)
+        {
+            if (!_referee.Enabled.Value) allReady = false;
+        }
+
+        if (allReady)
+        {
+            StartGame();
+        }
     }
 }

@@ -5,8 +5,6 @@ using UnityEngine;
 
 public class AreaController : NetworkBehaviour
 {
-    public Dictionary<int, RefereeController> RobotsInArea = new Dictionary<int, RefereeController>();
-
     [SerializeField] public NetworkVariable<int> ID = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
     // 0: not occupied 1: Blue 2: Red
     [SerializeField] public NetworkVariable<bool> Enabled = new NetworkVariable<bool>(false, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
@@ -24,6 +22,8 @@ public class AreaController : NetworkBehaviour
     [SerializeField] public List<RobotTag> TagList = new List<RobotTag>();
 
     [SerializeField] private BuffEffectSO[] BuffList;
+
+    protected Dictionary<int, RefereeController> RobotsInArea = new Dictionary<int, RefereeController>();
 
     protected virtual void Start()
     {

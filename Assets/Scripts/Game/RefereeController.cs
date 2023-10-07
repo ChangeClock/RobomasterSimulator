@@ -53,9 +53,9 @@ public class RefereeController : NetworkBehaviour
     public NetworkVariable<RobotClass> robotClass = new NetworkVariable<RobotClass>(RobotClass.Infantry);
     public List<RobotTag> robotTags = new List<RobotTag>();
     public NetworkVariable<Faction> faction = new NetworkVariable<Faction>(Faction.Neu);
-    public NetworkVariable<bool> Ready = new NetworkVariable<bool>(false);
 
     [Header("Player")]
+    public Transform spawnPoint;
     private RobotController robotController;
     private StarterAssetsInputs playerInput;
 
@@ -235,6 +235,17 @@ public class RefereeController : NetworkBehaviour
                 
             if (FPVCamera != null)
             {
+                int state;
+                if (gameManager.isRunning.Value)
+                {
+                    state = 2;
+                } else if (Ready.Value) {
+                    state = 1;
+                } else {
+                    state = 0;
+                }
+                FPVCamera.SetReadyState(state);
+
                 FPVCamera.SetRoleInfo(faction.Value, RobotID.Value);
 
                 FPVCamera.SetHPLimit(HPLimit.Value);
@@ -245,10 +256,6 @@ public class RefereeController : NetworkBehaviour
                 FPVCamera.SetReviveProgress(CurrentReviveProgress.Value, MaxReviveProgress.Value, (MaxReviveProgress.Value - CurrentReviveProgress.Value) / ReviveProgressPerSec.Value);
                 // FPVCamera.SetPurchaseRevive();
                 FPVCamera.SetFreeRevive(CurrentReviveProgress.Value >= MaxReviveProgress.Value);
-
-                // FPVCamera.SetHeat0(Heat0.Value, Heat0Limit.Value);
-                // FPVCamera.SetHeat1(Heat1.Value, Heat1Limit.Value);
-                // FPVCamera.SetAmmo(Shooter0Type.Value == 0? ConsumedAmmo0.Value : ConsumedAmmo1.Value, Shooter0Type.Value == 0? Ammo0.Value : Ammo1.Value, Shooter1Type.Value == 0? ConsumedAmmo0.Value : ConsumedAmmo1.Value, Shooter1Type.Value == 0? Ammo0.Value : Ammo1.Value);
 
                 foreach (var _shooter in ShooterControllerList.Values)
                 {
@@ -281,9 +288,7 @@ public class RefereeController : NetworkBehaviour
                 } else {
                     FPVCamera.SetPower(Power.Value);
                 }
-
                 FPVCamera.SetBuffer(Buffer.Value, BufferLimit.Value);
-
                 FPVCamera.SetEnergy(Energy.Value, EnergyLimit.Value);
             }
         }
@@ -313,9 +318,36 @@ public class RefereeController : NetworkBehaviour
     public NetworkVariable<bool> Immutable         = new NetworkVariable<bool>(false);
     public NetworkVariable<int> Warning           = new NetworkVariable<int>(0);
     public NetworkVariable<int> OccupiedArea      = new NetworkVariable<int>(0);
-    
+    public NetworkVariable<bool> Ready         = new NetworkVariable<bool>(false);
+
     public Vector2 Position = Vector2.zero;
     public float Direction = 0f;
+
+    public void GetReady()
+    {
+        if (gameManager.isRunning.Value) return;
+
+        Ready.Value = !Ready.Value;
+
+        Reset();
+
+        if (Ready.Value)
+        {
+            // Back to spawn point & disable control
+            gameObject.transform.SetPositionAndRotation(spawnPoint.position, spawnPoint.rotation);
+            playerInput.enabled = false;
+        } else {
+            // enable control
+            playerInput.enabled = true;
+        }
+
+        OnReady(RobotID.Value);
+    }
+
+    public void ToggleInput()
+    {
+        playerInput.enabled = true;
+    }
 
     [Header("Power")]
     public NetworkVariable<float> PowerLimit        = new NetworkVariable<float>(0);
@@ -357,16 +389,20 @@ public class RefereeController : NetworkBehaviour
                 float overPowerK = (Power.Value - PowerLimit.Value) / PowerLimit.Value;
                 float timeScale = Time.deltaTime / 0.1f;
 
+                float _damage = 0f;
                 if (overPowerK <= 0.1f & overPowerK > 0)
                 {
-                    RefereeDamage(0.1f * HPLimit.Value * timeScale);
+                    _damage = 0.1f * HPLimit.Value * timeScale;
                 } else if (overPowerK <= 0.2f & overPowerK > 0.1f)
                 {
-                    RefereeDamage(0.2f * HPLimit.Value * timeScale);
+                    _damage = 0.2f * HPLimit.Value * timeScale;
                 } else if (overPowerK > 0.2f)
                 {
-                    RefereeDamage(0.4f * HPLimit.Value * timeScale);
+                    _damage = 0.4f * HPLimit.Value * timeScale;
                 }
+
+                RefereeDamage(_damage);
+                Damage_OverPower.Value += _damage;
             }
         } else {
             if (Buffer.Value < BufferLimit.Value)
@@ -389,6 +425,14 @@ public class RefereeController : NetworkBehaviour
     public NetworkVariable<float> HPLimit           = new NetworkVariable<float>(500);
     public NetworkVariable<float> HP                = new NetworkVariable<float>(500);
     
+    public NetworkVariable<float> Damage_Hit                = new NetworkVariable<float>(0);
+    public NetworkVariable<float> Damage_17mm                = new NetworkVariable<float>(0);
+    public NetworkVariable<float> Damage_42mm                = new NetworkVariable<float>(0);
+    public NetworkVariable<float> Damage_Missle                = new NetworkVariable<float>(0);
+    public NetworkVariable<float> Damage_OverPower                = new NetworkVariable<float>(0);
+    public NetworkVariable<float> Damage_OverHeat                = new NetworkVariable<float>(0);
+    public NetworkVariable<float> Damage_Warning = new NetworkVariable<float>(0);
+
     public class AttackerInfo {
         public int ID;
         public float lastTime;
@@ -411,7 +455,7 @@ public class RefereeController : NetworkBehaviour
     {
         if (!IsServer) return;
 
-        if (attackerID != 0)
+        if (attackerID != 0 & gameManager.RefereeControllerList[attackerID].faction.Value != faction.Value)
         {
             if (AttackList.ContainsKey(attackerID)) 
             {
@@ -426,29 +470,34 @@ public class RefereeController : NetworkBehaviour
 
         if (Enabled.Value && !Immutable.Value) {
             // Debug.Log("[GameManager - Damage] HP:"+RobotStatusList[robotID].HP);
+            if (damageType != 3 & gameManager.RefereeControllerList.ContainsKey(attackerID)) 
+            {
+                int atkBuff = gameManager.RefereeControllerList[attackerID].ATKBuff.Value;
+                if (atkBuff > 0) _damage = _damage * atkBuff;
+            }
+
+            if (!robotTags.Contains(RobotTag.Building) & DEFBuff.Value > 0)
+            {
+                _damage = _damage * (1 - DEFBuff.Value / 100);
+            }
+            
             switch(damageType){
                 case 0:
+                    Damage_Hit.Value += _damage;
+                    break;
                 case 1:
+                    Damage_17mm.Value += _damage;
+                    break;
                 case 2:
-                    // TODO: 42mm sniper doesn't get affected by atkBuff
-                    if (gameManager.RefereeControllerList.ContainsKey(attackerID))
-                    {
-                        int atkBuff = gameManager.RefereeControllerList[attackerID].ATKBuff.Value;
-                        if (atkBuff > 0) _damage = _damage * atkBuff;
-                    }
-
+                    Damage_42mm.Value += _damage;
                     break;
                 case 3:
-                    // Missle damage doesn't get affected by atkbuff
+                    Damage_Missle.Value += _damage;
                     break;
                 default:
                     Debug.LogWarning("Unknown Damage Type" + damageType);
                     break;
             }
-
-            if (DEFBuff.Value > 0) _damage = _damage * (1 - DEFBuff.Value / 100);
-
-            // TODO: Real Damage
 
             if (_hp - _damage <= 0)
             {
@@ -489,6 +538,20 @@ public class RefereeController : NetworkBehaviour
         }
     }
 
+    public int GetLastAttacker()
+    {
+        if (AttackList.Count <= 0) return 0;
+
+        int attackerID = 0;
+
+        foreach (var _attacker in AttackList.Values)
+        {
+            if (_attacker.lastTime > AttackList[attackerID].lastTime) attackerID = _attacker.ID;
+        }
+
+        return attackerID;
+    }
+
     void TickHealth()
     {
         if (HP.Value < HPLimit.Value && HealBuff.Value > 0)
@@ -502,6 +565,43 @@ public class RefereeController : NetworkBehaviour
                 HP.Value = HPLimit.Value;
             }
         }
+    }
+
+    void RefereeDamage(float damage)
+    {
+        if (Enabled.Value)
+        {
+            float _hp = HP.Value;
+            
+            // Debug.Log($"[GameManager] raw damage: {damage}, damage {damage}");
+
+            if (_hp - damage <= 0)
+            {
+                HP.Value = 0;
+                Enabled.Value = false;
+                OnDeath(RobotID.Value, RobotID.Value);
+            } else {
+                HP.Value = (_hp - damage);
+            }
+        }
+    }
+
+    public virtual void ShieldOff()
+    {
+        if (!IsServer) return;
+
+        Shield.Value = 0;
+    }
+
+    void ResetDamage()
+    {
+        Damage_Hit.Value = 0f;
+        Damage_17mm.Value = 0f; 
+        Damage_42mm.Value = 0f;
+        Damage_Missle.Value = 0f;
+        Damage_OverPower.Value = 0f;
+        Damage_OverHeat.Value = 0f;
+        Damage_Warning.Value = 0f;
     }
 
     [Header("Revive")]
@@ -543,32 +643,6 @@ public class RefereeController : NetworkBehaviour
             default:
                 break;
         }
-    }
-
-    void RefereeDamage(float damage)
-    {
-        if (Enabled.Value)
-        {
-            float _hp = HP.Value;
-            
-            // Debug.Log($"[GameManager] raw damage: {damage}, damage {damage}");
-
-            if (_hp - damage <= 0)
-            {
-                HP.Value = 0;
-                Enabled.Value = false;
-                OnDeath(RobotID.Value, RobotID.Value);
-            } else {
-                HP.Value = (_hp - damage);
-            }
-        }
-    }
-
-    public virtual void ShieldOff()
-    {
-        if (!IsServer) return;
-
-        Shield.Value = 0;
     }
 
     # region Shooter related
@@ -860,6 +934,8 @@ public class RefereeController : NetworkBehaviour
         HP.Value = HPLimit.Value;
         Shield.Value = ShieldLimit.Value;
         PowerLimit.Value = ChassisPerformance.maxPower[Level.Value];
+
+        ResetDamage();
         
         ATKBuff.Value = defaultBuff.ATKBuff;
         DEFBuff.Value = defaultBuff.DEFBuff;

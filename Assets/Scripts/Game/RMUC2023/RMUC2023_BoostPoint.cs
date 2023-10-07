@@ -23,6 +23,7 @@ public class RMUC2023_BoostPoint : AreaController
             {
                 if(_referee.HasBuff(PreBoostBuff))
                 { 
+                    _referee.RemoveBuff(PreBoostBuff);
                     _referee.AddBuff(BoostBuff);
                     _referee.Buffer.Value = 250f;
                 }

@@ -20,10 +20,13 @@ public class FPVController : MonoBehaviour
         {
             PurchaseRevive.onClick.AddListener(() => referee.Revive(1));
             FreeRevive.onClick.AddListener(() => referee.Revive(0));
-            ChassisMode.onValueChanged.AddListener(delegate {SetPerformance(ChassisMode);});
-            Shooter1Mode.onValueChanged.AddListener(delegate {SetPerformance(Shooter1Mode);});
-            Shooter2Mode.onValueChanged.AddListener(delegate {SetPerformance(Shooter2Mode);});
+            GetReady.onClick.AddListener(() => referee.GetReady());
         }
+
+        ChassisMode.onValueChanged.AddListener(delegate {SetPerformance(ChassisMode);});
+        Shooter1Mode.onValueChanged.AddListener(delegate {SetPerformance(Shooter1Mode);});
+        Shooter2Mode.onValueChanged.AddListener(delegate {SetPerformance(Shooter2Mode);});
+
     }
 
     void Awake() 
@@ -261,7 +264,8 @@ public class FPVController : MonoBehaviour
 
     [SerializeField] private InputAction SettingMenuAction;
     [SerializeField] private GameObject SettingMenu;
-    [SerializeField] private Button Ready;
+    [SerializeField] private Button GetReady;
+    [SerializeField] private TMP_Text State;
     [SerializeField] private TMP_Text Role;
     [SerializeField] private GameObject ChassisPerformance;
     [SerializeField] private TMP_Dropdown ChassisMode;
@@ -361,6 +365,30 @@ public class FPVController : MonoBehaviour
     {
         Debug.Log($"[FPVController] chassis: {ChassisMode.value}, shooter1: {Shooter1Mode.value}, shooter2: {Shooter2Mode.value}");
         OnPerfChange(ChassisMode.value, Shooter1Mode.value, Shooter2Mode.value);
+    }
+
+    public void SetReadyState(int mode)
+    {
+        switch (mode)
+        {
+            case 0:
+                State.text = "Ready";
+                State.color = Color.green;
+                GetReady.interactable = true;
+                break;
+            case 1:
+                State.text = "Waiting";
+                State.color = Color.yellow;
+                GetReady.interactable = true;
+                break;
+            case 2:
+                State.text = "Running";
+                State.color = Color.red;
+                GetReady.interactable = false;
+                break;
+            default:
+                break;
+        }
     }
 
     #endregion

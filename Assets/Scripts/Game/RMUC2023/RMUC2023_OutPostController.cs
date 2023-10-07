@@ -10,6 +10,8 @@ public class RMUC2023_OutPostController : RefereeController
     [SerializeField] public NetworkVariable<bool> Suppressed = new NetworkVariable<bool>(false);
     [SerializeField] public NetworkVariable<bool> Stopped = new NetworkVariable<bool>(false);
 
+    [SerializeField] public bool HasGivenEXP = false;
+
     protected override void Start()
     {
         InitialRotation = SpinJoint.transform.localRotation;

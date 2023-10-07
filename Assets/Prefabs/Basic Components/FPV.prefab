@@ -202,7 +202,8 @@ MonoBehaviour:
       m_Flags: 0
     m_Flags: 0
   SettingMenu: {fileID: 1549079257076826426}
-  Ready: {fileID: 175495919626336645}
+  GetReady: {fileID: 175495919626336645}
+  State: {fileID: 4509903318232954197}
   Role: {fileID: 2454440470314661397}
   ChassisPerformance: {fileID: 6783698074169314719}
   ChassisMode: {fileID: 7494943490129497439}
@@ -1246,6 +1247,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &4509903318232954197 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 9191593674617960338, guid: a320c4d18d384e443a9bc130e7f7a5ee,
+    type: 3}
+  m_PrefabInstance: {fileID: 4690917457986437831}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!114 &4802957621589720178 stripped

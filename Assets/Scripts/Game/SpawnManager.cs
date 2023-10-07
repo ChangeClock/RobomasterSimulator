@@ -30,12 +30,14 @@ public class SpawnManager : NetworkBehaviour
             case 1:
                 player = Instantiate(prefabList[id+1], redSpawnPoints[id].position, redSpawnPoints[id].rotation);
                 referee = player.GetComponent<RefereeController>();
+        if (referee != null) referee.spawnPoint = redSpawnPoints[id];
                 referee.RobotID.Value = id + 1;
                 referee.faction.Value = Faction.Red;
                 break;
             case 2:
                 player = Instantiate(prefabList[id+1], blueSpawnPoints[id].position, blueSpawnPoints[id].rotation);
                 referee = player.GetComponent<RefereeController>();
+        if (referee != null) referee.spawnPoint = blueSpawnPoints[id];
                 referee.RobotID.Value = id + 21;
                 referee.faction.Value = Faction.Blue;
                 break;
@@ -59,7 +61,6 @@ public class SpawnManager : NetworkBehaviour
         // }
         
         // gameManager.RefereeControllerList.Add(referee.RobotID, referee);
-        
         player.GetComponent<NetworkObject>().SpawnAsPlayerObject(clientId);
         // gameManager.SpawnUpload(id + 1);
 

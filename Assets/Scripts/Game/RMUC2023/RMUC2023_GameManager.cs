@@ -20,6 +20,7 @@ public class RMUC2023_GameManager : GameManager
         if (RedControlPoint.Occupied.Value & !BlueControlPoint.Occupied.Value)
         {
             BlueControlTime.Value = 0f;
+            RedOutpost.Suppressed.Value = false;
 
             if (RedControlTime.Value < 6)
             {
@@ -30,6 +31,7 @@ public class RMUC2023_GameManager : GameManager
         } else if (!RedControlPoint.Occupied.Value & BlueControlPoint.Occupied.Value)
         {
             RedControlTime.Value = 0f;
+            BlueOutpost.Suppressed.Value = false;
 
             if (BlueControlTime.Value < 6)
             {
@@ -40,7 +42,9 @@ public class RMUC2023_GameManager : GameManager
         } else if (!RedControlPoint.Occupied.Value & !BlueControlPoint.Occupied.Value) 
         {
             BlueControlTime.Value = 0f;
+            BlueOutpost.Suppressed.Value = false;
             RedControlTime.Value = 0f;
+            RedOutpost.Suppressed.Value = false;
         }
     }
 
@@ -54,6 +58,35 @@ public class RMUC2023_GameManager : GameManager
             {
                 RedOutpost.Stopped.Value = true;
                 BlueOutpost.Stopped.Value = true;
+            }
+
+            if (TimeLeft.Value >= 240)
+            {
+                if (RedOutpost.HPLimit.Value - RedOutpost.HP.Value >= 500 & !RedOutpost.HasGivenEXP)
+                {
+                    RedOutpost.HasGivenEXP = true;
+
+                    int _id = RedOutpost.GetLastAttacker();
+                    if (_id != 0)
+                    {
+                        RefereeControllerList[_id].EXP.Value += 25;
+                    } else {
+                        DistributeEXP(Faction.Blue, 25);
+                    }
+                }
+
+                if (BlueOutpost.HPLimit.Value - BlueOutpost.HP.Value >= 500 & !BlueOutpost.HasGivenEXP)
+                {
+                    BlueOutpost.HasGivenEXP = true;
+
+                    int _id = BlueOutpost.GetLastAttacker();
+                    if (_id != 0)
+                    {
+                        RefereeControllerList[_id].EXP.Value += 25;
+                    } else {
+                        DistributeEXP(Faction.Red, 25);
+                    }
+                }
             }
         }
     }

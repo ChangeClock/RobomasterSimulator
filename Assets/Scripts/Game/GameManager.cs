@@ -73,6 +73,7 @@ public class GameManager : NetworkBehaviour
         RefereeController.OnPerformanceChange += ChangePerformanceUpload;
         RefereeController.OnRevived += ReviveUpload;
         RefereeController.OnDeath += DeathUpload;
+        RefereeController.OnReady += ReadyUpload;
     }
 
     private void OnDisable()
@@ -85,6 +86,7 @@ public class GameManager : NetworkBehaviour
         RefereeController.OnPerformanceChange -= ChangePerformanceUpload;
         RefereeController.OnRevived -= ReviveUpload;
         RefereeController.OnDeath -= DeathUpload;
+        RefereeController.OnReady -= ReadyUpload;
     }
 
     void Start() 
@@ -431,29 +433,38 @@ public class GameManager : NetworkBehaviour
         {
             foreach (var _id in Victim.AttackList.Keys)
             {
-                if (RefereeControllerList[_id].faction.Value != Victim.faction.Value) RefereeControllerList[_id].EXP.Value += (_id == attackerID) ? Victim.EXP.Value + (HasFirstBlood.Value ? 50 : 0) : Victim.EXP.Value / 4;
+                if (RefereeControllerList[_id].faction.Value != Victim.faction.Value) 
+                {
+                    RefereeControllerList[_id].EXP.Value += (_id == attackerID) ? Victim.EXP.Value + (HasFirstBlood.Value ? 50 : 0) : Victim.EXP.Value / 4;
+                }
             }
         } else {
             int _expInTotal = Victim.EXPValue.Value + (HasFirstBlood.Value ? 50 : 0);
-            List<int> _idList = new List<int>();
-
-            foreach (var _referee in RefereeControllerList.Values)
-            {
-                if (_referee.faction.Value != Victim.faction.Value 
-                && (_referee.robotClass.Value == RobotClass.Infantry || _referee.robotClass.Value == RobotClass.Hero) 
-                && _referee.Enabled.Value
-                ) _idList.Add(_referee.RobotID.Value); 
-            }
-
-            foreach (var _id in _idList)
-            {
-                RefereeControllerList[_id].EXP.Value += _expInTotal / _idList.Count;
-            }
+            
+            DistributeEXP(Victim.faction.Value == Faction.Red ? Faction.Blue : Faction.Red, _expInTotal);
         }
 
         if (!HasFirstBlood.Value)
         {
             HasFirstBlood.Value = true;
+        }
+    }
+
+    protected void DistributeEXP(Faction faction, int exp)
+    {
+        List<int> _idList = new List<int>();
+
+        foreach (var _referee in RefereeControllerList.Values)
+        {
+            if (_referee.faction.Value == faction
+            && (_referee.robotClass.Value == RobotClass.Infantry || _referee.robotClass.Value == RobotClass.Hero) 
+            && _referee.Enabled.Value
+            ) _idList.Add(_referee.RobotID.Value); 
+        }
+
+        foreach (var _id in _idList)
+        {
+            RefereeControllerList[_id].EXP.Value += exp / _idList.Count;
         }
     }
 
@@ -479,5 +490,16 @@ public class GameManager : NetworkBehaviour
                 Debug.Log("[GameManager] Unknown revive mode");
                 break;
         }
+    }
+
+    void ReadyUpload(int id)
+    {
+        ReadyHandlerServerRpc(id);
+    }
+
+    [ServerRpc]
+    void ReadyHandlerServerRpc(int id, ServerRpcParams serverRpcParams = default)
+    {
+        
     }
 }

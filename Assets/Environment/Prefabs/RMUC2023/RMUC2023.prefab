@@ -86,6 +86,7 @@ MonoBehaviour:
     m_InternalValue: 0
   ControlProgressPerSecond:
     m_InternalValue: 1
+  TagList: 
   BuffList: []
   PreBoostBuff: {fileID: 11400000, guid: d0466fc3d7c2ecf45a7c90cf218af1a2, type: 2}
   BoostBuff: {fileID: 11400000, guid: 6eb1d8bd6bd9e834a96de6c1186e5f92, type: 2}
@@ -245,6 +246,7 @@ MonoBehaviour:
     m_InternalValue: 0
   ControlProgressPerSecond:
     m_InternalValue: 1
+  TagList: 
   BuffList:
   - {fileID: 11400000, guid: b7fe733a28471a84e9c72fac46c9552f, type: 2}
 --- !u!114 &4361911932974463436
@@ -263,6 +265,94 @@ MonoBehaviour:
   AlwaysReplicateAsRoot: 0
   DontDestroyWithOwner: 0
   AutoObjectParentSync: 1
+--- !u!1 &698619064854435711
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7955364519697617680}
+  - component: {fileID: 1844098574886235264}
+  - component: {fileID: 8168027331514560188}
+  m_Layer: 0
+  m_Name: R-Control-Area
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7955364519697617680
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 698619064854435711}
+  m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
+  m_LocalPosition: {x: -28.9, y: 1, z: 21.6}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 8345070699079395522}
+  m_RootOrder: -1
+  m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
+--- !u!64 &1844098574886235264
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 698619064854435711}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 1
+  m_CookingOptions: 30
+  m_Mesh: {fileID: -5595293084641481728, guid: 1a62599c2f21d734b8fd036669b01eb8, type: 3}
+--- !u!114 &8168027331514560188
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 698619064854435711}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b3f72495cf672694781c338c566f9164, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ID:
+    m_InternalValue: 0
+  Enabled:
+    m_InternalValue: 1
+  printLog: 0
+  belongFaction:
+    m_InternalValue: 0
+  isControlPoint:
+    m_InternalValue: 0
+  Occupied:
+    m_InternalValue: 0
+  controllingFaction:
+    m_InternalValue: 3
+  MaxControlProgress:
+    m_InternalValue: 100
+  ControlProgress:
+    m_InternalValue: 0
+  ControlProgressPerSecond:
+    m_InternalValue: 1
+  TagList: 04000000
+  BuffList: []
 --- !u!1 &897314893481773359
 GameObject:
   m_ObjectHideFlags: 0
@@ -457,6 +547,7 @@ MonoBehaviour:
     m_InternalValue: 0
   ControlProgressPerSecond:
     m_InternalValue: 1
+  TagList: 
   BuffList:
   - {fileID: 11400000, guid: c4456e46a00167b4eb5c4f80e48149ad, type: 2}
 --- !u!114 &3367429904098881600
@@ -668,6 +759,7 @@ MonoBehaviour:
     m_InternalValue: 0
   ControlProgressPerSecond:
     m_InternalValue: 1
+  TagList: 
   BuffList:
   - {fileID: 11400000, guid: d0466fc3d7c2ecf45a7c90cf218af1a2, type: 2}
 --- !u!114 &3984151517186726640
@@ -773,6 +865,7 @@ MonoBehaviour:
     m_InternalValue: 0
   ControlProgressPerSecond:
     m_InternalValue: 1
+  TagList: 
   BuffList:
   - {fileID: 11400000, guid: c4456e46a00167b4eb5c4f80e48149ad, type: 2}
   HeroSnipeBuff: {fileID: 11400000, guid: be205b508f613f34b945b6d72e4fc0a6, type: 2}
@@ -1103,6 +1196,7 @@ MonoBehaviour:
     m_InternalValue: 0
   ControlProgressPerSecond:
     m_InternalValue: 1
+  TagList: 
   BuffList:
   - {fileID: 11400000, guid: c4456e46a00167b4eb5c4f80e48149ad, type: 2}
 --- !u!114 &7541122618622039051
@@ -1273,6 +1367,7 @@ MonoBehaviour:
     m_InternalValue: 0
   ControlProgressPerSecond:
     m_InternalValue: 1
+  TagList: 
   BuffList: []
   PreBoostBuff: {fileID: 11400000, guid: d0466fc3d7c2ecf45a7c90cf218af1a2, type: 2}
   BoostBuff: {fileID: 11400000, guid: 6eb1d8bd6bd9e834a96de6c1186e5f92, type: 2}
@@ -1416,6 +1511,7 @@ MonoBehaviour:
     m_InternalValue: 0
   ControlProgressPerSecond:
     m_InternalValue: 1
+  TagList: 
   BuffList: []
 --- !u!114 &2109235281917476644
 MonoBehaviour:
@@ -1679,6 +1775,7 @@ MonoBehaviour:
     m_InternalValue: 0
   ControlProgressPerSecond:
     m_InternalValue: 1
+  TagList: 
   BuffList:
   - {fileID: 11400000, guid: 9f0d998bc5e42ee4287a91decceece7c, type: 2}
 --- !u!114 &1194419823201475596
@@ -1856,6 +1953,94 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 8, y: 8, z: 8}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!1 &6077760628996698447
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5487339158061777122}
+  - component: {fileID: 4161149022839536446}
+  - component: {fileID: 1441357494148500770}
+  m_Layer: 0
+  m_Name: B-Control-Area
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5487339158061777122
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6077760628996698447}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 28.9, y: 1, z: -21.6}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 8345070699079395522}
+  m_RootOrder: -1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!64 &4161149022839536446
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6077760628996698447}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 1
+  m_CookingOptions: 30
+  m_Mesh: {fileID: -5595293084641481728, guid: 1a62599c2f21d734b8fd036669b01eb8, type: 3}
+--- !u!114 &1441357494148500770
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6077760628996698447}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b3f72495cf672694781c338c566f9164, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ID:
+    m_InternalValue: 0
+  Enabled:
+    m_InternalValue: 1
+  printLog: 0
+  belongFaction:
+    m_InternalValue: 1
+  isControlPoint:
+    m_InternalValue: 0
+  Occupied:
+    m_InternalValue: 0
+  controllingFaction:
+    m_InternalValue: 3
+  MaxControlProgress:
+    m_InternalValue: 100
+  ControlProgress:
+    m_InternalValue: 0
+  ControlProgressPerSecond:
+    m_InternalValue: 1
+  TagList: 04000000
+  BuffList: []
 --- !u!1 &6695749312833691871
 GameObject:
   m_ObjectHideFlags: 0
@@ -1942,6 +2127,7 @@ MonoBehaviour:
     m_InternalValue: 0
   ControlProgressPerSecond:
     m_InternalValue: 1
+  TagList: 
   BuffList: []
 --- !u!114 &5009690568752246791
 MonoBehaviour:
@@ -2046,6 +2232,7 @@ MonoBehaviour:
     m_InternalValue: 0
   ControlProgressPerSecond:
     m_InternalValue: 1
+  TagList: 
   BuffList:
   - {fileID: 11400000, guid: c4456e46a00167b4eb5c4f80e48149ad, type: 2}
   HeroSnipeBuff: {fileID: 11400000, guid: be205b508f613f34b945b6d72e4fc0a6, type: 2}
@@ -2153,6 +2340,7 @@ MonoBehaviour:
     m_InternalValue: 0
   ControlProgressPerSecond:
     m_InternalValue: 1
+  TagList: 
   BuffList:
   - {fileID: 11400000, guid: d0466fc3d7c2ecf45a7c90cf218af1a2, type: 2}
 --- !u!114 &7168780495178290060
@@ -2258,6 +2446,7 @@ MonoBehaviour:
     m_InternalValue: 0
   ControlProgressPerSecond:
     m_InternalValue: 1
+  TagList: 
   BuffList:
   - {fileID: 11400000, guid: c4456e46a00167b4eb5c4f80e48149ad, type: 2}
 --- !u!114 &9201331087038374386
@@ -2363,6 +2552,7 @@ MonoBehaviour:
     m_InternalValue: 0
   ControlProgressPerSecond:
     m_InternalValue: 1
+  TagList: 
   BuffList:
   - {fileID: 11400000, guid: b7fe733a28471a84e9c72fac46c9552f, type: 2}
 --- !u!114 &1484954487477428892
@@ -2468,6 +2658,7 @@ MonoBehaviour:
     m_InternalValue: 0
   ControlProgressPerSecond:
     m_InternalValue: 1
+  TagList: 
   BuffList:
   - {fileID: 11400000, guid: 9f0d998bc5e42ee4287a91decceece7c, type: 2}
 --- !u!114 &7329705353911826893
@@ -2679,6 +2870,7 @@ MonoBehaviour:
     m_InternalValue: 0
   ControlProgressPerSecond:
     m_InternalValue: 1
+  TagList: 
   BuffList:
   - {fileID: 11400000, guid: c4456e46a00167b4eb5c4f80e48149ad, type: 2}
 --- !u!114 &6737851532126055232
@@ -2863,6 +3055,8 @@ Transform:
   - {fileID: 6850251913291562394}
   - {fileID: 6330940207677470121}
   - {fileID: 5354677600159427700}
+  - {fileID: 5487339158061777122}
+  - {fileID: 7955364519697617680}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}

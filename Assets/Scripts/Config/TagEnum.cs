@@ -39,5 +39,7 @@ public enum RobotTag
 {
     Unit,
     GroundUnit,
-    Building
+    Building,
+    CombatUnit,
+    GrowingUnit
 }

@@ -917,6 +917,48 @@ public class RefereeController : NetworkBehaviour
 
     #endregion
 
+    #region Mine
+    
+    public Stack<OreController> OreList = new Stack<OreController>();
+    public List<Transform> OreStorePoints = new List<Transform>();
+    public List<GripperController> GripperPoints = new List<GripperController>();
+    public NetworkVariable<int[]> ExchangeSpeed = new NetworkVariable<int[]>();
+
+    public void AddOre(OreController ore)
+    {
+        if (OreList.Count >= OreStorePoints.Count) return;
+
+        OreList.Push(ore);
+
+        UpdateOre();
+    }
+
+    public OreController RemoveOre()
+    {
+        OreController ore = OreList.Pop();
+
+        UpdateOre();
+
+        return ore;
+    }
+
+    void UpdateOre()
+    {
+        // Debug.Log($"[RefereeController] OreList {OreList.Count}");
+
+        int i = 0;
+        foreach (var ore in OreList)
+        {
+            // Debug.Log($"[RefereeController] Ore {ore}");
+
+            ore.gameObject.transform.SetPositionAndRotation(OreStorePoints[i].position, OreStorePoints[i].rotation);
+              
+            i ++;
+        }
+    }
+
+    #endregion
+
     public virtual void Reset()
     {
         Level.Value = 0;
@@ -955,6 +997,11 @@ public class RefereeController : NetworkBehaviour
         }
 
         ShooterEnabled.Value = true;
+
+        while(OreList.Count > 0)
+        {
+            Destroy(OreList.Pop());
+        }
 
         Enabled.Value = true;
         Warning.Value = 0;

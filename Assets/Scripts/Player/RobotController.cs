@@ -59,7 +59,7 @@ public class RobotController : NetworkBehaviour
     {
         // Debug.Log("Client:" + NetworkManager.Singleton.LocalClientId + "IsOwner?" + IsOwner);
         if (IsOwner) {
-            this.gameObject.GetComponent<PlayerInput>().enabled = true;
+            // this.gameObject.GetComponent<PlayerInput>().enabled = true;
             // this.gameObject.GetComponent<StarterAssetsInputs>().enabled = true;
             // this.gameObject.GetComponentInChildren<Camera>().enabled = true;
         }

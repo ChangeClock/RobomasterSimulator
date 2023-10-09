@@ -29,6 +29,8 @@ public class MatchInfoController : NetworkBehaviour
     
     [SerializeField] private TMP_Text RedCoin;
     [SerializeField] private TMP_Text BlueCoin;
+    [SerializeField] private TMP_Text RedCoinTotal;
+    [SerializeField] private TMP_Text BlueCoinTotal;
 
     [SerializeField] private MapController MiniMap;
     [SerializeField] private Faction userBelong = Faction.Neu;
@@ -87,8 +89,12 @@ public class MatchInfoController : NetworkBehaviour
         BlueOutpostHPBar.SetValue(gameManager.BlueOutpost.HP.Value);
 
         // Red Coin
+        RedCoin.text = gameManager.RedCoin.Value.ToString();
+        RedCoinTotal.text = gameManager.RedCoinTotal.Value.ToString();
 
         // Blue Coin
+        BlueCoin.text = gameManager.BlueCoin.Value.ToString();
+        BlueCoinTotal.text = gameManager.BlueCoinTotal.Value.ToString();
 
         
         // Sync Observer UI

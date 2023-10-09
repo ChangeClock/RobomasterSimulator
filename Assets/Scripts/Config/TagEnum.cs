@@ -35,6 +35,11 @@ public enum RobotClass
     Buff,
 }
 
+public enum OreType{
+    Gold,
+    Silver
+}
+
 public enum RobotTag
 {
     Unit,

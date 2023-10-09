@@ -5,29 +5,38 @@ using UnityEngine;
 
 public class AreaController : NetworkBehaviour
 {
-    [SerializeField] public NetworkVariable<int> ID = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+    public NetworkVariable<int> ID = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
     // 0: not occupied 1: Blue 2: Red
-    [SerializeField] public NetworkVariable<bool> Enabled = new NetworkVariable<bool>(false, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-    [SerializeField] public bool printLog = false;
+    public NetworkVariable<bool> Enabled = new NetworkVariable<bool>(false, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+    public bool printLog = false;
+
+    public NetworkVariable<Faction> belongFaction = new NetworkVariable<Faction>(Faction.Neu);
+    public NetworkVariable<bool> isControlPoint = new NetworkVariable<bool>(false, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+    public NetworkVariable<bool> Occupied = new NetworkVariable<bool>(false, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+    public NetworkVariable<Faction> controllingFaction = new NetworkVariable<Faction>(Faction.Neu);
+
+    public NetworkVariable<float> MaxCaptureProgress = new NetworkVariable<float>(100.0f);
+    public NetworkVariable<float> CaptureProgress = new NetworkVariable<float>(0.0f);
+    public NetworkVariable<float> CaptureProgressPerSecond = new NetworkVariable<float>(1.0f);
     
-    [SerializeField] public NetworkVariable<Faction> belongFaction = new NetworkVariable<Faction>(Faction.Neu);
-    [SerializeField] public NetworkVariable<bool> isControlPoint = new NetworkVariable<bool>(false, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-    [SerializeField] public NetworkVariable<bool> Occupied = new NetworkVariable<bool>(false, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-    [SerializeField] public NetworkVariable<Faction> controllingFaction = new NetworkVariable<Faction>(Faction.Neu);
+    public NetworkVariable<float> MaxResetProgress = new NetworkVariable<float>(0.0f);
+    public NetworkVariable<float> ResetProgress = new NetworkVariable<float>(0.0f);
+    public NetworkVariable<float> ResetProgressPerSecond = new NetworkVariable<float>(1.0f);
 
-    [SerializeField] public NetworkVariable<float> MaxControlProgress = new NetworkVariable<float>(100.0f);
-    [SerializeField] public NetworkVariable<float> ControlProgress = new NetworkVariable<float>(0.0f);
-    [SerializeField] public NetworkVariable<float> ControlProgressPerSecond = new NetworkVariable<float>(1.0f);
-
-    [SerializeField] public List<RobotTag> TagList = new List<RobotTag>();
+    public List<RobotTag> TagList = new List<RobotTag>();
 
     [SerializeField] private BuffEffectSO[] BuffList;
+
+    public delegate void CaptureAction();
+    public event CaptureAction OnCaptured;
 
     protected Dictionary<int, RefereeController> RobotsInArea = new Dictionary<int, RefereeController>();
 
     protected virtual void Start()
     {
-       
+        if (!IsServer) return;
+
+        // gameObject.GetComponent<NetworkObject>().Spawn();
     }
 
     protected virtual void FixedUpdate()
@@ -39,9 +48,7 @@ public class AreaController : NetworkBehaviour
 
         if (!Enabled.Value) return;
 
-        if (printLog) Debug.Log($"[AreaController] {ID} Area contains {RobotsInArea.Count} robots");
-
-        Occupied.Value = RobotsInArea.Count > 0;
+        // if (printLog) Debug.Log($"[AreaController] {ID} Area contains {RobotsInArea.Count} robots");
 
         if (RobotsInArea.Count > 0)
         {
@@ -65,9 +72,33 @@ public class AreaController : NetworkBehaviour
                 isControlled = true;
             }
 
+            Occupied.Value = isControlled;
+
             // When there's no more orignal control faction robot in area, lose control
-            if (!isControlled) controllingFaction.Value = Faction.Neu;
+        } else {
+            Occupied.Value = false;
         }
+
+        if (ResetProgress.Value >= MaxResetProgress.Value)
+        {
+            if (Occupied.Value)
+            {
+                if (CaptureProgress.Value >= MaxCaptureProgress.Value) 
+                {
+                    Capture();
+                } else {
+                    CaptureProgress.Value += CaptureProgressPerSecond.Value * Time.deltaTime;
+                }
+            } else {
+                CaptureProgress.Value = 0;
+                controllingFaction.Value = Faction.Neu;
+            }
+        } else {
+            ResetProgress.Value += ResetProgressPerSecond.Value * Time.deltaTime;
+        }
+
+
+        // if (printLog) Debug.Log($"[AreaController] Capture Progress {CaptureProgress.Value}/{MaxCaptureProgress.Value}");
     }
 
     protected virtual void OnTriggerEnter(Collider other)
@@ -137,6 +168,17 @@ public class AreaController : NetworkBehaviour
     public bool ContainsRobot(int robotID)
     {
         return RobotsInArea.ContainsKey(robotID);
+    }
+
+    public void ResetCaptureProgress()
+    {
+        ResetProgress.Value = 0;
+        CaptureProgress.Value = 0;
+    }
+
+    protected virtual void Capture()
+    {
+
     }
 
 }

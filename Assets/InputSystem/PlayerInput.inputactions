@@ -15,19 +15,19 @@
                     "initialStateCheck": true
                 },
                 {
-                    "name": "Prepare",
-                    "type": "Value",
-                    "id": "6c35295d-733d-4f42-861c-6894c600bbb4",
-                    "expectedControlType": "Key",
+                    "name": "Shoot",
+                    "type": "Button",
+                    "id": "a55f7e93-97f9-4e92-b626-7a036ec3e4fa",
+                    "expectedControlType": "Button",
                     "processors": "",
                     "interactions": "",
-                    "initialStateCheck": true
+                    "initialStateCheck": false
                 },
                 {
-                    "name": "RobotSetting",
+                    "name": "Look",
                     "type": "Value",
-                    "id": "075b41db-f3de-4fd6-bd47-f8ee3df75dd3",
-                    "expectedControlType": "Key",
+                    "id": "b775d5c2-86e9-4fea-9ec3-c38e69a8612e",
+                    "expectedControlType": "Delta",
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": true
@@ -146,23 +146,45 @@
                 },
                 {
                     "name": "",
-                    "id": "887107a8-f21a-4f37-919c-3c26d71db196",
-                    "path": "<Keyboard>/enter",
+                    "id": "5528afee-73fb-46f0-9f28-9c01cb03bdf5",
+                    "path": "<Mouse>/leftButton",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Prepare",
+                    "action": "Shoot",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
                 {
                     "name": "",
-                    "id": "5656ffda-6752-423f-a81c-4965795469c7",
-                    "path": "<Keyboard>/p",
+                    "id": "82e50679-098f-4690-ab39-3e29e8fff07f",
+                    "path": "<Gamepad>/rightTrigger",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "RobotSetting",
+                    "action": "Shoot",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "f0dd2a99-c5ea-4800-be24-cd2c370a439e",
+                    "path": "<Pointer>/delta",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Look",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "44984f9b-a26c-4797-b59f-c97dea476db7",
+                    "path": "<Gamepad>/rightStick",
+                    "interactions": "",
+                    "processors": "InvertVector2(invertX=false,invertY=false),StickDeadzone,ScaleVector2(x=300,y=300)",
+                    "groups": "",
+                    "action": "Look",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

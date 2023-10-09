@@ -11,7 +11,12 @@ public class RMUC2023_GameManager : GameManager
     [SerializeField] AreaController BlueControlPoint;
     [SerializeField] public NetworkVariable<float> BlueControlTime = new NetworkVariable<float>(0);
 
-    [SerializeField] private BuffEffectSO HeroSnipeBuff;
+    protected override void OnEnable()
+    {
+        base.OnEnable();
+        
+        RMUC2023_ExchangePoint.OnExchanged += ExchangeUpload;
+    }
 
     protected override void Update()
     {
@@ -88,6 +93,11 @@ public class RMUC2023_GameManager : GameManager
         }
     }
 
+    #region Coin
+
+    [SerializeField] private RMUC2023_ExchangePoint RedExchangeStation;
+    [SerializeField] private RMUC2023_ExchangePoint BlueExchangeStation;
+
     protected override void OnTimeLeftChange(float oldTime, float newTime)
     {
         
@@ -97,8 +107,8 @@ public class RMUC2023_GameManager : GameManager
         }
         if (oldTime >= 60.0f && newTime < 60.0f) 
         {
-            RedCoin.Value += 150;
-            BlueCoin.Value += 150;
+            AddCoin(Faction.Red, 150);
+            AddCoin(Faction.Blue, 150);
         }
         if (oldTime >= 74.0f && newTime < 74.0f) 
         {
@@ -110,8 +120,8 @@ public class RMUC2023_GameManager : GameManager
         }
         if (oldTime >= 120.0f && newTime < 120.0f)
         {
-            RedCoin.Value += 50;
-            BlueCoin.Value += 50;
+            AddCoin(Faction.Red, 50);
+            AddCoin(Faction.Blue, 50);
         }
         if (oldTime >= 150.0f && newTime < 150.0f)
         {
@@ -119,14 +129,14 @@ public class RMUC2023_GameManager : GameManager
         }
         if (oldTime >= 180.0f && newTime < 180.0f)
         {
-            RedCoin.Value += 50;
-            BlueCoin.Value += 50;
+            AddCoin(Faction.Red, 50);
+            AddCoin(Faction.Blue, 50);
             // Big Buff
         }
         if (oldTime >= 240.0f && newTime < 240.0f)
         {
-            RedCoin.Value += 50;
-            BlueCoin.Value += 50;
+            AddCoin(Faction.Red, 50);
+            AddCoin(Faction.Blue, 50);
             // Stop Big Buff
         }
         if (oldTime >= 270.0f && newTime < 270.0f)
@@ -135,8 +145,8 @@ public class RMUC2023_GameManager : GameManager
         }
         if (oldTime >= 300.0f && newTime < 300.0f)
         {
-            RedCoin.Value += 50;
-            BlueCoin.Value += 50;
+            AddCoin(Faction.Red, 50);
+            AddCoin(Faction.Blue, 50);
         }
         if (oldTime >= 330.0f && newTime < 330.0f)
         {
@@ -144,11 +154,36 @@ public class RMUC2023_GameManager : GameManager
         }
         if (oldTime >= 360.0f && newTime < 360.0f)
         {
-            RedCoin.Value += 50;
-            BlueCoin.Value += 50;
+            AddCoin(Faction.Red, 50);
+            AddCoin(Faction.Blue, 50);
             // Small Buff
         }
     }
+
+    void ExchangeUpload(Faction faction, OreType type, int value)
+    {
+        ExchangeHandlerServerRpc(faction, type, value);
+    }
+
+    [ServerRpc]
+    void ExchangeHandlerServerRpc(Faction faction, OreType type, int value, ServerRpcParams serverRpcParams = default)
+    {
+        int coin = value;
+
+        if (type == OreType.Gold && !HasFirstGold.Value)
+        {
+            coin += 250;
+            HasFirstGold.Value = true;
+        }
+
+        AddCoin(faction, coin);
+    }
+
+    #endregion
+
+    #region Hero Snipe
+
+    [SerializeField] private BuffEffectSO HeroSnipeBuff;
 
     [ServerRpc]
     protected override void ShootHandlerServerRpc(int shooterID, int shooterType, int robotID, ServerRpcParams serverRpcParams = default)
@@ -172,4 +207,6 @@ public class RMUC2023_GameManager : GameManager
             }
         }
     }
+
+    #endregion
 }

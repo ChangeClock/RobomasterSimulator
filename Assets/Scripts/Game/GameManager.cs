@@ -23,6 +23,10 @@ public class GameManager : NetworkBehaviour
     // 0: 中立 1: R-Hero 2: R-Engineer 3/4/5: R-Infantry 6: R-Air 7: R-Sentry 9: R-Lidar 18: R-Outpost 19: R-Base 21: B-Hero 22: B-Engineer 23/24/25: B-Infantry 26: B-Air 27: B-Sentry 29: B-Lidar 38: B-Outpost 39: B-Base;
     public Dictionary<int, RefereeController> RefereeControllerList = new Dictionary<int, RefereeController>();
 
+    [Header("Tags")]
+    [SerializeField] private List<RobotClass> GroundUnit = new List<RobotClass>(){RobotClass.Hero, RobotClass.Engineer, RobotClass.Infantry, RobotClass.Sentry};
+    [SerializeField] private List<RobotClass> GrowingUnit = new List<RobotClass>(){RobotClass.Hero, RobotClass.Infantry};
+    
     [Header("EXP")]
     [SerializeField] public NetworkVariable<bool> HasFirstBlood = new NetworkVariable<bool>(false);
     [SerializeField] private ExpInfoSO HeroExpInfo;
@@ -48,22 +52,21 @@ public class GameManager : NetworkBehaviour
     [SerializeField] private AreaController[] RedPatrolPoints;
     [SerializeField] private AreaController[] BluePatrolPoints;
     [SerializeField] private AreaController RedRepairStation;
-    [SerializeField] private AreaController RedSilverMinePoint;
-    [SerializeField] private AreaController RedGoldMinePoint;
     [SerializeField] private AreaController BlueRepairStation;
-    [SerializeField] private AreaController BlueSilverMinePoint;
-    [SerializeField] private AreaController BlueGoldMinePoint;
 
     [Header("Coin")]
-    [SerializeField] public NetworkVariable<int> RedCoin = new NetworkVariable<int>(0);
-    [SerializeField] public NetworkVariable<int> BlueCoin = new NetworkVariable<int>(0);
+    [SerializeField] public NetworkVariable<int> InitialCoin = new NetworkVariable<int>(400);
+    [SerializeField] public NetworkVariable<int> RedCoin = new NetworkVariable<int>(400);
+    [SerializeField] public NetworkVariable<int> BlueCoin = new NetworkVariable<int>(400);
+    [SerializeField] public NetworkVariable<int> RedCoinTotal = new NetworkVariable<int>(400);
+    [SerializeField] public NetworkVariable<int> BlueCoinTotal = new NetworkVariable<int>(400);
     [SerializeField] public NetworkVariable<bool> HasFirstGold = new NetworkVariable<bool>(false);
 
     // [Header("EXPInfo")]
     // [SerializeField] private ExpInfoSO HeroExpInfo;
     // [SerializeField] private ExpInfoSO InfantryExpInfo;
 
-    private void OnEnable()
+    protected virtual void OnEnable()
     {
         RefereeController.OnDamage += DamageUpload;
         RefereeController.OnShoot += ShootUpload;
@@ -76,7 +79,7 @@ public class GameManager : NetworkBehaviour
         RefereeController.OnReady += ReadyUpload;
     }
 
-    private void OnDisable()
+    protected virtual void OnDisable()
     {
         RefereeController.OnDamage -= DamageUpload;
         RefereeController.OnShoot -= ShootUpload;
@@ -157,6 +160,11 @@ public class GameManager : NetworkBehaviour
         HasFirstBlood.Value = false;
         HasFirstGold.Value = false;
 
+        RedCoin.Value = InitialCoin.Value;
+        RedCoinTotal.Value = InitialCoin.Value;
+        BlueCoin.Value = InitialCoin.Value;
+        BlueCoinTotal.Value = InitialCoin.Value;
+
         foreach(var _referee in RefereeControllerList.Values)
         {
             _referee.Reset();
@@ -169,6 +177,23 @@ public class GameManager : NetworkBehaviour
         // TODO: bring robot to their spawnpoint, reset HP, EXP, Level, Ammo, Heat, Energy
 
         // TODO: Reset bank on each side, reset mine ore status.
+    }
+
+    protected void AddCoin(Faction faction, int coin)
+    {
+        switch (faction)
+        {
+            case Faction.Red:
+                RedCoin.Value += coin;
+                RedCoinTotal.Value += coin;
+                break;
+            case Faction.Blue:
+                BlueCoin.Value += coin;
+                BlueCoinTotal.Value += coin;
+                break;
+            default:
+                break;
+        }
     }
 
     /**
@@ -283,8 +308,14 @@ public class GameManager : NetworkBehaviour
     void SetUnitEXPInfo(RefereeController referee, ExpInfoSO expInfo)
     {
         referee.EXPInfo = expInfo;
-        referee.EXPToNextLevel.Value = expInfo.expToNextLevel[referee.Level.Value];
-        referee.EXPValue.Value = expInfo.expValue[referee.Level.Value];
+        if (expInfo.expToNextLevel.Length > referee.Level.Value)
+        {       
+            referee.EXPToNextLevel.Value = expInfo.expToNextLevel[referee.Level.Value];
+        }
+        if (expInfo.expValue.Length > referee.Level.Value)
+        {
+            referee.EXPValue.Value = expInfo.expValue[referee.Level.Value];
+        }
     }
 
     void SetUnitPerformance(RefereeController referee, int mode, RobotPerformanceSO performance)

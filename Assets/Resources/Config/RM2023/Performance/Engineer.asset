@@ -18,3 +18,4 @@ MonoBehaviour:
   maxHeat: 
   coolDown: 
   shootSpeed: 
+  exchangeSpeed: 050000000a0000000c0000000f00000014000000

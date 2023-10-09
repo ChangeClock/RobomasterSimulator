@@ -1,0 +1,17 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d76cf181a4ec306489328af7f44e77ad, type: 3}
+  m_Name: RMUC2023_Price
+  m_EditorClassIdentifier: 
+  silverPrice: 4b0000006400000096000000e100000077010000
+  goldPrice: 640000007d000000af000000fa00000090010000
+  levelLimit: 000000003f020000ee0200004c04000059060000

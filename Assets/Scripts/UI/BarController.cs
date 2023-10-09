@@ -50,10 +50,6 @@ public class BarController : MonoBehaviour
     public void SetColor(Color color)
     {
         if (Bar != null) Bar.color = color;
-    }
-
-    public void SetBoardColor(Color color)
-    {
         if (Boarder != null) Boarder.color = color;
     }
 

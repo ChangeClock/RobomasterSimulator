@@ -429,73 +429,73 @@ MonoBehaviour:
   PurchaseItemHP: {fileID: 1655064319775658438}
   PurchaseItemHPPoint1: {fileID: 5191255628090604761}
   PurchaseItemHPPoint2: {fileID: 754928091839802479}
-  RemotePurchase17mmAction:
-    m_Name: Remote Purchase 17mm
+  RemotePurchaseAmmo0Action:
+    m_Name: Remote Purchase Ammo 0
     m_Type: 0
     m_ExpectedControlType: 
-    m_Id: 4bf7d3b0-39fe-4ee5-b6fe-5cb29049f500
+    m_Id: 38020a49-d434-4298-bbce-df36e286b22c
     m_Processors: 
     m_Interactions: 
     m_SingletonActionBindings:
     - m_Name: Ctrl+2
-      m_Id: baa4f157-5e80-43de-a6d7-b6bd4fa51f99
+      m_Id: 115a3b66-30e9-41d6-85ad-bb33697e9bef
       m_Path: OneModifier
       m_Interactions: 
       m_Processors: 
       m_Groups: 
-      m_Action: Remote Purchase 17mm
+      m_Action: Remote Purchase Ammo 0
       m_Flags: 4
     - m_Name: modifier
-      m_Id: b2906fa8-08ce-4b54-b804-d72689532afb
+      m_Id: df78d587-8bc2-44af-950f-e372968e0018
       m_Path: <Keyboard>/ctrl
       m_Interactions: 
       m_Processors: 
       m_Groups: 
-      m_Action: Remote Purchase 17mm
+      m_Action: Remote Purchase Ammo 0
       m_Flags: 8
     - m_Name: binding
-      m_Id: 2a253a69-4eba-4368-9349-c641b0e385d1
-      m_Path: <Keyboard>/1
+      m_Id: 2f4210a6-21e1-4479-bb46-99ef2fe6bb9d
+      m_Path: <Keyboard>/2
       m_Interactions: 
       m_Processors: 
       m_Groups: 
-      m_Action: Remote Purchase 17mm
+      m_Action: Remote Purchase Ammo 0
       m_Flags: 8
     m_Flags: 0
   PurchaseItem17mm: {fileID: 3295065484718365007}
   PurchaseItem17mmPoint1: {fileID: 3748533967753469259}
   PurchaseItem17mmPoint2: {fileID: 2971462115650539414}
-  RemotePurchase42mmAction:
-    m_Name: Remote Purchase 42mm
+  RemotePurchaseAmmo1Action:
+    m_Name: Remote Purchase Ammo 1
     m_Type: 0
     m_ExpectedControlType: 
-    m_Id: 0352670d-eff9-44cb-b489-ff5b661e771f
+    m_Id: d2ed615f-d965-4872-8b54-2a093ab6756f
     m_Processors: 
     m_Interactions: 
     m_SingletonActionBindings:
     - m_Name: Ctrl+3
-      m_Id: c404458e-cb1d-40b4-8afa-14624532716d
+      m_Id: 364d3a27-1fa5-474e-99bb-3951f4316017
       m_Path: OneModifier
       m_Interactions: 
       m_Processors: 
       m_Groups: 
-      m_Action: Remote Purchase 42mm
+      m_Action: Remote Purchase Ammo 1
       m_Flags: 4
     - m_Name: modifier
-      m_Id: a54b9adf-0213-4d87-b897-7cb8872651ad
+      m_Id: ee6916fc-958a-4aee-8f2e-b6f8095fa736
       m_Path: <Keyboard>/ctrl
       m_Interactions: 
       m_Processors: 
       m_Groups: 
-      m_Action: Remote Purchase 42mm
+      m_Action: Remote Purchase Ammo 1
       m_Flags: 8
     - m_Name: binding
-      m_Id: d0f2173c-3443-4f2a-aaac-0cbabc41a8f6
+      m_Id: 9e416d99-52fc-4a7c-8406-e30326c77576
       m_Path: <Keyboard>/3
       m_Interactions: 
       m_Processors: 
       m_Groups: 
-      m_Action: Remote Purchase 42mm
+      m_Action: Remote Purchase Ammo 1
       m_Flags: 8
     m_Flags: 0
   PurchaseItem42mm: {fileID: 5820583702128319386}

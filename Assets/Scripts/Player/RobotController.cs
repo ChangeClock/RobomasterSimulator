@@ -250,7 +250,7 @@ public class RobotController : NetworkBehaviour
         vy = Mathf.Clamp(moveControllerY.Update(targetVy + deltaY, Time.deltaTime), -1f, 1f);
         vw = targetVw;
 
-        Debug.Log($"[RobotController] X {targetVx} / {deltaX/Time.deltaTime} Y {targetVy} / {deltaY/Time.deltaTime}");
+        // Debug.Log($"[RobotController] X {targetVx} / {deltaX/Time.deltaTime} Y {targetVy} / {deltaY/Time.deltaTime}");
         // Debug.Log($"[RobotController] vx {vx} vy {vy}");
 
         wheelForce[0] = vx-vy-vw;

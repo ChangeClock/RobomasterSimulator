@@ -63,17 +63,24 @@ public class GameManager : NetworkBehaviour
     public NetworkVariable<int[]> Coins = new NetworkVariable<int[]>();
     public NetworkVariable<int[]> CoinsTotal = new NetworkVariable<int[]>();
     public NetworkVariable<bool> HasFirstGold = new NetworkVariable<bool>(false);
+
+    [SerializeField] private int RealAmmo0SupplyLimit = 1500;
+    public NetworkVariable<int[]> RealAmmo0Supply = new NetworkVariable<int[]>();
+    [SerializeField] private int Ammo0SupplyLimit = 1500;
+    public NetworkVariable<int[]> Ammo0Supply = new NetworkVariable<int[]>();
+    [SerializeField] private int Ammo1SupplyLimit = 100;
+    public NetworkVariable<int[]> Ammo1Supply = new NetworkVariable<int[]>();
+    
     [SerializeField] private int RemoteSupplyApplyInterval = 6;
     [SerializeField] private int RemoteHPTimesLimit = 2;
-    [SerializeField] private float RemoteHPSupllyCount = 0.6f;
+    [SerializeField] private float RemoteHPSupplyAmount = 0.6f;
     public NetworkVariable<int[]> RemoteHPTimes = new NetworkVariable<int[]>();
-    [SerializeField] private int Remote17mmTimesLimit = 2;
-    [SerializeField] private int Remote17mmSupplyCount = 100;
-    public NetworkVariable<int[]> Remote17mmTimes = new NetworkVariable<int[]>();
-    [SerializeField] private int Remote42mmTimesLimit = 2;
-    [SerializeField] private int Remote42mmSupplyCount = 10;
-    public NetworkVariable<int[]> Remote42mmTimes = new NetworkVariable<int[]>();
-
+    [SerializeField] private int RemoteAmmo0TimesLimit = 2;
+    [SerializeField] private int RemoteAmmo0SupplyAmount = 100;
+    public NetworkVariable<int[]> RemoteAmmo0Times = new NetworkVariable<int[]>();
+    [SerializeField] private int RemoteAmmo1TimesLimit = 2;
+    [SerializeField] private int RemoteAmmo1SupplyAmount = 10;
+    public NetworkVariable<int[]> RemoteAmmo1Times = new NetworkVariable<int[]>();
 
     // [Header("EXPInfo")]
     // [SerializeField] private ExpInfoSO HeroExpInfo;
@@ -112,6 +119,8 @@ public class GameManager : NetworkBehaviour
         if (!IsServer) return;
 
         ResetCoin();
+
+        ResetAmmoSupply();
 
         ResetRemoteSupplyTimes();
     }
@@ -569,15 +578,18 @@ public class GameManager : NetworkBehaviour
         }
     }
 
-    void PurchaseUpload(int id, PurchaseType type)
+    void PurchaseUpload(int id, PurchaseType type, int amount)
     {
-
+        PurchaseHandlerServerRpc(id, type, amount);
     }
         
     [ServerRpc]
-    protected virtual void PurchaseHandlerServerRpc(int id, PurchaseType type, ServerRpcParams serverRpcParams = default)
+    protected virtual void PurchaseHandlerServerRpc(int id, PurchaseType type, int amount, ServerRpcParams serverRpcParams = default)
     {
+        // Debug.Log($"[GameManager] id {id} type {type}, amount {amount}");
+
         RefereeController referee = RefereeControllerList[id];
+        Faction faction = referee.faction.Value;
 
         int cost = 0;
 
@@ -585,26 +597,66 @@ public class GameManager : NetworkBehaviour
         {
             case PurchaseType.Remote_HP:
                 cost = 100 + Mathf.CeilToInt((420 - TimeLeft.Value) / 60) * 20;
-                if (cost >= Coins.Value[(int)referee.faction.Value]) RemoteHealthSupply(referee);
+                if (CostCoin(faction, cost)) 
+                {
+                    RemoteHPTimes.Value[(int)faction] --;
+                    StartCoroutine(RemoteHealthSupply(referee));
+                }
                 break;
-            case PurchaseType.Remote_Bullet_17mm:
+            case PurchaseType.Remote_Ammo0:
                 cost = 200;
-                if (cost >= Coins.Value[(int)referee.faction.Value]) Remote17mmSupply(referee);
+                if (CostCoin(faction, cost)) 
+                {
+                    RemoteAmmo0Times.Value[(int)faction] --;
+                    StartCoroutine(RemoteAmmo0Supply(referee));
+                }
                 break;
-            case PurchaseType.Remote_Bullet_42mm:
+            case PurchaseType.Remote_Ammo1:
                 cost = 300;
-                if (cost >= Coins.Value[(int)referee.faction.Value]) Remote42mmSupply(referee);
+                if (CostCoin(faction, cost)) 
+                {
+                    RemoteAmmo1Times.Value[(int)faction] --;
+                    StartCoroutine(RemoteAmmo1Supply(referee));
+                }
+                break;
+            case PurchaseType.Ammo0:
+                cost = amount;
+                if (CostCoin(faction, cost)) 
+                {
+                    Ammo0Supply.Value[(int)faction] -= amount;
+                    referee.Ammo0.Value += amount;
+                }
+                break;
+            case PurchaseType.Ammo1:
+                cost = amount * 15;
+                if (CostCoin(faction, cost)) 
+                {
+                    Ammo1Supply.Value[(int)faction] -= amount;
+                    referee.Ammo1.Value += amount;
+                }
                 break;
             default:
                 break;
         }
     }
 
+    bool CostCoin(Faction faction, int cost)
+    {
+        if (Coins.Value[(int)faction] >= cost)
+        {
+            Coins.Value[(int)faction] -= cost;
+            return true;
+        }
+        return false;
+    }
+
     IEnumerator RemoteHealthSupply(RefereeController robot)
     {
         yield return new WaitForSeconds(RemoteSupplyApplyInterval);
 
-        if (robot.HPLimit.Value * RemoteHPSupllyCount + robot.HP.Value >= robot.HPLimit.Value)
+        if (!robot.Enabled.Value) yield break;
+
+        if (robot.HPLimit.Value * RemoteHPSupplyAmount + robot.HP.Value >= robot.HPLimit.Value)
         {
             robot.HP.Value = robot.HPLimit.Value;
         } else {
@@ -612,18 +664,28 @@ public class GameManager : NetworkBehaviour
         }
     }
 
-    IEnumerator Remote17mmSupply(RefereeController robot)
+    IEnumerator RemoteAmmo0Supply(RefereeController robot)
     {
         yield return new WaitForSeconds(RemoteSupplyApplyInterval);
 
-        robot.Ammo0.Value += Remote17mmSupplyCount;
+        // Debug.Log($"[GameManager] Remote Ammo0 Supply {RemoteAmmo0SupplyAmount}");
+        robot.Ammo0.Value += RemoteAmmo0SupplyAmount;
     }
 
-    IEnumerator Remote42mmSupply(RefereeController robot)
+    IEnumerator RemoteAmmo1Supply(RefereeController robot)
     {
         yield return new WaitForSeconds(RemoteSupplyApplyInterval);
 
-        robot.Ammo1.Value += Remote42mmSupplyCount;;
+        robot.Ammo1.Value += RemoteAmmo1SupplyAmount;
+    }
+
+    void ResetAmmoSupply()
+    {
+        foreach (var fac in Factions)
+        {
+            Ammo0Supply.Value[(int)fac] = Ammo0SupplyLimit;
+            Ammo1Supply.Value[(int)fac] = Ammo0SupplyLimit;
+        }
     }
 
     void ResetRemoteSupplyTimes()
@@ -631,8 +693,8 @@ public class GameManager : NetworkBehaviour
         foreach (var fac in Factions)
         {
             RemoteHPTimes.Value[(int)fac] = RemoteHPTimesLimit;
-            Remote17mmTimes.Value[(int)fac] = Remote17mmTimesLimit;
-            Remote42mmTimes.Value[(int)fac] = Remote42mmTimesLimit;
+            RemoteAmmo0Times.Value[(int)fac] = RemoteAmmo0TimesLimit;
+            RemoteAmmo1Times.Value[(int)fac] = RemoteAmmo1TimesLimit;
         }
     }
 }

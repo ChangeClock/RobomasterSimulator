@@ -37,7 +37,7 @@ public class RefereeController : NetworkBehaviour
     public delegate void ChangePerformanceAction(int robotID, int chassisMode, int shooter1Mode, int shooter2Mode);
     public static event ChangePerformanceAction OnPerformanceChange;
 
-    public delegate void PurchaseAction(int robotID,  PurchaseType type);
+    public delegate void PurchaseAction(int robotID, PurchaseType type, int amount = 1);
     public static event PurchaseAction OnPurchase;
 
     // public DataTransmission.RobotStatus Status = new DataTransmission.RobotStatus();
@@ -290,7 +290,7 @@ public class RefereeController : NetworkBehaviour
                     }
                 }
 
-                FPVCamera.SetPurchaseItem(robotTags.Contains(RobotTag.GroundUnit), gameManager.RemoteHPTimes.Value[(int)faction.Value], has17mmShooter, gameManager.Remote17mmTimes.Value[(int)faction.Value], has42mmShooter, gameManager.Remote42mmTimes.Value[(int)faction.Value]);
+                FPVCamera.SetPurchaseItem(robotTags.Contains(RobotTag.GroundUnit), gameManager.RemoteHPTimes.Value[(int)faction.Value], has17mmShooter, gameManager.RemoteAmmo0Times.Value[(int)faction.Value], has42mmShooter, gameManager.RemoteAmmo1Times.Value[(int)faction.Value]);
 
                 FPVCamera.SetHealBuff(HealBuff.Value > 0, HealBuff.Value);
                 FPVCamera.SetDEFBuff(DEFBuff.Value > 0, DEFBuff.Value);
@@ -792,13 +792,14 @@ public class RefereeController : NetworkBehaviour
     #region Purchase
 
     // 0 - HP, 1 - 17mm, 2 - 42mm
-    public void RemotePurchase(PurchaseType type)
+    public void RemotePurchase(PurchaseType type, int amount = 1)
     {
-        RemotePurchaseServerRpc(type);
+        // Debug.Log($"[RefereeController] type {type}, amount {amount}");
+        RemotePurchaseServerRpc(type, amount);
     }
 
     [ServerRpc]
-    void RemotePurchaseServerRpc(PurchaseType type, ServerRpcParams serverRpcParams = default)
+    void RemotePurchaseServerRpc(PurchaseType type, int amount, ServerRpcParams serverRpcParams = default)
     {
         if (!Enabled.Value) return;
 
@@ -809,18 +810,18 @@ public class RefereeController : NetworkBehaviour
             case PurchaseType.Remote_HP:
                 if(gameManager.RemoteHPTimes.Value[(int)faction.Value] == 0) return;
                 break;
-            case PurchaseType.Remote_Bullet_17mm:
-                if(gameManager.Remote17mmTimes.Value[(int)faction.Value] == 0) return;
+            case PurchaseType.Remote_Ammo0:
+                if(gameManager.RemoteAmmo0Times.Value[(int)faction.Value] == 0) return;
                 break;
-            case PurchaseType.Remote_Bullet_42mm:
-                if(gameManager.Remote42mmTimes.Value[(int)faction.Value] == 0) return;
+            case PurchaseType.Remote_Ammo1:
+                if(gameManager.RemoteAmmo1Times.Value[(int)faction.Value] == 0) return;
                 break;
             default:
-                Debug.LogError("[RefereeController] Unknown Purchase Type");
-                break;
+                Debug.LogError("[RefereeController] Unknown Purchase Type"); 
+                return;
         }
-        
-        OnPurchase(RobotID.Value, type);
+
+        OnPurchase(RobotID.Value, type, amount);
     }
 
     #endregion

@@ -35,9 +35,9 @@ public class FPVController : MonoBehaviour
             FreeRevive.onClick.AddListener(() => referee.Revive(0));
             GetReady.onClick.AddListener(() => referee.GetReady());
 
-            RemotePurchaseHPAction.performed += context => referee.RemotePurchase(PurchaseType.Remote_HP);
-            RemotePurchase17mmAction.performed += context => referee.RemotePurchase(PurchaseType.Remote_Bullet_17mm);
-            RemotePurchase42mmAction.performed += context => referee.RemotePurchase(PurchaseType.Remote_Bullet_42mm);
+            RemotePurchaseHPAction.performed += context => {referee.RemotePurchase(PurchaseType.Remote_HP);};
+            RemotePurchaseAmmo0Action.performed += context => {referee.RemotePurchase(PurchaseType.Remote_Ammo0);};
+            RemotePurchaseAmmo1Action.performed += context => {referee.RemotePurchase(PurchaseType.Remote_Ammo1);};
         }
 
         ChassisMode.onValueChanged.AddListener(delegate {SetPerformance(ChassisMode);});
@@ -49,12 +49,18 @@ public class FPVController : MonoBehaviour
     {
         SettingMenuAction.Enable();
         RemotePurchaseAction.Enable();
+        RemotePurchaseHPAction.Enable();
+        RemotePurchaseAmmo0Action.Enable();
+        RemotePurchaseAmmo1Action.Enable();
     }
 
     void OnDisable()
     {
         SettingMenuAction.Disable();
         RemotePurchaseAction.Disable();
+        RemotePurchaseHPAction.Disable();
+        RemotePurchaseAmmo0Action.Disable();
+        RemotePurchaseAmmo1Action.Disable();
     }
 
     // Update is called once per frame
@@ -73,6 +79,13 @@ public class FPVController : MonoBehaviour
                 HintTextOpen.SetActive(false);
                 HintTextClose.SetActive(false);
             }
+        }
+
+        if (ReviveWindow.activeSelf || SettingMenu.activeSelf)
+        {
+            UnityEngine.Cursor.lockState = CursorLockMode.Confined;
+        } else {
+            UnityEngine.Cursor.lockState = CursorLockMode.Locked;
         }
     }
 
@@ -309,13 +322,6 @@ public class FPVController : MonoBehaviour
 
     void ToggleSettingMenu()
     {
-        if (!SettingMenu.activeSelf)
-        {
-            UnityEngine.Cursor.lockState = CursorLockMode.Confined;
-        } else {
-            UnityEngine.Cursor.lockState = CursorLockMode.Locked;
-        }
-
         SettingMenu.SetActive(!SettingMenu.activeSelf);
 
         Shooter1Performance.SetActive(referee.ShooterControllerList.ContainsKey(0));
@@ -443,12 +449,12 @@ public class FPVController : MonoBehaviour
     [SerializeField] private Image PurchaseItemHPPoint1;
     [SerializeField] private Image PurchaseItemHPPoint2;
 
-    [SerializeField] private InputAction RemotePurchase17mmAction;
+    [SerializeField] private InputAction RemotePurchaseAmmo0Action;
     [SerializeField] private CanvasGroup PurchaseItem17mm;
     [SerializeField] private Image PurchaseItem17mmPoint1;
     [SerializeField] private Image PurchaseItem17mmPoint2;
 
-    [SerializeField] private InputAction RemotePurchase42mmAction;
+    [SerializeField] private InputAction RemotePurchaseAmmo1Action;
     [SerializeField] private CanvasGroup PurchaseItem42mm;
     [SerializeField] private Image PurchaseItem42mmPoint1;
     [SerializeField] private Image PurchaseItem42mmPoint2;
@@ -456,13 +462,6 @@ public class FPVController : MonoBehaviour
     void ToggleRemotePurchaseMenu()
     {
         if (!referee.Disengaged.Value) return;
-
-        if (!RemotePurchaseMenu.activeSelf)
-        {
-            UnityEngine.Cursor.lockState = CursorLockMode.Confined;
-        } else {
-            UnityEngine.Cursor.lockState = CursorLockMode.Locked;
-        }
 
         RemotePurchaseMenu.SetActive(!RemotePurchaseMenu.activeSelf);
     }
@@ -505,12 +504,7 @@ public class FPVController : MonoBehaviour
 
     void ToggleExchangeMenu()
     {
-        if (!ExchangeMenu.activeSelf)
-        {
-            UnityEngine.Cursor.lockState = CursorLockMode.Confined;
-        } else {
-            UnityEngine.Cursor.lockState = CursorLockMode.Locked;
-        }
+
     }
 
     #endregion

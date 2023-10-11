@@ -1339,18 +1339,27 @@ MonoBehaviour:
     m_InternalValue: 0000000000000000
   HasFirstGold:
     m_InternalValue: 0
+  RealAmmo0SupplyLimit: 1500
+  RealAmmo0Supply:
+    m_InternalValue: 
+  Ammo0SupplyLimit: 1500
+  Ammo0Supply:
+    m_InternalValue: 0000000000000000
+  Ammo1SupplyLimit: 100
+  Ammo1Supply:
+    m_InternalValue: 0000000000000000
   RemoteSupplyApplyInterval: 6
   RemoteHPTimesLimit: 2
-  RemoteHPSupllyCount: 0.6
+  RemoteHPSupplyAmount: 0.6
   RemoteHPTimes:
     m_InternalValue: 0000000000000000
-  Remote17mmTimesLimit: 2
-  Remote17mmSupplyCount: 100
-  Remote17mmTimes:
+  RemoteAmmo0TimesLimit: 2
+  RemoteAmmo0SupplyAmount: 100
+  RemoteAmmo0Times:
     m_InternalValue: 0000000000000000
-  Remote42mmTimesLimit: 2
-  Remote42mmSupplyCount: 10
-  Remote42mmTimes:
+  RemoteAmmo1TimesLimit: 2
+  RemoteAmmo1SupplyAmount: 10
+  RemoteAmmo1Times:
     m_InternalValue: 0000000000000000
   RedOutpost: {fileID: 405291678}
   BlueOutpost: {fileID: 543465513}

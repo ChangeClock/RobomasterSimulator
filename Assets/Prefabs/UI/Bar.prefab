@@ -338,5 +338,5 @@ MonoBehaviour:
   divisionStep: 0.5
   SliderBar: {fileID: 7957607324711240396}
   Bar: {fileID: 5307554526139043346}
-  Boarder: {fileID: 1613623428361186896}
+  Boarder: {fileID: 4371814310836524441}
   recTransform: {fileID: 3730641140165116588}

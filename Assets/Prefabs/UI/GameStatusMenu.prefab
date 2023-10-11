@@ -2738,6 +2738,8 @@ MonoBehaviour:
   UnitInfoBars: []
   RedCoin: {fileID: 4599127416464696370}
   BlueCoin: {fileID: 8584132852710842581}
+  RedCoinTotal: {fileID: 1125534216456351752}
+  BlueCoinTotal: {fileID: 3437088927287008}
   MiniMap: {fileID: 0}
   userBelong: 2
   userID: 0

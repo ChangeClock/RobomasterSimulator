@@ -12,42 +12,68 @@ public class FPVController : MonoBehaviour
     [SerializeField] private Camera FPVCamera;
     [SerializeField] private GameObject PlayerUI;
 
-    void Start()
+    void Awake() 
     {
         referee = gameObject.GetComponentInParent<RefereeController>();
     
+        SettingMenuAction.performed += context => ToggleSettingMenu();    
+        
+        if (referee.robotClass.Value == RobotClass.Engineer)
+        {
+            RemotePurchaseAction.performed += context => ToggleExchangeMenu();
+        } else {
+            RemotePurchaseAction.performed += context => ToggleRemotePurchaseMenu();
+        }
+
+    }
+
+    void Start()
+    {
         if (referee != null)
         {
             PurchaseRevive.onClick.AddListener(() => referee.Revive(1));
             FreeRevive.onClick.AddListener(() => referee.Revive(0));
             GetReady.onClick.AddListener(() => referee.GetReady());
+
+            RemotePurchaseHPAction.performed += context => referee.RemotePurchase(PurchaseType.Remote_HP);
+            RemotePurchase17mmAction.performed += context => referee.RemotePurchase(PurchaseType.Remote_Bullet_17mm);
+            RemotePurchase42mmAction.performed += context => referee.RemotePurchase(PurchaseType.Remote_Bullet_42mm);
         }
 
         ChassisMode.onValueChanged.AddListener(delegate {SetPerformance(ChassisMode);});
         Shooter1Mode.onValueChanged.AddListener(delegate {SetPerformance(Shooter1Mode);});
         Shooter2Mode.onValueChanged.AddListener(delegate {SetPerformance(Shooter2Mode);});
-
-    }
-
-    void Awake() 
-    {
-        SettingMenuAction.performed += context => ToggleSettingMenu();    
     }
 
     void OnEnable()
     {
         SettingMenuAction.Enable();
+        RemotePurchaseAction.Enable();
     }
 
     void OnDisable()
     {
         SettingMenuAction.Disable();
+        RemotePurchaseAction.Disable();
     }
 
     // Update is called once per frame
     void Update()
     {
-
+        if (referee.robotClass.Value != RobotClass.Engineer)
+        {
+            if (referee.Disengaged.Value)
+            {
+                HintTextUnavailable.SetActive(false);
+                HintTextOpen.SetActive(!RemotePurchaseMenu.activeSelf);
+                HintTextClose.SetActive(RemotePurchaseMenu.activeSelf);
+            } else {
+                HintTextUnavailable.SetActive(true);
+                RemotePurchaseMenu.SetActive(false);
+                HintTextOpen.SetActive(false);
+                HintTextClose.SetActive(false);
+            }
+        }
     }
 
     public void TurnOnCamera()
@@ -283,6 +309,13 @@ public class FPVController : MonoBehaviour
 
     void ToggleSettingMenu()
     {
+        if (!SettingMenu.activeSelf)
+        {
+            UnityEngine.Cursor.lockState = CursorLockMode.Confined;
+        } else {
+            UnityEngine.Cursor.lockState = CursorLockMode.Locked;
+        }
+
         SettingMenu.SetActive(!SettingMenu.activeSelf);
 
         Shooter1Performance.SetActive(referee.ShooterControllerList.ContainsKey(0));
@@ -388,6 +421,95 @@ public class FPVController : MonoBehaviour
                 break;
             default:
                 break;
+        }
+    }
+
+    #endregion
+
+    #region RemotePurchase
+
+    [SerializeField] private InputAction RemotePurchaseAction;
+
+    [SerializeField] private GameObject RemotePurchaseMenu;
+    [SerializeField] private GameObject HintTextOpen;
+    [SerializeField] private GameObject HintTextClose;
+    [SerializeField] private GameObject HintTextUnavailable;
+
+    [SerializeField] private Color InactiveColor = Color.gray;
+    [SerializeField] private Color ActiveColor = new Color(146, 255, 252, 255);
+
+    [SerializeField] private InputAction RemotePurchaseHPAction;
+    [SerializeField] private CanvasGroup PurchaseItemHP;
+    [SerializeField] private Image PurchaseItemHPPoint1;
+    [SerializeField] private Image PurchaseItemHPPoint2;
+
+    [SerializeField] private InputAction RemotePurchase17mmAction;
+    [SerializeField] private CanvasGroup PurchaseItem17mm;
+    [SerializeField] private Image PurchaseItem17mmPoint1;
+    [SerializeField] private Image PurchaseItem17mmPoint2;
+
+    [SerializeField] private InputAction RemotePurchase42mmAction;
+    [SerializeField] private CanvasGroup PurchaseItem42mm;
+    [SerializeField] private Image PurchaseItem42mmPoint1;
+    [SerializeField] private Image PurchaseItem42mmPoint2;
+
+    void ToggleRemotePurchaseMenu()
+    {
+        if (!referee.Disengaged.Value) return;
+
+        if (!RemotePurchaseMenu.activeSelf)
+        {
+            UnityEngine.Cursor.lockState = CursorLockMode.Confined;
+        } else {
+            UnityEngine.Cursor.lockState = CursorLockMode.Locked;
+        }
+
+        RemotePurchaseMenu.SetActive(!RemotePurchaseMenu.activeSelf);
+    }
+
+    public void SetPurchaseItem(bool hp, int hpTimes, bool bullet_17, int bullet_17Times, bool bullet_42, int bullet_42Times)
+    {
+        if (hp)
+        {
+            PurchaseItemHP.alpha = 1f;
+            if (PurchaseItemHPPoint1 != null) PurchaseItemHPPoint1.color = (hpTimes >=1) ? ActiveColor : InactiveColor;
+            if (PurchaseItemHPPoint2 != null) PurchaseItemHPPoint2.color = (hpTimes >=2) ? ActiveColor : InactiveColor;
+        } else {
+            PurchaseItemHP.alpha = 0.4f;
+        }
+        
+        if (bullet_17)
+        {
+            PurchaseItem17mm.alpha = 1f;
+            if (PurchaseItem17mmPoint1 != null) PurchaseItem17mmPoint1.color = (bullet_17Times >=1) ? ActiveColor : InactiveColor;
+            if (PurchaseItem17mmPoint2 != null) PurchaseItem17mmPoint2.color = (bullet_17Times >=2) ? ActiveColor : InactiveColor;
+        } else {
+            PurchaseItem17mm.alpha = 0.4f;
+        }
+        
+        if (bullet_42)
+        {
+            PurchaseItem42mm.alpha = 1f;
+            if (PurchaseItem42mmPoint1 != null) PurchaseItem42mmPoint1.color = (bullet_42Times >=1) ? ActiveColor : InactiveColor;
+            if (PurchaseItem42mmPoint2 != null) PurchaseItem42mmPoint2.color = (bullet_42Times >=2) ? ActiveColor : InactiveColor;
+        } else {
+            PurchaseItem42mm.alpha = 0.4f;
+        }
+    }
+
+    #endregion
+
+    #region Exchange
+
+    private GameObject ExchangeMenu;
+
+    void ToggleExchangeMenu()
+    {
+        if (!ExchangeMenu.activeSelf)
+        {
+            UnityEngine.Cursor.lockState = CursorLockMode.Confined;
+        } else {
+            UnityEngine.Cursor.lockState = CursorLockMode.Locked;
         }
     }
 

@@ -194,17 +194,7 @@ public class RMUC2023_GameManager : GameManager
 
         if (referee.robotClass.Value == RobotClass.Hero & referee.HasBuff(HeroSnipeBuff))
         {
-            switch (referee.faction.Value)
-            {
-                case Faction.Red:
-                    RedCoin.Value += 10;
-                    break;
-                case Faction.Blue:
-                    BlueCoin.Value += 10;
-                    break;
-                default :
-                    break;
-            }
+            AddCoin(referee.faction.Value, 10);
         }
     }
 

@@ -389,19 +389,42 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ab8c54de69a0fc54386b2ed2da3f7b48, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rotateSpeed: 1000
-  motorTorque: 400
+  Enabled: 0
+  Boost:
+    m_Name: Boost
+    m_Type: 0
+    m_ExpectedControlType: 
+    m_Id: 559f3547-1219-4480-afc7-58d8b08bb7a2
+    m_Processors: 
+    m_Interactions: 
+    m_SingletonActionBindings: []
+    m_Flags: 0
+  BoostPower: 240
+  moveControllerParameters:
+  - 0.02
+  - 0
+  - 0.015
   followControllerParameters:
   - 0.02
   - 0
   - 0.015
+  isSpin: 0
+  yawControllerParameters:
+  - 80
+  - 0
+  - 0.015
+  pitchControllerParameters:
+  - 50
+  - 0
+  - 0.015
   yawTargetAngle: 0
   pitchTargetAngle: 0
+  pitchMax: 0
+  pitchMin: 0
+  Shooter0: {fileID: 0}
+  Shooter1: {fileID: 0}
   ShootFrequency: 20
   ShootSpeed: 100
-  ShootHeight: 1.5
-  ShooterEnabled: 1
-  ShooterType: 0
 --- !u!114 &6218964000086452308
 MonoBehaviour:
   m_ObjectHideFlags: 0

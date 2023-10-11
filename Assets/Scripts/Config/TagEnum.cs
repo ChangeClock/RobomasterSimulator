@@ -40,6 +40,18 @@ public enum OreType{
     Silver
 }
 
+public enum PurchaseType{
+    Remote_HP,
+    Remote_Bullet_17mm,
+    Remote_Bullet_42mm,
+    Bullet_17mm_50,
+    Bullet_17mm_100,
+    Bullet_17mm_200,
+    Bullet_42mm_5,
+    Bullet_42mm_10,
+    Bullet_42mm_20,
+}
+
 public enum RobotTag
 {
     Unit,

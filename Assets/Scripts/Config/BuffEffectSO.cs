@@ -8,6 +8,7 @@ public class BuffEffectSO : ScriptableObject
     // All float number communicate through integer type to precision loss.
     public int buffDuration = 0; // ms
     public int DEFBuff = 0; // %
+    public int DEFDeBuff = 0; // %
     public int ATKBuff = 0; // %
     public int CDBuff = 0; // magnitude
     public int ReviveProgressPerSec = 0; // %

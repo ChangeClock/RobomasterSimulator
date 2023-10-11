@@ -3,76 +3,90 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using Unity.Netcode;
-using UnityEngine.Networking;
 using Cinemachine;
 
 public class RobotController : NetworkBehaviour
 {
     public bool Enabled = false;
 
-    // private PlayerInputs _input;
-    private float[] _input = new float[6];
+    private RefereeController referee;
+
+    [Header("Action")]
+    private PlayerInput Input;
+    private InputAction move;
+    private InputAction look;
+    private InputAction shoot;
     [SerializeField] private InputAction Boost;
     [SerializeField] private float BoostPower = 240;
+    [SerializeField] private InputAction Spin;
+    [SerializeField] private bool IsSpin;
 
     [Header("Chassis")]
-    private Transform Base;
+    [SerializeField] private GameObject Base;
+    private Vector3 LastPostion;
+    private Quaternion LastRotation;
 
-    private PIDController moveController;
+    private PIDController moveControllerX;
+    private PIDController moveControllerY;
     private PIDController followController;
     [SerializeField] private float[] moveControllerParameters = {0.02f, 0f, 0.015f};
     [SerializeField] private float[] followControllerParameters = {0.02f, 0f, 0.015f};
     
-    private Transform[] wheels = new Transform[4];
+    private float targetVx;
+    private float targetVy;
+    private float targetVw;
+
+    private float vx;
+    private float vy;
+    private float vw;
+
+    // Right-Front, Left-Front, Left-Back, Right-Back
+    [SerializeField] private WheelController[] Wheels;
     private float[] wheelForce = new float[4];
 
-    [SerializeField] private bool isSpin = false;
-
     [Header("Gimbal")]
-    private Transform yawComponent;
-    private Transform pitchComponent;
-
+    [SerializeField]private GameObject Yaw;
+    [SerializeField]private GameObject Pitch;
     private PIDController yawController;
     private PIDController pitchController;
     [SerializeField] private float[] yawControllerParameters = {80f, 0f, 0.015f};
     [SerializeField] private float[] pitchControllerParameters = {50f, 0f, 0.015f};
     [SerializeField] private float yawTargetAngle = 0;
     [SerializeField] private float pitchTargetAngle = 0;
-    private HingeJoint yawJoint;
-    private HingeJoint pitchJoint;
-    private JointMotor yawMotor;
-    private JointMotor pitchMotor;
+
     [SerializeField] private float pitchMax;
     [SerializeField] private float pitchMin;
-
-    [Header("Player Shooter")]
-    [SerializeField]private ShooterController Shooter0;
-    [SerializeField]private ShooterController Shooter1;
-
-    [Tooltip("Shoot Frequency in HZ")]
-    [SerializeField]private float ShootFrequency = 20f;
-    [SerializeField]private float ShootSpeed = 30f;
-
-    private float _shootTimeoutDelta;
+    
+    [Header("Shooter")]
+    [SerializeField]private List<ShooterController> ShooterList = new List<ShooterController>();
+    [SerializeField]private int CurrentShooter = 0;
+    [SerializeField]private float ShootFrequency = 25f;
+    private float _shootTimeoutDelta = 0f;
 
     public override void OnNetworkSpawn()
     {
-        // Debug.Log("Client:" + NetworkManager.Singleton.LocalClientId + "IsOwner?" + IsOwner);
-        if (IsOwner) {
-            // this.gameObject.GetComponent<PlayerInput>().enabled = true;
-            // this.gameObject.GetComponent<StarterAssetsInputs>().enabled = true;
-            // this.gameObject.GetComponentInChildren<Camera>().enabled = true;
+        if (IsOwner) Enabled = true;
+    }
+
+    void Awake()
+    {
+        if (Input == null)
+        {
+            Input = new PlayerInput();
         }
+
+        referee = gameObject.GetComponent<RefereeController>();
+
+        UnityEngine.Cursor.lockState = CursorLockMode.Locked;
     }
 
     void Start()
     {
-        Base = transform.Find("Base");
+        moveControllerX = new PIDController(moveControllerParameters[0],
+                                            moveControllerParameters[1],
+                                            moveControllerParameters[2]);
 
-        yawComponent = transform.Find("Yaw");
-        pitchComponent = transform.Find("Pitch");
-
-        moveController = new PIDController(moveControllerParameters[0],
+        moveControllerY = new PIDController(moveControllerParameters[0],
                                             moveControllerParameters[1],
                                             moveControllerParameters[2]);
 
@@ -81,136 +95,163 @@ public class RobotController : NetworkBehaviour
                                             followControllerParameters[2]);
 
         yawController = new PIDController(yawControllerParameters[0],
-                                            yawControllerParameters[1],
-                                            yawControllerParameters[2]);
+                                        yawControllerParameters[1],
+                                        yawControllerParameters[2]);
 
         pitchController = new PIDController(pitchControllerParameters[0],
                                             pitchControllerParameters[1],
                                             pitchControllerParameters[2]);
+    
+        LastPostion = Base.transform.position;
 
-        wheels[0] = transform.Find("Right-Front-Wheel");
-        wheels[1] = transform.Find("Left-Front-Wheel");
-        wheels[2] = transform.Find("Left-Back-Wheel");
-        wheels[3] = transform.Find("Right-Back-Wheel");
-
-        if (yawComponent != null)
+        Spin.performed += context =>
         {
-            yawJoint = yawComponent.GetComponent<HingeJoint>();
-            yawMotor = yawJoint.motor;
-        }
-        if (pitchComponent != null)
-        {
-            pitchJoint = pitchComponent.GetComponent<HingeJoint>();
-            pitchMotor = pitchJoint.motor;
-        }
+            IsSpin = !IsSpin;
+        };
     }
 
     void OnEnable()
     {
+        move = Input.Player.Move;
+        move.Enable();
+        look = Input.Player.Look;
+        look.Enable();
+        shoot = Input.Player.Shoot;
+        shoot.Enable();
         Boost.Enable();
+        Spin.Enable();
     }
 
     void OnDisable()
     {
+        move.Disable();
+        look.Disable();
+        shoot.Disable();
         Boost.Disable();
+        Spin.Disable();
     }
 
-    void Update()
+    void FixedUpdate()
     {
         if (!IsOwner) return;
 
         if (!Enabled) return;
 
-        StarterAssetsInputs _playerInputs = GetComponent<StarterAssetsInputs>();
+        Vector2 lookDelta = look.ReadValue<Vector2>();
+        // Debug.Log($"[EngineerController] lookDelta: {lookDelta.x}, {lookDelta.y}");
+        
+        Vector2 moveDirection = move.ReadValue<Vector2>();
+        // Debug.Log($"[EngineerController] moveDirection: {moveDirection.x}, {moveDirection.y}");
 
-        _input[0] = _playerInputs.move.x;
-        _input[1] = _playerInputs.move.y;
-        _input[2] = _playerInputs.look.x;
-        _input[3] = _playerInputs.look.y;
-        _input[4] = _playerInputs.shoot ? 1f : 0f;
-        _input[5] = _playerInputs.spin ? 1f : 0f;
+        float shootTrigger = shoot.ReadValue<float>();
 
-        // Debug.Log($"isShoot ? {_input[4]}");
+        // Debug.Log($"[RobotController] CursorLock: {UnityEngine.Cursor.lockState}");
 
-        _playerInputs.shoot = false;
-        _playerInputs.spin = false;
-
-        // All input status
-        // Debug.Log(_input[0] + " " + _input[1] + " " + _input[2] + " " + _input[3] + " " + _input[4] + " " + _input[5]);
-
-        ControlRobotServerRpc(_input);
-    }
-
-    private void MoveSight()
-    {
-        // TODO: YAW和PITCH都得上PID
-
-        yawController.updatePara(yawControllerParameters[0],
-                                yawControllerParameters[1],
-                                yawControllerParameters[2]);
-
-        pitchController.updatePara(pitchControllerParameters[0],
-                                pitchControllerParameters[1],
-                                pitchControllerParameters[2]);
-
-        yawTargetAngle += _input[2];
-        if (yawTargetAngle < 0) yawTargetAngle += 360;
-        if (yawTargetAngle > 360) yawTargetAngle -= 360;
-        pitchTargetAngle += _input[3];
-        if (pitchTargetAngle < pitchMin) pitchTargetAngle = pitchMin;
-        if (pitchTargetAngle > pitchMax) pitchTargetAngle = pitchMax;
-
-        float _yawDifference = yawTargetAngle - yawComponent.eulerAngles.y;
-        float _pitchDifference = pitchTargetAngle - pitchComponent.eulerAngles.z;
-
-        // Debug.Log("yaw: " + yawComponent.eulerAngles.y + " yawTargetAngle: " + yawTargetAngle + "_yawDifference: " + _yawDifference);
-        // Debug.Log("pitch: " + pitchComponent.eulerAngles.z + " pitchTargetAngle: " + pitchTargetAngle + " _pitchDifference: " + _pitchDifference);
-
-        // pitchMotor.targetVelocity = -_input[3] * rotateSpeed;
-
-        if (_yawDifference > 180) {
-            yawMotor.targetVelocity = yawController.Update(_yawDifference - 360, Time.deltaTime);
-        } else if (_yawDifference < -180) {
-            yawMotor.targetVelocity = yawController.Update(360 + _yawDifference, Time.deltaTime);
-        } else {
-            yawMotor.targetVelocity = yawController.Update(_yawDifference, Time.deltaTime);
+        if (UnityEngine.Cursor.lockState != CursorLockMode.Locked)
+        {
+            lookDelta = Vector2.zero;
+            moveDirection = Vector2.zero;
         }
 
-        pitchMotor.targetVelocity = pitchController.Update(_pitchDifference, Time.deltaTime);
+        // Look
+        if (Yaw != null)
+        {
+            if (Yaw.GetComponent<HingeJoint>() != null)
+            {
+                yawController.updatePara(yawControllerParameters[0],
+                                        yawControllerParameters[1],
+                                        yawControllerParameters[2]);
 
-        // Debug.Log("Velocity: " + yawMotor.targetVelocity);
+                JointMotor yawMotor = Yaw.GetComponent<HingeJoint>().motor;
+
+                yawTargetAngle += lookDelta[0];
+                if (yawTargetAngle < 0) yawTargetAngle += 360;
+                if (yawTargetAngle > 360) yawTargetAngle -= 360;
+                float _yawDifference = yawTargetAngle - Yaw.transform.eulerAngles.y;
+
+                // Yaw joint exists
+                if (_yawDifference > 180) {
+                    yawMotor.targetVelocity = yawController.Update(_yawDifference - 360, Time.deltaTime);
+                } else if (_yawDifference < -180) {
+                    yawMotor.targetVelocity = yawController.Update(360 + _yawDifference, Time.deltaTime);
+                } else {
+                    yawMotor.targetVelocity = yawController.Update(_yawDifference, Time.deltaTime);
+                }
+
+                Yaw.GetComponent<HingeJoint>().motor = yawMotor;
+            } else {
+                // No Yaw Joint, update vw only;
+                targetVw = Mathf.Clamp(lookDelta[0] / 100, -1f, 1f);
+            }
+        }
         
-        pitchJoint.motor = pitchMotor;
-        yawJoint.motor = yawMotor;
-    }
+        if (Pitch != null)
+        {
+            if (Pitch.GetComponent<HingeJoint>() != null)
+            {
+                pitchController.updatePara(pitchControllerParameters[0],
+                                        pitchControllerParameters[1],
+                                        pitchControllerParameters[2]);
 
-    private void Move()
-    {
-        moveController.updatePara(moveControllerParameters[0],
-                                    moveControllerParameters[1],
-                                    moveControllerParameters[2]);
+                JointMotor pitchMotor = Pitch.GetComponent<HingeJoint>().motor;
 
-        followController.updatePara(followControllerParameters[0],
-                                    followControllerParameters[1],
-                                    followControllerParameters[2]);
+                pitchTargetAngle += lookDelta[1];
+                if (pitchTargetAngle < pitchMin) pitchTargetAngle = pitchMin;
+                if (pitchTargetAngle > pitchMax) pitchTargetAngle = pitchMax;
+                float _pitchDifference = pitchTargetAngle - Pitch.transform.eulerAngles.z;
 
-        // Compute the vx & vy according to the YAW direction, and project these vector on base direction to calculate the force should apply to vx and vy on basement.
-        Vector3 _inputX = _input[1] * Vector3.Project(yawComponent.right, Base.right) + _input[0] * Vector3.Project(-yawComponent.forward, Base.right);
-        Vector3 _inputY = _input[1] * Vector3.Project(yawComponent.right, -Base.forward) + _input[0] * Vector3.Project(-yawComponent.forward, -Base.forward);
+                pitchMotor.targetVelocity = pitchController.Update(_pitchDifference, Time.deltaTime);
 
-        float vx = Vector3.Dot(_inputX.normalized, Base.right) * (_inputX).magnitude;
-        float vy = Vector3.Dot(_inputY.normalized, -Base.forward) * (_inputY).magnitude;
-        float vw = 0;
+                Pitch.GetComponent<HingeJoint>().motor = pitchMotor;
+            }
+        }
+
+        // Move
+        Vector3 _inputX = moveDirection[0] * Vector3.Project(Yaw.transform.forward, Base.transform.right) + moveDirection[1] * Vector3.Project(Yaw.transform.right, Base.transform.right);
+        Vector3 _inputY = moveDirection[0] * Vector3.Project(Yaw.transform.forward, Base.transform.forward) + moveDirection[1] * Vector3.Project(Yaw.transform.right, Base.transform.forward);
+
+        targetVx = Vector3.Dot(_inputX.normalized, Base.transform.right) * (_inputX).magnitude;
+        targetVy = Vector3.Dot(_inputY.normalized, Base.transform.forward) * (_inputY).magnitude;
+
+        moveControllerX = new PIDController(moveControllerParameters[0],
+                                            moveControllerParameters[1],
+                                            moveControllerParameters[2]);
+
+        moveControllerY = new PIDController(moveControllerParameters[0],
+                                            moveControllerParameters[1],
+                                            moveControllerParameters[2]);
 
         // 小陀螺 or 底盘跟随云台
-        if (isSpin){
-            vw = 1f;
-        } else {
-            float _angle = Vector3.SignedAngle(yawComponent.right, Base.right, Base.up);
+        if (IsSpin){
+            targetVw = 1f;
+        } else if (Yaw.GetComponent<HingeJoint>() != null) {
+            followController.updatePara(followControllerParameters[0],
+                                        followControllerParameters[1],
+                                        followControllerParameters[2]);
+            
+            float _angle = Vector3.SignedAngle(Yaw.transform.right, Base.transform.right, Base.transform.up);
             float _vw = followController.Update(_angle, Time.deltaTime);
-            vw = -Mathf.Clamp(_vw, -1f, 1f);
+            targetVw = -Mathf.Clamp(_vw, -1f, 1f);
             // Debug.Log("vw: " + Mathf.Clamp(_vw, -1f, 1f));
         }
+
+        Vector3 deltaPostion = Base.transform.position - LastPostion;
+        float deltaW = (Base.transform.rotation.eulerAngles.y - LastRotation.eulerAngles.y) / Time.deltaTime;
+        LastPostion = Base.transform.position;
+        float deltaX = Vector3.Dot(deltaPostion.normalized, Base.transform.right) * (deltaPostion).magnitude;
+        float deltaY = Vector3.Dot(deltaPostion.normalized, Base.transform.forward) * (deltaPostion).magnitude;;
+
+        // Debug.Log($"[RobotContorller] deltaPostion {deltaPostion}");
+
+        // Debug.Log($"[RobotController] targetVx {targetVx} targetVy {targetVy} targetVw {targetVw}");
+        // Debug.Log($"[RobotController] deltaX {deltaX} deltaY {deltaY} deltaW {deltaW}");
+
+        vx = Mathf.Clamp(moveControllerX.Update(targetVx - deltaX, Time.deltaTime), -1f, 1f);
+        vy = Mathf.Clamp(moveControllerY.Update(targetVy + deltaY, Time.deltaTime), -1f, 1f);
+        vw = targetVw;
+
+        Debug.Log($"[RobotController] X {targetVx} / {deltaX/Time.deltaTime} Y {targetVy} / {deltaY/Time.deltaTime}");
+        // Debug.Log($"[RobotController] vx {vx} vy {vy}");
 
         wheelForce[0] = vx-vy-vw;
         wheelForce[1] = vx+vy+vw;
@@ -218,56 +259,43 @@ public class RobotController : NetworkBehaviour
         wheelForce[3] = vx+vy-vw;
 
         float _factor = 1;
-        if ((Boost.ReadValue<float>() > 0)) _factor = BoostPower / gameObject.GetComponent<RefereeController>().PowerLimit.Value;
-        _factor = _factor * gameObject.GetComponent<RefereeController>().PowerLimit.Value / wheels.Length;
+        float powerlimit = referee.PowerLimit.Value;
 
-        for (int i=0; i< wheels.Length; i++)
+        if ((Boost.ReadValue<float>() > 0) || powerlimit < 0) _factor = BoostPower / powerlimit;
+        _factor = _factor * powerlimit / Wheels.Length;
+
+        for (int i=0; i< Wheels.Length; i++)
         {
-            wheels[i].GetComponent<WheelController>().SetPower(wheelForce[i] * _factor);
-        
+            Wheels[i].GetComponent<WheelController>().SetPower(wheelForce[i] * _factor);
         }
-    }
 
-    private void TriggerShot()
-    {
-        // TODO: User input to control the shooterController
-
-        if (_input[4] > 0 && _shootTimeoutDelta <= 0.0f) 
+        if (ShooterList.Count > 0)
         {
-            // reset the shoot timeout timer
-            _shootTimeoutDelta = 1 / ShootFrequency;
-
-            // Debug.Log("[RobotController] TriggerShot");
-            if (Shooter0 != null){
-                Shooter0.PullTrigger(ShootSpeed);
+            if (shootTrigger > 0)
+            {
+                if (_shootTimeoutDelta > 1 / ShootFrequency)
+                {
+                    if (HasHeatRedundancy(ShooterList[CurrentShooter]))
+                    {
+                        ShooterList[CurrentShooter].PullTrigger();
+                        _shootTimeoutDelta = 0f;
+                    } else {
+                        int i = 0;
+                        foreach (var shooter in ShooterList)
+                        {
+                            if (HasHeatRedundancy(shooter)) CurrentShooter = i;
+                            i ++;
+                        }
+                    }
+                } else {
+                    _shootTimeoutDelta += Time.deltaTime;
+                }
             }
         }
-
-        // shoot timeout
-        if (_shootTimeoutDelta >= 0.0f)
-        {
-            _shootTimeoutDelta -= Time.deltaTime;
-            // Debug.Log($"Shoot timeout {_shootTimeoutDelta}, {Time.deltaTime}");
-        }
     }
 
-    [ServerRpc(RequireOwnership = false)]
-    public void ControlRobotServerRpc(float[] input, ServerRpcParams serverRpcParams = default)
+    bool HasHeatRedundancy(ShooterController shooter)
     {
-        // Debug.Log("Client uploading user input: " + serverRpcParams.Receive.SenderClientId);
-        _input = input;
-
-        if (_input[5] > 0)
-        {
-            isSpin = !isSpin;
-        }
-
-        // Debug.DrawLine(Base.position, Base.right * 20 + Base.position, Color.blue);
-        // Debug.DrawLine(yawComponent.position, yawComponent.right * 20 + yawComponent.position, Color.green);
-        // Debug.DrawLine(pitchComponent.position, - pitchComponent.right * 20 + pitchComponent.position, Color.yellow);
-
-        MoveSight();
-        Move();
-        TriggerShot();
+        return shooter.HeatLimit.Value - shooter.Heat.Value >= (shooter.Mode.Value == 0 ? 10 : 100);
     }
 }

@@ -75,7 +75,7 @@ public class ShooterController : NetworkBehaviour
         OverHeat.SetActive(Heat.Value > HeatLimit.Value);
     }
 
-    public void PullTrigger(float Speed)
+    public void PullTrigger()
     {
         if (!Enabled.Value) return;
 

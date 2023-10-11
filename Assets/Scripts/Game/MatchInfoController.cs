@@ -89,13 +89,13 @@ public class MatchInfoController : NetworkBehaviour
         BlueOutpostHPBar.SetValue(gameManager.BlueOutpost.HP.Value);
 
         // Red Coin
-        RedCoin.text = gameManager.RedCoin.Value.ToString();
-        RedCoinTotal.text = gameManager.RedCoinTotal.Value.ToString();
+        // Debug.Log($"[MatchInfoController] Coins: {gameManager.Coins.Value.Length}");
+        RedCoin.text = gameManager.Coins.Value[(int)Faction.Red].ToString();
+        RedCoinTotal.text = gameManager.CoinsTotal.Value[(int)Faction.Red].ToString();
 
         // Blue Coin
-        BlueCoin.text = gameManager.BlueCoin.Value.ToString();
-        BlueCoinTotal.text = gameManager.BlueCoinTotal.Value.ToString();
-
+        BlueCoin.text = gameManager.Coins.Value[(int)Faction.Blue].ToString();
+        BlueCoinTotal.text = gameManager.CoinsTotal.Value[(int)Faction.Blue].ToString();
         
         // Sync Observer UI
         // if (ObserverUI != null)

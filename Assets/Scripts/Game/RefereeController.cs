@@ -37,6 +37,9 @@ public class RefereeController : NetworkBehaviour
     public delegate void ChangePerformanceAction(int robotID, int chassisMode, int shooter1Mode, int shooter2Mode);
     public static event ChangePerformanceAction OnPerformanceChange;
 
+    public delegate void PurchaseAction(int robotID,  PurchaseType type);
+    public static event PurchaseAction OnPurchase;
+
     // public DataTransmission.RobotStatus Status = new DataTransmission.RobotStatus();
 
     [Header("Referee")]
@@ -53,7 +56,7 @@ public class RefereeController : NetworkBehaviour
     public NetworkVariable<RobotClass> robotClass = new NetworkVariable<RobotClass>(RobotClass.Infantry);
     public List<RobotTag> robotTags = new List<RobotTag>();
     public NetworkVariable<Faction> faction = new NetworkVariable<Faction>(Faction.Neu);
-
+    
     [Header("Player")]
     public Transform spawnPoint;
     private RobotController robotController;
@@ -117,7 +120,8 @@ public class RefereeController : NetworkBehaviour
             robotController = this.gameObject.GetComponent<RobotController>();
             if (robotController != null) robotController.Enabled = true;
 
-            playerInput = this.gameObject.GetComponent<StarterAssetsInputs>();      
+            playerInput = this.gameObject.GetComponent<StarterAssetsInputs>(); 
+            if (playerInput != null) playerInput.enabled = true;     
         }
     }
 
@@ -187,6 +191,11 @@ public class RefereeController : NetworkBehaviour
 
     protected virtual void Update()
     {
+        if (robotController != null)
+        {
+            if (IsOwner) robotController.enabled = Enabled.Value;
+        }
+
         // Sync Armor related Status
         foreach(ArmorController _armor in Armors)
         {
@@ -254,8 +263,13 @@ public class RefereeController : NetworkBehaviour
                 FPVCamera.SetGreyScale(!Enabled.Value);
                 FPVCamera.SetReviveWindow(Reviving.Value);
                 FPVCamera.SetReviveProgress(CurrentReviveProgress.Value, MaxReviveProgress.Value, (MaxReviveProgress.Value - CurrentReviveProgress.Value) / ReviveProgressPerSec.Value);
-                // FPVCamera.SetPurchaseRevive();
+
+                FPVCamera.SetPurchaseRevive(PurchaseRevivePrice.Value >= gameManager.Coins.Value[(int)faction.Value], PurchaseRevivePrice.Value);
+
                 FPVCamera.SetFreeRevive(CurrentReviveProgress.Value >= MaxReviveProgress.Value);
+
+                bool has17mmShooter = false;
+                bool has42mmShooter = false;
 
                 foreach (var _shooter in ShooterControllerList.Values)
                 {
@@ -264,15 +278,19 @@ public class RefereeController : NetworkBehaviour
                     switch (_shooter.Mode.Value)
                     {
                         case 0:
+                            has17mmShooter = true;
                             _shooter.SetAmmo(ConsumedAmmo0.Value, Ammo0.Value);
                             break;
                         case 1:
+                            has42mmShooter = true;
                             _shooter.SetAmmo(ConsumedAmmo1.Value, Ammo1.Value);
                             break;
                         default:
                             break;
                     }
                 }
+
+                FPVCamera.SetPurchaseItem(robotTags.Contains(RobotTag.GroundUnit), gameManager.RemoteHPTimes.Value[(int)faction.Value], has17mmShooter, gameManager.Remote17mmTimes.Value[(int)faction.Value], has42mmShooter, gameManager.Remote42mmTimes.Value[(int)faction.Value]);
 
                 FPVCamera.SetHealBuff(HealBuff.Value > 0, HealBuff.Value);
                 FPVCamera.SetDEFBuff(DEFBuff.Value > 0, DEFBuff.Value);
@@ -295,6 +313,16 @@ public class RefereeController : NetworkBehaviour
 
         if (IsServer)
         {
+            // Debug.Log($"[RefereeController] Disengaged? {Disengaged.Value}, DisengagedTime: {DisengagedTime.Value}/{DisengagedTimeLimit.Value}");
+
+            if (DisengagedTime.Value >= DisengagedTimeLimit.Value)
+            {
+                Disengaged.Value = true;
+            } else {
+                Disengaged.Value = false;
+                DisengagedTime.Value += Time.deltaTime;
+            }
+
             if (PowerLimit.Value > 0) TickPower();
 
             if (Reviving.Value) TickRevive();
@@ -319,6 +347,10 @@ public class RefereeController : NetworkBehaviour
     public NetworkVariable<int> Warning           = new NetworkVariable<int>(0);
     public NetworkVariable<int> OccupiedArea      = new NetworkVariable<int>(0);
     public NetworkVariable<bool> Ready         = new NetworkVariable<bool>(false);
+
+    public NetworkVariable<bool> Disengaged      = new NetworkVariable<bool>(true);
+    public NetworkVariable<float> DisengagedTime = new NetworkVariable<float>(0f);
+    public NetworkVariable<float> DisengagedTimeLimit = new NetworkVariable<float>(6.0f);
 
     public Vector2 Position = Vector2.zero;
     public float Direction = 0f;
@@ -455,13 +487,16 @@ public class RefereeController : NetworkBehaviour
     {
         if (!IsServer) return;
 
-        if (attackerID != 0 & gameManager.RefereeControllerList[attackerID].faction.Value != faction.Value)
+        if (attackerID != 0)
         {
-            if (AttackList.ContainsKey(attackerID)) 
-            {
-                AttackList[attackerID].resetLastTime();
-            } else {
-                AttackList.Add(attackerID, new AttackerInfo(attackerID));
+            if (gameManager.RefereeControllerList[attackerID].faction.Value != faction.Value)
+            {            
+                if (AttackList.ContainsKey(attackerID)) 
+                {
+                    AttackList[attackerID].resetLastTime();
+                } else {
+                    AttackList.Add(attackerID, new AttackerInfo(attackerID));
+                }
             }
         }
 
@@ -473,12 +508,12 @@ public class RefereeController : NetworkBehaviour
             if (damageType != 3 & gameManager.RefereeControllerList.ContainsKey(attackerID)) 
             {
                 int atkBuff = gameManager.RefereeControllerList[attackerID].ATKBuff.Value;
-                if (atkBuff > 0) _damage = _damage * atkBuff;
+                if (atkBuff > 0) _damage = _damage * (1 + atkBuff / 100);
             }
 
             if (!robotTags.Contains(RobotTag.Building) & DEFBuff.Value > 0)
             {
-                _damage = _damage * (1 - DEFBuff.Value / 100);
+                _damage = _damage * (1 - (DEFBuff.Value + DEFDeBuff.Value) / 100);
             }
             
             switch(damageType){
@@ -502,11 +537,18 @@ public class RefereeController : NetworkBehaviour
             if (_hp - _damage <= 0)
             {
                 HP.Value = 0;
+                ShooterEnabled.Value = false;
                 Enabled.Value = false;
                 OnDeath(attackerID, RobotID.Value);
             } else {
                 HP.Value = (_hp - _damage);
             }
+        }
+
+        if (_damage > 0)
+        {
+            Disengaged.Value = false;
+            DisengagedTime.Value = 0f;
         }
 
         if (OnDamage != null)
@@ -579,9 +621,16 @@ public class RefereeController : NetworkBehaviour
             {
                 HP.Value = 0;
                 Enabled.Value = false;
+                ShooterEnabled.Value = false;
                 OnDeath(RobotID.Value, RobotID.Value);
             } else {
                 HP.Value = (_hp - damage);
+            }
+
+            if (damage > 0)
+            {
+                Disengaged.Value = false;
+                DisengagedTime.Value = 0f;
             }
         }
     }
@@ -609,6 +658,9 @@ public class RefereeController : NetworkBehaviour
     public NetworkVariable<int> MaxReviveProgress = new NetworkVariable<int>(10);
     public NetworkVariable<int> ReviveProgressPerSec = new NetworkVariable<int>(1);
     public NetworkVariable<float> CurrentReviveProgress = new NetworkVariable<float>(0);
+
+    public NetworkVariable<int> PurchaseReviveTimes = new NetworkVariable<int>(2);
+    public NetworkVariable<int> PurchaseRevivePrice = new NetworkVariable<int>(10);
 
     void TickRevive()
     {
@@ -639,6 +691,11 @@ public class RefereeController : NetworkBehaviour
                 break;
             case 1:
                 // TODO: Pay to win
+                Reviving.Value = false;
+                CurrentReviveProgress.Value = 0;
+                HP.Value = HPLimit.Value;
+                ShooterEnabled.Value = true;
+                Enabled.Value = true;
                 break;
             default:
                 break;
@@ -697,6 +754,9 @@ public class RefereeController : NetworkBehaviour
                 break;
         }
 
+        Disengaged.Value = false;
+        DisengagedTime.Value = 0f;
+
         OnShoot(ID, shooter.Type.Value, RobotID.Value, Position, Velocity);
     }
 
@@ -729,12 +789,49 @@ public class RefereeController : NetworkBehaviour
 
     #endregion
 
+    #region Purchase
+
+    // 0 - HP, 1 - 17mm, 2 - 42mm
+    public void RemotePurchase(PurchaseType type)
+    {
+        RemotePurchaseServerRpc(type);
+    }
+
+    [ServerRpc]
+    void RemotePurchaseServerRpc(PurchaseType type, ServerRpcParams serverRpcParams = default)
+    {
+        if (!Enabled.Value) return;
+
+        if (!Disengaged.Value) return;
+
+        switch(type)
+        {
+            case PurchaseType.Remote_HP:
+                if(gameManager.RemoteHPTimes.Value[(int)faction.Value] == 0) return;
+                break;
+            case PurchaseType.Remote_Bullet_17mm:
+                if(gameManager.Remote17mmTimes.Value[(int)faction.Value] == 0) return;
+                break;
+            case PurchaseType.Remote_Bullet_42mm:
+                if(gameManager.Remote42mmTimes.Value[(int)faction.Value] == 0) return;
+                break;
+            default:
+                Debug.LogError("[RefereeController] Unknown Purchase Type");
+                break;
+        }
+        
+        OnPurchase(RobotID.Value, type);
+    }
+
+    #endregion
+
     #region Buff Related
     
     [Header("Buff Related")]
     
     public NetworkVariable<int> ATKBuff         = new NetworkVariable<int>(0);
     public NetworkVariable<int> DEFBuff         = new NetworkVariable<int>(0);
+    public NetworkVariable<int> DEFDeBuff         = new NetworkVariable<int>(0);
     public NetworkVariable<int> CDBuff         = new NetworkVariable<int>(0);
     public NetworkVariable<int> HealBuff         = new NetworkVariable<int>(0);
 
@@ -802,6 +899,11 @@ public class RefereeController : NetworkBehaviour
                     newBuffStat.DEFBuff = _buff.DEFBuff;
                 }
 
+                if (_buff.DEFDeBuff > newBuffStat.DEFDeBuff)
+                {
+                    newBuffStat.DEFDeBuff = _buff.DEFDeBuff;
+                }
+
                 if (_buff.ATKBuff > newBuffStat.ATKBuff)
                 {
                     newBuffStat.ATKBuff = _buff.ATKBuff;
@@ -841,6 +943,7 @@ public class RefereeController : NetworkBehaviour
 
         HealBuff.Value = newBuffStat.HealBuff;
         DEFBuff.Value = newBuffStat.DEFBuff;
+        DEFDeBuff.Value = newBuffStat.DEFDeBuff;
         ATKBuff.Value = newBuffStat.ATKBuff;
         CDBuff.Value = newBuffStat.CDBuff;
     }

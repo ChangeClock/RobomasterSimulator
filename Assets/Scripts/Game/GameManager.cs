@@ -13,6 +13,8 @@ public class GameManager : NetworkBehaviour
     [SerializeField] public NetworkVariable<float> TimeLeft = new NetworkVariable<float>(420.0f);
     [SerializeField] public NetworkVariable<bool> isRunning = new NetworkVariable<bool>(false);
 
+    [SerializeField] private List<Faction> Factions = new List<Faction>(){Faction.Red, Faction.Blue};
+
     [SerializeField] public RefereeController RedBase;
     [SerializeField] public RefereeController BlueBase;
     [SerializeField] public RefereeController RedOutpost;
@@ -28,7 +30,7 @@ public class GameManager : NetworkBehaviour
     [SerializeField] private List<RobotClass> GrowingUnit = new List<RobotClass>(){RobotClass.Hero, RobotClass.Infantry};
     
     [Header("EXP")]
-    [SerializeField] public NetworkVariable<bool> HasFirstBlood = new NetworkVariable<bool>(false);
+    public NetworkVariable<bool> HasFirstBlood = new NetworkVariable<bool>(false);
     [SerializeField] private ExpInfoSO HeroExpInfo;
     [SerializeField] private ExpInfoSO InfantryExpInfo;
     [SerializeField] private ExpInfoSO EngineerExpInfo;
@@ -54,13 +56,24 @@ public class GameManager : NetworkBehaviour
     [SerializeField] private AreaController RedRepairStation;
     [SerializeField] private AreaController BlueRepairStation;
 
-    [Header("Coin")]
-    [SerializeField] public NetworkVariable<int> InitialCoin = new NetworkVariable<int>(400);
-    [SerializeField] public NetworkVariable<int> RedCoin = new NetworkVariable<int>(400);
-    [SerializeField] public NetworkVariable<int> BlueCoin = new NetworkVariable<int>(400);
-    [SerializeField] public NetworkVariable<int> RedCoinTotal = new NetworkVariable<int>(400);
-    [SerializeField] public NetworkVariable<int> BlueCoinTotal = new NetworkVariable<int>(400);
-    [SerializeField] public NetworkVariable<bool> HasFirstGold = new NetworkVariable<bool>(false);
+    // [Header("Coin")]
+    public int InitialCoin = 400;
+
+    [Header("Purchase")]    
+    public NetworkVariable<int[]> Coins = new NetworkVariable<int[]>();
+    public NetworkVariable<int[]> CoinsTotal = new NetworkVariable<int[]>();
+    public NetworkVariable<bool> HasFirstGold = new NetworkVariable<bool>(false);
+    [SerializeField] private int RemoteSupplyApplyInterval = 6;
+    [SerializeField] private int RemoteHPTimesLimit = 2;
+    [SerializeField] private float RemoteHPSupllyCount = 0.6f;
+    public NetworkVariable<int[]> RemoteHPTimes = new NetworkVariable<int[]>();
+    [SerializeField] private int Remote17mmTimesLimit = 2;
+    [SerializeField] private int Remote17mmSupplyCount = 100;
+    public NetworkVariable<int[]> Remote17mmTimes = new NetworkVariable<int[]>();
+    [SerializeField] private int Remote42mmTimesLimit = 2;
+    [SerializeField] private int Remote42mmSupplyCount = 10;
+    public NetworkVariable<int[]> Remote42mmTimes = new NetworkVariable<int[]>();
+
 
     // [Header("EXPInfo")]
     // [SerializeField] private ExpInfoSO HeroExpInfo;
@@ -77,6 +90,7 @@ public class GameManager : NetworkBehaviour
         RefereeController.OnRevived += ReviveUpload;
         RefereeController.OnDeath += DeathUpload;
         RefereeController.OnReady += ReadyUpload;
+        RefereeController.OnPurchase += PurchaseUpload;
     }
 
     protected virtual void OnDisable()
@@ -90,11 +104,16 @@ public class GameManager : NetworkBehaviour
         RefereeController.OnRevived -= ReviveUpload;
         RefereeController.OnDeath -= DeathUpload;
         RefereeController.OnReady -= ReadyUpload;
+        RefereeController.OnPurchase -= PurchaseUpload;
     }
 
     void Start() 
     {
         if (!IsServer) return;
+
+        ResetCoin();
+
+        ResetRemoteSupplyTimes();
     }
 
     protected virtual void Update()
@@ -160,10 +179,8 @@ public class GameManager : NetworkBehaviour
         HasFirstBlood.Value = false;
         HasFirstGold.Value = false;
 
-        RedCoin.Value = InitialCoin.Value;
-        RedCoinTotal.Value = InitialCoin.Value;
-        BlueCoin.Value = InitialCoin.Value;
-        BlueCoinTotal.Value = InitialCoin.Value;
+        ResetCoin();
+        ResetRemoteSupplyTimes();
 
         foreach(var _referee in RefereeControllerList.Values)
         {
@@ -181,18 +198,16 @@ public class GameManager : NetworkBehaviour
 
     protected void AddCoin(Faction faction, int coin)
     {
-        switch (faction)
+        Coins.Value[(int)faction] += coin;
+        CoinsTotal.Value[(int)faction] += coin;
+    }
+
+    protected void ResetCoin()
+    {
+        foreach (var fac in Factions)
         {
-            case Faction.Red:
-                RedCoin.Value += coin;
-                RedCoinTotal.Value += coin;
-                break;
-            case Faction.Blue:
-                BlueCoin.Value += coin;
-                BlueCoinTotal.Value += coin;
-                break;
-            default:
-                break;
+            Coins.Value[(int)fac] = InitialCoin;
+            CoinsTotal.Value[(int)fac] = InitialCoin;
         }
     }
 
@@ -551,6 +566,73 @@ public class GameManager : NetworkBehaviour
         if (allReady)
         {
             StartGame();
+        }
+    }
+
+    void PurchaseUpload(int id, PurchaseType type)
+    {
+
+    }
+        
+    [ServerRpc]
+    protected virtual void PurchaseHandlerServerRpc(int id, PurchaseType type, ServerRpcParams serverRpcParams = default)
+    {
+        RefereeController referee = RefereeControllerList[id];
+
+        int cost = 0;
+
+        switch (type)
+        {
+            case PurchaseType.Remote_HP:
+                cost = 100 + Mathf.CeilToInt((420 - TimeLeft.Value) / 60) * 20;
+                if (cost >= Coins.Value[(int)referee.faction.Value]) RemoteHealthSupply(referee);
+                break;
+            case PurchaseType.Remote_Bullet_17mm:
+                cost = 200;
+                if (cost >= Coins.Value[(int)referee.faction.Value]) Remote17mmSupply(referee);
+                break;
+            case PurchaseType.Remote_Bullet_42mm:
+                cost = 300;
+                if (cost >= Coins.Value[(int)referee.faction.Value]) Remote42mmSupply(referee);
+                break;
+            default:
+                break;
+        }
+    }
+
+    IEnumerator RemoteHealthSupply(RefereeController robot)
+    {
+        yield return new WaitForSeconds(RemoteSupplyApplyInterval);
+
+        if (robot.HPLimit.Value * RemoteHPSupllyCount + robot.HP.Value >= robot.HPLimit.Value)
+        {
+            robot.HP.Value = robot.HPLimit.Value;
+        } else {
+            robot.HP.Value += robot.HPLimit.Value * 0.6f;
+        }
+    }
+
+    IEnumerator Remote17mmSupply(RefereeController robot)
+    {
+        yield return new WaitForSeconds(RemoteSupplyApplyInterval);
+
+        robot.Ammo0.Value += Remote17mmSupplyCount;
+    }
+
+    IEnumerator Remote42mmSupply(RefereeController robot)
+    {
+        yield return new WaitForSeconds(RemoteSupplyApplyInterval);
+
+        robot.Ammo1.Value += Remote42mmSupplyCount;;
+    }
+
+    void ResetRemoteSupplyTimes()
+    {
+        foreach (var fac in Factions)
+        {
+            RemoteHPTimes.Value[(int)fac] = RemoteHPTimesLimit;
+            Remote17mmTimes.Value[(int)fac] = Remote17mmTimesLimit;
+            Remote42mmTimes.Value[(int)fac] = Remote42mmTimesLimit;
         }
     }
 }

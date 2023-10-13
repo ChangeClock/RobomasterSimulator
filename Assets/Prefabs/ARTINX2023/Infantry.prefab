@@ -459,7 +459,7 @@ MonoBehaviour:
   Ammo0:
     m_InternalValue: 200
   RealAmmo0:
-    m_InternalValue: 200
+    m_InternalValue: 350
   RealAmmo0Limit:
     m_InternalValue: 350
   ConsumedAmmo1:
@@ -470,6 +470,8 @@ MonoBehaviour:
     m_InternalValue: 0
   RealAmmo1Limit:
     m_InternalValue: 100
+  InSupplyArea:
+    m_InternalValue: 0
   ATKBuff:
     m_InternalValue: 0
   DEFBuff:
@@ -580,7 +582,7 @@ MonoBehaviour:
   - {fileID: 8801609716689365590}
   - {fileID: 266857224345066673}
   CurrentShooter: 0
-  ShootFrequency: 20
+  ShootFrequency: 5
 --- !u!1 &8413717783539453555
 GameObject:
   m_ObjectHideFlags: 0

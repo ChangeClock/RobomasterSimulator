@@ -166,7 +166,7 @@ public class GameManager : NetworkBehaviour
         }
     }
 
-    public void FinishGame(Faction faction = Faction.Neu)
+    public virtual void FinishGame(Faction faction = Faction.Neu)
     {
         isRunning.Value = false;
 
@@ -482,7 +482,8 @@ public class GameManager : NetworkBehaviour
                 break;
             default:
                 // TODO: If the robot is penalty to death, disable revival
-                Victim.MaxReviveProgress.Value = (int)Math.Round(10.0f + TimeLeft.Value / 10.0f);
+                Victim.MaxReviveProgress.Value = (int)Math.Round(10.0f + (420.0f - TimeLeft.Value) / 10.0f);
+                Victim.PurchaseRevivePrice.Value = (int)Math.Round(((420 - TimeLeft.Value) / 60) * 100 + Victim.Level.Value * 50);
                 Victim.Reviving.Value = true;
                 Victim.Enabled.Value = false;
                 break;

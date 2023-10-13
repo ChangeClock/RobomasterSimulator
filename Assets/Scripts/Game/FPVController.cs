@@ -25,6 +25,9 @@ public class FPVController : MonoBehaviour
             RemotePurchaseAction.performed += context => ToggleRemotePurchaseMenu();
         }
 
+        Ammo0PurchaseAction.performed += context => ToggleAmmo0PurchaseMenu();
+        Ammo1PurchaseAction.performed += context => ToggleAmmo1PurchaseMenu();
+
     }
 
     void Start()
@@ -38,6 +41,20 @@ public class FPVController : MonoBehaviour
             RemotePurchaseHPAction.performed += context => {referee.RemotePurchase(PurchaseType.Remote_HP);};
             RemotePurchaseAmmo0Action.performed += context => {referee.RemotePurchase(PurchaseType.Remote_Ammo0);};
             RemotePurchaseAmmo1Action.performed += context => {referee.RemotePurchase(PurchaseType.Remote_Ammo1);};
+        
+            Ammo0_50.onClick.AddListener(() => referee.Purchase(PurchaseType.Ammo0, 50));
+            Ammo0_100.onClick.AddListener(() => referee.Purchase(PurchaseType.Ammo0, 100));
+            Ammo0_150.onClick.AddListener(() => referee.Purchase(PurchaseType.Ammo0, 150));
+            Ammo0_200.onClick.AddListener(() => referee.Purchase(PurchaseType.Ammo0, 200));
+            Ammo0_250.onClick.AddListener(() => referee.Purchase(PurchaseType.Ammo0, 250));
+            Ammo0_300.onClick.AddListener(() => referee.Purchase(PurchaseType.Ammo0, 300));
+
+            Ammo1_5.onClick.AddListener(() => referee.Purchase(PurchaseType.Ammo1, 5));
+            Ammo1_10.onClick.AddListener(() => referee.Purchase(PurchaseType.Ammo1, 10));
+            Ammo1_15.onClick.AddListener(() => referee.Purchase(PurchaseType.Ammo1, 15));
+            Ammo1_20.onClick.AddListener(() => referee.Purchase(PurchaseType.Ammo1, 20));
+            Ammo1_25.onClick.AddListener(() => referee.Purchase(PurchaseType.Ammo1, 25));
+            Ammo1_30.onClick.AddListener(() => referee.Purchase(PurchaseType.Ammo1, 30));
         }
 
         ChassisMode.onValueChanged.AddListener(delegate {SetPerformance(ChassisMode);});
@@ -52,6 +69,9 @@ public class FPVController : MonoBehaviour
         RemotePurchaseHPAction.Enable();
         RemotePurchaseAmmo0Action.Enable();
         RemotePurchaseAmmo1Action.Enable();
+
+        Ammo0PurchaseAction.Enable();
+        Ammo1PurchaseAction.Enable();
     }
 
     void OnDisable()
@@ -61,6 +81,9 @@ public class FPVController : MonoBehaviour
         RemotePurchaseHPAction.Disable();
         RemotePurchaseAmmo0Action.Disable();
         RemotePurchaseAmmo1Action.Disable();
+
+        Ammo0PurchaseAction.Disable();
+        Ammo1PurchaseAction.Disable();
     }
 
     // Update is called once per frame
@@ -81,7 +104,7 @@ public class FPVController : MonoBehaviour
             }
         }
 
-        if (ReviveWindow.activeSelf || SettingMenu.activeSelf)
+        if (ReviveWindow.activeSelf || SettingMenu.activeSelf || Ammo0PurchaseMenu.activeSelf || Ammo1PurchaseMenu.activeSelf)
         {
             UnityEngine.Cursor.lockState = CursorLockMode.Confined;
         } else {
@@ -427,6 +450,162 @@ public class FPVController : MonoBehaviour
                 break;
             default:
                 break;
+        }
+    }
+
+    #endregion
+
+    #region Purchase
+
+    [SerializeField] private InputAction Ammo0PurchaseAction;
+
+    [SerializeField] private GameObject Ammo0PurchaseMenu;
+    [SerializeField] private TextMeshProUGUI Ammo0Status;
+    [SerializeField] private GameObject NoShooterPopup0;
+    [SerializeField] private GameObject NotInSupplyArea0;
+    [SerializeField] private Button Ammo0_50;
+    [SerializeField] private Button Ammo0_100;
+    [SerializeField] private Button Ammo0_150;
+    [SerializeField] private Button Ammo0_200;
+    [SerializeField] private Button Ammo0_250;
+    [SerializeField] private Button Ammo0_300;
+
+    [SerializeField] private InputAction Ammo1PurchaseAction;
+
+    [SerializeField] private GameObject Ammo1PurchaseMenu;
+    [SerializeField] private TextMeshProUGUI Ammo1Status;
+    [SerializeField] private GameObject NoShooterPopup1;
+    [SerializeField] private GameObject NotInSupplyArea1;
+    [SerializeField] private Button Ammo1_5;
+    [SerializeField] private Button Ammo1_10;
+    [SerializeField] private Button Ammo1_15;
+    [SerializeField] private Button Ammo1_20;
+    [SerializeField] private Button Ammo1_25;
+    [SerializeField] private Button Ammo1_30;
+
+    void ToggleAmmo0PurchaseMenu()
+    {
+        Ammo0PurchaseMenu.SetActive(!Ammo0PurchaseMenu.activeSelf);
+    }
+
+    public void SetAmmo0Item(bool hasShooter, bool inSupplyArea, int coin, int currentAmmo, int maxAmmo)
+    {
+        int availableAmmo = (coin > maxAmmo) ? maxAmmo : coin;
+
+        Ammo0Status.text = currentAmmo.ToString() + "/" + availableAmmo.ToString();
+
+        NoShooterPopup0.SetActive(!hasShooter);
+        NotInSupplyArea0.SetActive(!inSupplyArea);
+
+        if (50 <= availableAmmo)
+        {
+            Ammo0_50.interactable = true;
+        } else {
+            Ammo0_50.interactable = false;
+        }
+
+        if (100 <= availableAmmo)
+        {
+            Ammo0_100.interactable = true;
+        } else {
+            Ammo0_100.interactable = false;
+        }
+
+        if (150 <= availableAmmo)
+        {
+            Ammo0_150.interactable = true;
+        } else {
+            Ammo0_150.interactable = false;
+        }
+
+        if (200 <= availableAmmo)
+        {
+            Ammo0_200.interactable = true;
+        } else {
+            Ammo0_200.interactable = false;
+        }
+
+        if (250 <= availableAmmo)
+        {
+            Ammo0_250.interactable = true;
+        } else {
+            Ammo0_250.interactable = false;
+        }
+
+        if (300 <= availableAmmo)
+        {
+            Ammo0_300.interactable = true;
+        } else {
+            Ammo0_300.interactable = false;
+        }
+    }
+
+    void ToggleAmmo1PurchaseMenu()
+    {
+        Ammo1PurchaseMenu.SetActive(!Ammo1PurchaseMenu.activeSelf);
+    }
+
+    public void SetAmmo1Item(bool hasShooter, bool inSupplyArea, int coin, int currentAmmo, int maxAmmo)
+    {
+        int availableAmmo = ((coin / 15) > maxAmmo) ? maxAmmo : (coin / 15);
+
+        Ammo1Status.text = currentAmmo.ToString() + "/" + availableAmmo.ToString();
+
+        NoShooterPopup1.SetActive(!hasShooter);
+        NotInSupplyArea1.SetActive(!inSupplyArea);
+
+        if (!hasShooter || !inSupplyArea)
+        {
+            Ammo1_5.interactable = false;
+            Ammo1_10.interactable = false;
+            Ammo1_15.interactable = false;
+            Ammo1_20.interactable = false;
+            Ammo1_25.interactable = false;
+            Ammo1_30.interactable = false;
+
+            return;
+        }
+
+        if (5 <= availableAmmo)
+        {
+            Ammo1_5.interactable = true;
+        } else {
+            Ammo1_5.interactable = false;
+        }
+
+        if (10 <= availableAmmo)
+        {
+            Ammo1_10.interactable = true;
+        } else {
+            Ammo1_10.interactable = false;
+        }
+
+        if (15 <= availableAmmo)
+        {
+            Ammo1_15.interactable = true;
+        } else {
+            Ammo1_15.interactable = false;
+        }
+
+        if (20 <= availableAmmo)
+        {
+            Ammo1_20.interactable = true;
+        } else {
+            Ammo1_20.interactable = false;
+        }
+
+        if (25 <= availableAmmo)
+        {
+            Ammo1_25.interactable = true;
+        } else {
+            Ammo1_25.interactable = false;
+        }
+
+        if (30 <= availableAmmo)
+        {
+            Ammo1_30.interactable = true;
+        } else {
+            Ammo1_30.interactable = false;
         }
     }
 

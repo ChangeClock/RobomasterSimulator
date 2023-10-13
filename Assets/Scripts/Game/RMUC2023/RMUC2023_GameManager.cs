@@ -199,4 +199,20 @@ public class RMUC2023_GameManager : GameManager
     }
 
     #endregion
+
+    #region Engineer Initial Buff
+
+    [SerializeField] private BuffEffectSO EngineerInitBuff;
+
+    public override void StartGame()
+    {
+        foreach(var _referee in RefereeControllerList.Values)
+        {
+            if (_referee.robotClass.Value == RobotClass.Engineer) _referee.AddBuff(EngineerInitBuff);
+        }
+
+        base.StartGame();
+    }
+
+    #endregion
 }

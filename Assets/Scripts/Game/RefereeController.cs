@@ -68,6 +68,8 @@ public class RefereeController : NetworkBehaviour
         {
             OnSpawn(RobotID.Value);
             Debug.Log($"[RefereeController] {RobotID.Value} Spawned");
+
+            ResetAmmo();
         }
 
         // Debug.Log("Client:" + NetworkManager.Singleton.LocalClientId + "IsOwner?" + IsOwner);
@@ -275,7 +277,7 @@ public class RefereeController : NetworkBehaviour
                 {
                     if (!_shooter.Enabled.Value) continue;
 
-                    switch (_shooter.Mode.Value)
+                    switch (_shooter.Type.Value)
                     {
                         case 0:
                             has17mmShooter = true;
@@ -289,6 +291,9 @@ public class RefereeController : NetworkBehaviour
                             break;
                     }
                 }
+
+                FPVCamera.SetAmmo0Item(has17mmShooter, InSupplyArea.Value, gameManager.Coins.Value[(int)faction.Value], Ammo0.Value, gameManager.Ammo0Supply.Value[(int)faction.Value]);
+                FPVCamera.SetAmmo1Item(has42mmShooter, InSupplyArea.Value, gameManager.Coins.Value[(int)faction.Value], Ammo1.Value, gameManager.Ammo1Supply.Value[(int)faction.Value]);
 
                 FPVCamera.SetPurchaseItem(robotTags.Contains(RobotTag.GroundUnit), gameManager.RemoteHPTimes.Value[(int)faction.Value], has17mmShooter, gameManager.RemoteAmmo0Times.Value[(int)faction.Value], has42mmShooter, gameManager.RemoteAmmo1Times.Value[(int)faction.Value]);
 
@@ -615,7 +620,7 @@ public class RefereeController : NetworkBehaviour
         {
             float _hp = HP.Value;
             
-            // Debug.Log($"[GameManager] raw damage: {damage}, damage {damage}");
+            Debug.Log($"[GameManager] raw damage: {damage}, damage {damage}");
 
             if (_hp - damage <= 0)
             {
@@ -787,9 +792,21 @@ public class RefereeController : NetworkBehaviour
         }
     }
 
+    void ResetAmmo()
+    {
+        ConsumedAmmo0.Value = 0;
+        Ammo0.Value = 0;
+        RealAmmo0.Value = RealAmmo0Limit.Value;
+        ConsumedAmmo1.Value = 0;
+        Ammo1.Value = 0;
+        RealAmmo1.Value = RealAmmo1Limit.Value;
+    }
+
     #endregion
 
     #region Purchase
+
+    public NetworkVariable<bool> InSupplyArea = new NetworkVariable<bool>(false);
 
     // 0 - HP, 1 - 17mm, 2 - 42mm
     public void RemotePurchase(PurchaseType type, int amount = 1)
@@ -802,7 +819,6 @@ public class RefereeController : NetworkBehaviour
     void RemotePurchaseServerRpc(PurchaseType type, int amount, ServerRpcParams serverRpcParams = default)
     {
         if (!Enabled.Value) return;
-
         if (!Disengaged.Value) return;
 
         switch(type)
@@ -820,6 +836,19 @@ public class RefereeController : NetworkBehaviour
                 Debug.LogError("[RefereeController] Unknown Purchase Type"); 
                 return;
         }
+
+        OnPurchase(RobotID.Value, type, amount);
+    }
+
+    public void Purchase(PurchaseType type, int amount)
+    {
+        PurchaseServerRpc(type, amount);
+    }
+
+    [ServerRpc]
+    void PurchaseServerRpc(PurchaseType type, int amount, ServerRpcParams serverRpcParams = default)
+    {
+        if (!InSupplyArea.Value) return;
 
         OnPurchase(RobotID.Value, type, amount);
     }
@@ -925,6 +954,11 @@ public class RefereeController : NetworkBehaviour
                     newBuffStat.HealBuff = _buff.HealBuff;
                 }
 
+                if (_buff.InSupplyArea > newBuffStat.InSupplyArea)
+                {
+                    newBuffStat.InSupplyArea = _buff.InSupplyArea;
+                }
+
                 _buffInfo.lastTime += Time.deltaTime;
                 if (_buffInfo.lastTime * 1000 > _buff.buffDuration) overtimeBuff.Add(_buff);
             }
@@ -947,6 +981,7 @@ public class RefereeController : NetworkBehaviour
         DEFDeBuff.Value = newBuffStat.DEFDeBuff;
         ATKBuff.Value = newBuffStat.ATKBuff;
         CDBuff.Value = newBuffStat.CDBuff;
+        InSupplyArea.Value = (newBuffStat.InSupplyArea > 0);
     }
 
     void DetectHandler(int areaID)
@@ -1088,12 +1123,7 @@ public class RefereeController : NetworkBehaviour
         CDBuff.Value = defaultBuff.CDBuff;
         HealBuff.Value = defaultBuff.HealBuff;
 
-        ConsumedAmmo0.Value = 0;
-        Ammo0.Value = 0;
-        RealAmmo0.Value = RealAmmo0Limit.Value;
-        ConsumedAmmo1.Value = 0;
-        Ammo1.Value = 0;
-        RealAmmo1.Value = RealAmmo1Limit.Value;
+        ResetAmmo();
 
         foreach(var _shooter in ShooterControllerList.Values)
         {

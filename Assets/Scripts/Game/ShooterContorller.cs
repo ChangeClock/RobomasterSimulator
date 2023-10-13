@@ -14,21 +14,16 @@ public class ShooterController : NetworkBehaviour
 
     public GameObject ShootPoint;
 
-    // public NetworkVariable<int> ID  = new NetworkVariable<int>(0);
     [SerializeField] public NetworkVariable<bool> Enabled  = new NetworkVariable<bool>(true);
 
     public int ID = 0;
-    // public bool Enabled = false;
-    // public bool UIEnabled = false;
 
     // // Shooter Type: 0 - 17mm 1 - 42mm
     public NetworkVariable<int> Type      = new NetworkVariable<int>(0);
-    // public int Type = 0;
 
     // Shooter 17mm Mode: 0 - None 1 - Boost 2 - CD 3 - Speed
     // Shooter 42mm Mode: 0 - None 1 - Boost 2 - Speed
     public NetworkVariable<int> Mode      = new NetworkVariable<int>(0);
-    // public int Mode = 0;
 
     public RobotPerformanceSO GimbalPerformance;
     public NetworkVariable<int> Level             = new NetworkVariable<int>(0);
@@ -37,10 +32,6 @@ public class ShooterController : NetworkBehaviour
     public NetworkVariable<float> Heat             = new NetworkVariable<float>(0f);
     public NetworkVariable<int> CD               = new NetworkVariable<int>(0);
     public NetworkVariable<int> SpeedLimit       = new NetworkVariable<int>(0);
-    // public float HeatLimit = 0f;
-    // public float Heat = 0f;
-    // public int CD = 0;
-    // public int SpeedLimit = 0;
 
     [SerializeField] private GameObject UI;
     [SerializeField] private TextMeshProUGUI Speed;

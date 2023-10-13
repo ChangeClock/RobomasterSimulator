@@ -1372,6 +1372,7 @@ MonoBehaviour:
   RedExchangeStation: {fileID: 0}
   BlueExchangeStation: {fileID: 0}
   HeroSnipeBuff: {fileID: 11400000, guid: be205b508f613f34b945b6d72e4fc0a6, type: 2}
+  EngineerInitBuff: {fileID: 0}
 --- !u!1001 &405291674
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -6483,7 +6484,7 @@ MonoBehaviour:
   gameManager: {fileID: 0}
   prefabList:
   - {fileID: 5245181634047844342, guid: d356a9992b99a6a4280e8fb144d57ae7, type: 3}
-  - {fileID: 3375936746519120113, guid: 7e4d370908a923d4caba2a85bceb6202, type: 3}
+  - {fileID: 4566135839495928145, guid: d62b8893686fd234d9e18bbf349a0a87, type: 3}
   - {fileID: 3375936746519120113, guid: d785c092f75d7c24fb7723e7bc1f00c0, type: 3}
   - {fileID: 4566135839495928145, guid: 4a52550d2d77f934f9ec652815a1b7c4, type: 3}
   - {fileID: 4566135839495928145, guid: 4a52550d2d77f934f9ec652815a1b7c4, type: 3}

@@ -34,7 +34,7 @@ public class ClassSelectionMenu : MonoBehaviour
         for (int i = 0; i < Oberver.Length; i ++)
         {
             int tempVar = i;
-            BlueClasses[i].onClick.AddListener(() => SpawnPlayer(0,tempVar));
+            Oberver[i].onClick.AddListener(() => SpawnPlayer(0,tempVar));
         }
 
         // foreach(var (item, index) in Oberver.WithIndex())

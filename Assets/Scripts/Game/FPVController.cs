@@ -139,8 +139,14 @@ public class FPVController : MonoBehaviour
     #region RoleStatus
 
     [SerializeField] private TextMeshProUGUI ID;
+    [SerializeField] private RawImage Avatar;
+    [SerializeField] private Texture HeroAvatar;
+    [SerializeField] private Texture EngineerAvatar;
+    [SerializeField] private Texture InfantryAvatar;
+    [SerializeField] private Texture SentryAvatar;
+    [SerializeField] private Texture AeroAvatar;
 
-    public void SetRoleInfo(Faction belong, int robotID)
+    public void SetRoleInfo(Faction belong, int robotID, RobotClass robotclass)
     {
         switch(belong)
         {
@@ -158,6 +164,27 @@ public class FPVController : MonoBehaviour
                 Debug.LogError("[FPVController] Unknown faction");
                 break;
         }
+
+        switch(robotclass)
+        {
+            case RobotClass.Hero:
+                Avatar.texture = HeroAvatar;
+                break;
+            case RobotClass.Engineer:
+                Avatar.texture = EngineerAvatar;
+                break;
+            case RobotClass.Infantry:
+                Avatar.texture = InfantryAvatar;
+                break;
+            case RobotClass.Sentry:
+                Avatar.texture = SentryAvatar;
+                break;
+            case RobotClass.Aero:
+                Avatar.texture = AeroAvatar;
+                break;
+            default:
+                break;
+        }
     }
 
     #endregion
@@ -168,16 +195,12 @@ public class FPVController : MonoBehaviour
     [SerializeField] private TextMeshProUGUI HP;
     [SerializeField] private TextMeshProUGUI HPLimit;
 
-    public void SetHP(float hp)
-    {
-        HP.text = hp.ToString("N0");
-        HPBar.SetValue(hp);
-    }
-
-    public void SetHPLimit(float hplimit)
+    public void SetHP(float hp, float hplimit)
     {
         HPLimit.text = hplimit.ToString("N0");
         HPBar.SetMaxValue(hplimit);
+        HP.text = hp.ToString("N0");
+        HPBar.SetValue(hp);
     }
 
     #endregion
@@ -208,7 +231,7 @@ public class FPVController : MonoBehaviour
     {
         ReviveProgress.maxValue = max;
         ReviveProgress.value = current;
-        TimeToRevive.text = time.ToString("N0");
+        TimeToRevive.text = time.ToString("N0") + "s";
     }
 
     public void SetPurchaseRevive(bool enable, int price)

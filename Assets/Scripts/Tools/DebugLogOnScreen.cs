@@ -4,10 +4,10 @@ using System;
 
 public class DebugLogOnScreen : MonoBehaviour
 {
-    public int fontSize = 2;
+    public int fontSize = 16;
     private int logNo = 0;
     private string debugLog = "";
-    private const int maxLines = 10;
+    private const int maxLines = 25;
     private Queue<string> debugLogQueue = new Queue<string>();
     
     void OnEnable()
@@ -41,6 +41,6 @@ public class DebugLogOnScreen : MonoBehaviour
     {
         GUI.skin.label.fontSize = fontSize;
 
-        GUI.Label(new Rect(10, Screen.height - 200, Screen.width, Screen.height), debugLog);
+        GUI.Label(new Rect(10, Screen.height / 4, Screen.width, Screen.height / 2), debugLog);
     }
 }

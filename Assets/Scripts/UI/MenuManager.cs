@@ -51,10 +51,11 @@ public class MenuManager : MonoBehaviour {
 
     void Update()
     {
-        // if(NetworkManager.Singleton.IsClient || NetworkManager.Singleton.IsServer)
-        // {        
-        //     NetworkInfo.text = "Ping: " + NetworkManager.Singleton.NetworkConfig.NetworkTransport.GetCurrentRtt(NetworkManager.Singleton.LocalClientId) + "ms";
-        // }
+        if(NetworkManager.Singleton.IsClient || NetworkManager.Singleton.IsServer)
+        {
+            ClientInfo.text = "ClientID: " + NetworkManager.Singleton.LocalClientId;    
+            // NetworkInfo.text = "Ping: " + NetworkManager.Singleton.NetworkConfig.NetworkTransport.GetCurrentRtt(NetworkManager.Singleton.LocalClientId) + "ms";
+        }
     }
 
     void EnterMenu(int index = 0)
@@ -111,8 +112,6 @@ public class MenuManager : MonoBehaviour {
 
         if (NetworkManager.Singleton.IsClient)
         {
-            ClientInfo.text = "ClientID: " + NetworkManager.Singleton.LocalClientId;
-
             MultiplayerInfo.SetActive(true);
             hide();
         }

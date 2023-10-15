@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
-using UnityEngine.Networking;
 
 public class GameManager : NetworkBehaviour
 {
@@ -60,27 +59,27 @@ public class GameManager : NetworkBehaviour
     public int InitialCoin = 400;
 
     [Header("Purchase")]    
-    public NetworkVariable<int[]> Coins = new NetworkVariable<int[]>();
-    public NetworkVariable<int[]> CoinsTotal = new NetworkVariable<int[]>();
+    public NetworkList<int> Coins = new NetworkList<int>();
+    public NetworkList<int> CoinsTotal = new NetworkList<int>();
     public NetworkVariable<bool> HasFirstGold = new NetworkVariable<bool>(false);
 
     [SerializeField] private int RealAmmo0SupplyLimit = 1500;
-    public NetworkVariable<int[]> RealAmmo0Supply = new NetworkVariable<int[]>();
+    public NetworkList<int> RealAmmo0Supply = new NetworkList<int>();
     [SerializeField] private int Ammo0SupplyLimit = 1500;
-    public NetworkVariable<int[]> Ammo0Supply = new NetworkVariable<int[]>();
+    public NetworkList<int> Ammo0Supply = new NetworkList<int>();
     [SerializeField] private int Ammo1SupplyLimit = 100;
-    public NetworkVariable<int[]> Ammo1Supply = new NetworkVariable<int[]>();
+    public NetworkList<int> Ammo1Supply = new NetworkList<int>();
     
     [SerializeField] private int RemoteSupplyApplyInterval = 6;
     [SerializeField] private int RemoteHPTimesLimit = 2;
     [SerializeField] private float RemoteHPSupplyAmount = 0.6f;
-    public NetworkVariable<int[]> RemoteHPTimes = new NetworkVariable<int[]>();
+    public NetworkList<int> RemoteHPTimes = new NetworkList<int>();
     [SerializeField] private int RemoteAmmo0TimesLimit = 2;
     [SerializeField] private int RemoteAmmo0SupplyAmount = 100;
-    public NetworkVariable<int[]> RemoteAmmo0Times = new NetworkVariable<int[]>();
+    public NetworkList<int> RemoteAmmo0Times = new NetworkList<int>();
     [SerializeField] private int RemoteAmmo1TimesLimit = 2;
     [SerializeField] private int RemoteAmmo1SupplyAmount = 10;
-    public NetworkVariable<int[]> RemoteAmmo1Times = new NetworkVariable<int[]>();
+    public NetworkList<int> RemoteAmmo1Times = new NetworkList<int>();
 
     // [Header("EXPInfo")]
     // [SerializeField] private ExpInfoSO HeroExpInfo;
@@ -118,11 +117,22 @@ public class GameManager : NetworkBehaviour
     {
         if (!IsServer) return;
 
-        ResetCoin();
+        RefereeControllerList.Add(RedBase.RobotID.Value, RedBase);
+        RefereeControllerList.Add(BlueBase.RobotID.Value, BlueBase);
+        RefereeControllerList.Add(RedOutpost.RobotID.Value, RedOutpost);
+        RefereeControllerList.Add(BlueOutpost.RobotID.Value, BlueOutpost);
 
-        ResetAmmoSupply();
-
-        ResetRemoteSupplyTimes();
+        foreach(var fac in Factions)
+        {
+            Coins.Add(InitialCoin);
+            CoinsTotal.Add(InitialCoin);
+            RealAmmo0Supply.Add(RealAmmo0SupplyLimit);
+            Ammo0Supply.Add(Ammo0SupplyLimit);
+            Ammo1Supply.Add(Ammo1SupplyLimit);
+            RemoteHPTimes.Add(RemoteHPTimesLimit);
+            RemoteAmmo0Times.Add(RemoteAmmo0TimesLimit);
+            RemoteAmmo1Times.Add(RemoteAmmo1TimesLimit);
+        }
     }
 
     protected virtual void Update()
@@ -207,16 +217,16 @@ public class GameManager : NetworkBehaviour
 
     protected void AddCoin(Faction faction, int coin)
     {
-        Coins.Value[(int)faction] += coin;
-        CoinsTotal.Value[(int)faction] += coin;
+        Coins[(int)faction] += coin;
+        CoinsTotal[(int)faction] += coin;
     }
 
     protected void ResetCoin()
     {
         foreach (var fac in Factions)
         {
-            Coins.Value[(int)fac] = InitialCoin;
-            CoinsTotal.Value[(int)fac] = InitialCoin;
+            Coins[(int)fac] = InitialCoin;
+            CoinsTotal[(int)fac] = InitialCoin;
         }
     }
 
@@ -276,7 +286,7 @@ public class GameManager : NetworkBehaviour
         ChangePerformanceServerRpc(robotID, chassisMode, shooter1Mode, shooter2Mode);
     }
 
-    [ServerRpc]
+    [ServerRpc(RequireOwnership = false)]
     void ChangePerformanceServerRpc(int robotID, int chassisMode, int shooter1Mode, int shooter2Mode, ServerRpcParams serverRpcParams = default)
     {
         RefereeController referee = RefereeControllerList[robotID];
@@ -387,7 +397,7 @@ public class GameManager : NetworkBehaviour
     }
 
     [ServerRpc]
-    void DamageHandlerServerRpc(int damageType, float damage, int armorID, int attackerID, int robotID, ServerRpcParams serverRpcParams = default)
+    protected virtual void DamageHandlerServerRpc(int damageType, float damage, int armorID, int attackerID, int robotID, ServerRpcParams serverRpcParams = default)
     {
         Debug.Log("Damage Type: " + damageType + " Armor ID: " + armorID + " Robot ID: " + robotID);
         // Not Disabled or Immutable
@@ -436,13 +446,12 @@ public class GameManager : NetworkBehaviour
     }
 
     [ServerRpc]
-    void DeathHandlerServerRpc(int attackerID, int robotID, ServerRpcParams serverRpcParams = default)
+    protected virtual void DeathHandlerServerRpc(int attackerID, int robotID, ServerRpcParams serverRpcParams = default)
     {
         Debug.Log($"Robot {robotID} death event!");
 
         RefereeController Victim = RefereeControllerList[robotID];
 
-        // TODO: Add EXP to Killer and Assistant
         switch (robotID)
         {
             // TODO: Change Base Status
@@ -600,7 +609,7 @@ public class GameManager : NetworkBehaviour
                 cost = 100 + Mathf.CeilToInt((420 - TimeLeft.Value) / 60) * 20;
                 if (CostCoin(faction, cost)) 
                 {
-                    RemoteHPTimes.Value[(int)faction] --;
+                    RemoteHPTimes[(int)faction] --;
                     StartCoroutine(RemoteHealthSupply(referee));
                 }
                 break;
@@ -608,7 +617,7 @@ public class GameManager : NetworkBehaviour
                 cost = 200;
                 if (CostCoin(faction, cost)) 
                 {
-                    RemoteAmmo0Times.Value[(int)faction] --;
+                    RemoteAmmo0Times[(int)faction] --;
                     StartCoroutine(RemoteAmmo0Supply(referee));
                 }
                 break;
@@ -616,7 +625,7 @@ public class GameManager : NetworkBehaviour
                 cost = 300;
                 if (CostCoin(faction, cost)) 
                 {
-                    RemoteAmmo1Times.Value[(int)faction] --;
+                    RemoteAmmo1Times[(int)faction] --;
                     StartCoroutine(RemoteAmmo1Supply(referee));
                 }
                 break;
@@ -624,7 +633,7 @@ public class GameManager : NetworkBehaviour
                 cost = amount;
                 if (CostCoin(faction, cost)) 
                 {
-                    Ammo0Supply.Value[(int)faction] -= amount;
+                    Ammo0Supply[(int)faction] -= amount;
                     referee.Ammo0.Value += amount;
                 }
                 break;
@@ -632,7 +641,7 @@ public class GameManager : NetworkBehaviour
                 cost = amount * 15;
                 if (CostCoin(faction, cost)) 
                 {
-                    Ammo1Supply.Value[(int)faction] -= amount;
+                    Ammo1Supply[(int)faction] -= amount;
                     referee.Ammo1.Value += amount;
                 }
                 break;
@@ -643,9 +652,9 @@ public class GameManager : NetworkBehaviour
 
     bool CostCoin(Faction faction, int cost)
     {
-        if (Coins.Value[(int)faction] >= cost)
+        if (Coins[(int)faction] >= cost)
         {
-            Coins.Value[(int)faction] -= cost;
+            Coins[(int)faction] -= cost;
             return true;
         }
         return false;
@@ -684,8 +693,8 @@ public class GameManager : NetworkBehaviour
     {
         foreach (var fac in Factions)
         {
-            Ammo0Supply.Value[(int)fac] = Ammo0SupplyLimit;
-            Ammo1Supply.Value[(int)fac] = Ammo0SupplyLimit;
+            Ammo0Supply[(int)fac] = Ammo0SupplyLimit;
+            Ammo1Supply[(int)fac] = Ammo0SupplyLimit;
         }
     }
 
@@ -693,9 +702,9 @@ public class GameManager : NetworkBehaviour
     {
         foreach (var fac in Factions)
         {
-            RemoteHPTimes.Value[(int)fac] = RemoteHPTimesLimit;
-            RemoteAmmo0Times.Value[(int)fac] = RemoteAmmo0TimesLimit;
-            RemoteAmmo1Times.Value[(int)fac] = RemoteAmmo1TimesLimit;
+            RemoteHPTimes[(int)fac] = RemoteHPTimesLimit;
+            RemoteAmmo0Times[(int)fac] = RemoteAmmo0TimesLimit;
+            RemoteAmmo1Times[(int)fac] = RemoteAmmo1TimesLimit;
         }
     }
 }

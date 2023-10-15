@@ -909,7 +909,7 @@ GameObject:
   - component: {fileID: 2820198931293577703}
   - component: {fileID: 3515898284439576577}
   - component: {fileID: 918822531715997807}
-  - component: {fileID: -7734835981012115929}
+  - component: {fileID: 4029713748502332399}
   m_Layer: 0
   m_Name: Shooter-17mm
   m_TagString: Untagged
@@ -1001,7 +1001,7 @@ MonoBehaviour:
   HeatBar: {fileID: 2206298558127228611}
   BlurBackground: {fileID: 3739223850874060802}
   OverHeat: {fileID: 5462043801422267029}
---- !u!114 &-7734835981012115929
+--- !u!114 &4029713748502332399
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

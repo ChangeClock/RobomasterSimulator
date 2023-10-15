@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3449f0b231aa6d649b93f3ae28d67858, type: 3}
+  m_Name: RMUC2024_42mm-Default
+  m_EditorClassIdentifier: 
+  maxHealth: []
+  maxPower: 
+  maxHeat: c8000000e60000000401000022010000400100005e0100007c010000a4010000c2010000f4010000
+  coolDown: 28000000300000003800000040000000480000005000000058000000600000006800000078000000
+  shootSpeed: 10000000100000001000000010000000100000001000000010000000100000001000000010000000

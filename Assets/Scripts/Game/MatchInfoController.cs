@@ -25,7 +25,8 @@ public class MatchInfoController : NetworkBehaviour
     [SerializeField] private TMP_Text BlueOutpostHP;
     [SerializeField] private BarController BlueOutpostHPBar;
 
-    [SerializeField] private UnitInfoBar[] UnitInfoBars;
+    [SerializeField] private GameObject[] RedUnitInfo;
+    [SerializeField] private GameObject[] BlueUnitInfo;
     
     [SerializeField] private TMP_Text RedCoin;
     [SerializeField] private TMP_Text BlueCoin;
@@ -90,13 +91,38 @@ public class MatchInfoController : NetworkBehaviour
 
         // Red Coin
         // Debug.Log($"[MatchInfoController] Coins: {gameManager.Coins.Value.Length}");
-        RedCoin.text = gameManager.Coins.Value[(int)Faction.Red].ToString();
-        RedCoinTotal.text = gameManager.CoinsTotal.Value[(int)Faction.Red].ToString();
+        RedCoin.text = gameManager.Coins[(int)Faction.Red].ToString();
+        RedCoinTotal.text = gameManager.CoinsTotal[(int)Faction.Red].ToString();
 
         // Blue Coin
-        BlueCoin.text = gameManager.Coins.Value[(int)Faction.Blue].ToString();
-        BlueCoinTotal.text = gameManager.CoinsTotal.Value[(int)Faction.Blue].ToString();
+        BlueCoin.text = gameManager.Coins[(int)Faction.Blue].ToString();
+        BlueCoinTotal.text = gameManager.CoinsTotal[(int)Faction.Blue].ToString();
         
+        for (int i = 1; i <= 7; i ++)
+        {
+            RedUnitInfo[i-1].SetActive(gameManager.RefereeControllerList.ContainsKey(i));
+
+            if (RedUnitInfo[i-1].activeSelf)
+            {
+                RedUnitInfo[i-1].GetComponent<UnitInfoController>().SetID(i);
+                RedUnitInfo[i-1].GetComponent<UnitInfoController>().SetHP(gameManager.RefereeControllerList[i].HP.Value, gameManager.RefereeControllerList[i].HPLimit.Value);
+                RedUnitInfo[i-1].GetComponent<UnitInfoController>().SetLevel(gameManager.RefereeControllerList[i].Level.Value);
+                RedUnitInfo[i-1].GetComponent<UnitInfoController>().SetReviveTime(gameManager.RefereeControllerList[i].Reviving.Value, (gameManager.RefereeControllerList[i].MaxReviveProgress.Value - gameManager.RefereeControllerList[i].CurrentReviveProgress.Value) / gameManager.RefereeControllerList[i].ReviveProgressPerSec.Value);
+            }
+        }
+
+        for (int i = 21; i <= 27; i ++)
+        {
+            BlueUnitInfo[i-21].SetActive(gameManager.RefereeControllerList.ContainsKey(i));
+
+            if (BlueUnitInfo[i-21].activeSelf)
+            {
+                BlueUnitInfo[i-21].GetComponent<UnitInfoController>().SetID(i);
+                BlueUnitInfo[i-21].GetComponent<UnitInfoController>().SetHP(gameManager.RefereeControllerList[i].HP.Value, gameManager.RefereeControllerList[i].HPLimit.Value);
+                BlueUnitInfo[i-21].GetComponent<UnitInfoController>().SetLevel(gameManager.RefereeControllerList[i].Level.Value);
+                BlueUnitInfo[i-21].GetComponent<UnitInfoController>().SetReviveTime(gameManager.RefereeControllerList[i].Reviving.Value, (gameManager.RefereeControllerList[i].MaxReviveProgress.Value - gameManager.RefereeControllerList[i].CurrentReviveProgress.Value) / gameManager.RefereeControllerList[i].ReviveProgressPerSec.Value);
+            }
+        }
         // Sync Observer UI
         // if (ObserverUI != null)
         // {

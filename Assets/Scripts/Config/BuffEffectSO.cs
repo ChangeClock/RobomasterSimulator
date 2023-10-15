@@ -13,5 +13,5 @@ public class BuffEffectSO : ScriptableObject
     public int CDBuff = 0; // magnitude
     public int ReviveProgressPerSec = 0; // %
     public int HealBuff = 0; // %
-    public int InSupplyArea = 0; // %
+    public int InSupplyArea = 0; // bool
 }

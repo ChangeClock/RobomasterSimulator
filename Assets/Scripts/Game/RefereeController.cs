@@ -63,22 +63,23 @@ public class RefereeController : NetworkBehaviour
     private StarterAssetsInputs playerInput;
 
     public override void OnNetworkSpawn()
-    {        
+    {
         if (IsServer)
         {
             OnSpawn(RobotID.Value);
-            Debug.Log($"[RefereeController] {RobotID.Value} Spawned");
+            // Debug.Log($"[RefereeController] {RobotID.Value} Spawned");
 
             ResetAmmo();
         }
 
-        // Debug.Log("Client:" + NetworkManager.Singleton.LocalClientId + "IsOwner?" + IsOwner);
+        Debug.Log("Client:" + NetworkManager.Singleton.LocalClientId + "IsOwner?" + IsOwner);
+        
         if (IsOwner) 
         {            
             if (FPVCamera != null & !robotTags.Contains(RobotTag.Building))
             {
                 FPVCamera.TurnOnCamera();
-                FPVCamera.SetRoleInfo(faction.Value, RobotID.Value);
+                FPVCamera.SetRoleInfo(faction.Value, RobotID.Value, robotClass.Value);
             }  
 
             ShooterController[] Shooters = this.gameObject.GetComponentsInChildren<ShooterController>();
@@ -99,7 +100,7 @@ public class RefereeController : NetworkBehaviour
 
                     ShooterControllerList.Add(id, _shooter);
 
-                    _shooter.gameObject.GetComponent<NetworkObject>().SpawnAsPlayerObject(this.gameObject.GetComponent<NetworkObject>().OwnerClientId);
+                    // _shooter.gameObject.GetComponent<NetworkObject>().SpawnAsPlayerObject(this.gameObject.GetComponent<NetworkObject>().OwnerClientId);
                     _shooter.Enabled.Value = enabled;
                     _shooter.OnTrigger += TriggerHandler;
 
@@ -257,16 +258,15 @@ public class RefereeController : NetworkBehaviour
                 }
                 FPVCamera.SetReadyState(state);
 
-                FPVCamera.SetRoleInfo(faction.Value, RobotID.Value);
+                FPVCamera.SetRoleInfo(faction.Value, RobotID.Value, robotClass.Value);
 
-                FPVCamera.SetHPLimit(HPLimit.Value);
-                FPVCamera.SetHP(HP.Value);
+                FPVCamera.SetHP(HP.Value, HPLimit.Value);
 
                 FPVCamera.SetGreyScale(!Enabled.Value);
                 FPVCamera.SetReviveWindow(Reviving.Value);
                 FPVCamera.SetReviveProgress(CurrentReviveProgress.Value, MaxReviveProgress.Value, (MaxReviveProgress.Value - CurrentReviveProgress.Value) / ReviveProgressPerSec.Value);
 
-                FPVCamera.SetPurchaseRevive(PurchaseRevivePrice.Value >= gameManager.Coins.Value[(int)faction.Value], PurchaseRevivePrice.Value);
+                FPVCamera.SetPurchaseRevive(PurchaseRevivePrice.Value >= gameManager.Coins[(int)faction.Value], PurchaseRevivePrice.Value);
 
                 FPVCamera.SetFreeRevive(CurrentReviveProgress.Value >= MaxReviveProgress.Value);
 
@@ -292,10 +292,10 @@ public class RefereeController : NetworkBehaviour
                     }
                 }
 
-                FPVCamera.SetAmmo0Item(has17mmShooter, InSupplyArea.Value, gameManager.Coins.Value[(int)faction.Value], Ammo0.Value, gameManager.Ammo0Supply.Value[(int)faction.Value]);
-                FPVCamera.SetAmmo1Item(has42mmShooter, InSupplyArea.Value, gameManager.Coins.Value[(int)faction.Value], Ammo1.Value, gameManager.Ammo1Supply.Value[(int)faction.Value]);
+                FPVCamera.SetAmmo0Item(has17mmShooter, InSupplyArea.Value, gameManager.Coins[(int)faction.Value], Ammo0.Value, gameManager.Ammo0Supply[(int)faction.Value]);
+                FPVCamera.SetAmmo1Item(has42mmShooter, InSupplyArea.Value, gameManager.Coins[(int)faction.Value], Ammo1.Value, gameManager.Ammo1Supply[(int)faction.Value]);
 
-                FPVCamera.SetPurchaseItem(robotTags.Contains(RobotTag.GroundUnit), gameManager.RemoteHPTimes.Value[(int)faction.Value], has17mmShooter, gameManager.RemoteAmmo0Times.Value[(int)faction.Value], has42mmShooter, gameManager.RemoteAmmo1Times.Value[(int)faction.Value]);
+                FPVCamera.SetPurchaseItem(robotTags.Contains(RobotTag.GroundUnit), gameManager.RemoteHPTimes[(int)faction.Value], has17mmShooter, gameManager.RemoteAmmo0Times[(int)faction.Value], has42mmShooter, gameManager.RemoteAmmo1Times[(int)faction.Value]);
 
                 FPVCamera.SetHealBuff(HealBuff.Value > 0, HealBuff.Value);
                 FPVCamera.SetDEFBuff(DEFBuff.Value > 0, DEFBuff.Value);
@@ -328,7 +328,7 @@ public class RefereeController : NetworkBehaviour
                 DisengagedTime.Value += Time.deltaTime;
             }
 
-            if (PowerLimit.Value > 0) TickPower();
+            TickPower();
 
             if (Reviving.Value) TickRevive();
 
@@ -405,8 +405,11 @@ public class RefereeController : NetworkBehaviour
 
         foreach (WheelController wheel in Wheels)
         {
+            if (!Enabled.Value) wheel.SetPower(0);
             realPower += Mathf.Abs(wheel.GetPower());
         }
+
+        if (PowerLimit.Value <= 0 || !Enabled.Value) return;
 
         float _deltaPower = (PowerLimit.Value - realPower) * Time.deltaTime;
 
@@ -620,7 +623,7 @@ public class RefereeController : NetworkBehaviour
         {
             float _hp = HP.Value;
             
-            Debug.Log($"[GameManager] raw damage: {damage}, damage {damage}");
+            // Debug.Log($"[GameManager] raw damage: {damage}, damage {damage}");
 
             if (_hp - damage <= 0)
             {
@@ -824,13 +827,13 @@ public class RefereeController : NetworkBehaviour
         switch(type)
         {
             case PurchaseType.Remote_HP:
-                if(gameManager.RemoteHPTimes.Value[(int)faction.Value] == 0) return;
+                if(gameManager.RemoteHPTimes[(int)faction.Value] == 0) return;
                 break;
             case PurchaseType.Remote_Ammo0:
-                if(gameManager.RemoteAmmo0Times.Value[(int)faction.Value] == 0) return;
+                if(gameManager.RemoteAmmo0Times[(int)faction.Value] == 0) return;
                 break;
             case PurchaseType.Remote_Ammo1:
-                if(gameManager.RemoteAmmo1Times.Value[(int)faction.Value] == 0) return;
+                if(gameManager.RemoteAmmo1Times[(int)faction.Value] == 0) return;
                 break;
             default:
                 Debug.LogError("[RefereeController] Unknown Purchase Type"); 
@@ -1009,25 +1012,32 @@ public class RefereeController : NetworkBehaviour
     void TickEXP()
     {        
         // EXP growth with time
-        TimeToNextEXP.Value += Time.deltaTime;
-
-        if (TimeToNextEXP.Value >= EXPInfo.expGrowth)
+        if (EXPInfo.expGrowth > 0)
         {
-            TimeToNextEXP.Value -= EXPInfo.expGrowth;
-            EXP.Value += 1;
+            TimeToNextEXP.Value += Time.deltaTime;
+
+            if (TimeToNextEXP.Value >= EXPInfo.expGrowth)
+            {
+                TimeToNextEXP.Value -= EXPInfo.expGrowth;
+                EXP.Value += 1;
+            }
         }
         
         // Add up EXP but don't level up if the performance are not chosen yet
 
+        if (Level.Value > EXPInfo.expToNextLevel.Length) return;
+
         // Level up
         if (EXP.Value >= EXPInfo.expToNextLevel[Level.Value] && EXPInfo.expToNextLevel[Level.Value] >= 0)
         {
-            // Don't zero the current EXP, just minus the EXP needed to next level
             EXP.Value -= EXPInfo.expToNextLevel[Level.Value];
             Level.Value += 1;
             EXPToNextLevel.Value = EXPInfo.expToNextLevel[Level.Value];
 
-            EXPValue.Value = EXPInfo.expValue[Level.Value];
+            if (Level.Value <= EXPInfo.expValue.Length)
+            {
+                EXPValue.Value = EXPInfo.expValue[Level.Value];
+            }
 
             if (ChassisPerformance != null)
             {
@@ -1049,6 +1059,8 @@ public class RefereeController : NetworkBehaviour
         }
     }
 
+    // TODO: RMUC2024 has introduced level down feature, need to pack changeLevel() funtion.
+
     void PerfChangeHandler(int chassisMode, int shooter1Mode, int shooter2Mode)
     {
         OnPerformanceChange(RobotID.Value, chassisMode, shooter1Mode, shooter2Mode);
@@ -1061,7 +1073,7 @@ public class RefereeController : NetworkBehaviour
     public Stack<OreController> OreList = new Stack<OreController>();
     public List<Transform> OreStorePoints = new List<Transform>();
     public List<GripperController> GripperPoints = new List<GripperController>();
-    public NetworkVariable<int[]> ExchangeSpeed = new NetworkVariable<int[]>();
+    public List<int> ExchangeSpeed = new List<int>();
 
     public void AddOre(OreController ore)
     {
@@ -1083,7 +1095,7 @@ public class RefereeController : NetworkBehaviour
 
     void UpdateOre()
     {
-        // Debug.Log($"[RefereeController] OreList {OreList.Count}");
+        Debug.Log($"[RefereeController] OreList {OreList.Count}");
 
         int i = 0;
         foreach (var ore in OreList)

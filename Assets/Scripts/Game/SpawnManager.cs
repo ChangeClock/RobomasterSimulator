@@ -7,7 +7,7 @@ public class SpawnManager : NetworkBehaviour
 {
     [SerializeField] private GameManager gameManager;
     
-    [SerializeField] public GameObject[] prefabList;
+    public GameObject[] prefabList;
 
     [SerializeField] private Transform[] redSpawnPoints;
     [SerializeField] private Transform[] blueSpawnPoints;
@@ -23,6 +23,8 @@ public class SpawnManager : NetworkBehaviour
         var clientId = serverRpcParams.Receive.SenderClientId;
         GameObject player;
         RefereeController referee;
+
+        Debug.Log($"[SpawnManager] clientID: {clientId}");
 
         // role: 0-observer 1-red 2-blue 3-referee
         switch(role)
@@ -48,22 +50,7 @@ public class SpawnManager : NetworkBehaviour
                 break;
         }
 
-        // Debug.Log("Server Side? " + NetworkManager.Singleton.IsServer);
-        // Debug.Log("Client ID: " + clientId);
+        player.GetComponent<NetworkObject>().SpawnWithOwnership(clientId);
 
-        // TODO: Instantiate these players according to their robotID in fixed position
-        // TODO: Instantiate these players according to their choice in a limited area
-
-        // if (gameManager.RefereeControllerList[referee.RobotID] != null)
-        // {
-        //     Debug.LogError($"{referee.RobotID} exists !!!");
-        //     return;
-        // }
-        
-        // gameManager.RefereeControllerList.Add(referee.RobotID, referee);
-        player.GetComponent<NetworkObject>().SpawnAsPlayerObject(clientId);
-        // gameManager.SpawnUpload(id + 1);
-
-        // OnSpawn(robotID);
     }
 }

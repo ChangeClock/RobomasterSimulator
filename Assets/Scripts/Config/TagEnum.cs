@@ -28,7 +28,7 @@ public enum RobotClass
     Hero,
     Engineer,
     Sentry,
-    Uav,
+    Aero,
     Missile,
     Outpost,
     Base,
@@ -57,4 +57,5 @@ public enum RobotTag
     CombatUnit,
     GrowingUnit,
     Miner,
+    Balance,
 }

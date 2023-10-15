@@ -13,7 +13,9 @@ public class RMUC2023_MineArea : AreaController
     {
         base.Start();
 
-        if (printLog) Debug.Log($"[MineArea] OreStorePoints : {OreStorePoints.Count}");
+        // if (printLog) Debug.Log($"[MineArea] OreStorePoints : {OreStorePoints.Count}");
+
+        if (!IsServer) return;
 
         if (OreStorePoints.Count > 0)
         {

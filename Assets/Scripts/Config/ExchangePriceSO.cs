@@ -9,4 +9,5 @@ public class ExchangePriceSO : ScriptableObject
     public int[] silverPrice;
     public int[] goldPrice;
     public int[] levelLimit;
+    public float[] levelBonus;
 }

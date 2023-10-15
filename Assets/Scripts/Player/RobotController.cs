@@ -65,7 +65,11 @@ public class RobotController : NetworkBehaviour
 
     public override void OnNetworkSpawn()
     {
-        if (IsOwner) Enabled = true;
+        if (IsOwner)
+        { 
+            Enabled = true;
+            UnityEngine.Cursor.lockState = CursorLockMode.Locked;
+        }
     }
 
     void Awake()
@@ -76,8 +80,6 @@ public class RobotController : NetworkBehaviour
         }
 
         referee = gameObject.GetComponent<RefereeController>();
-
-        UnityEngine.Cursor.lockState = CursorLockMode.Locked;
     }
 
     void Start()
@@ -143,8 +145,6 @@ public class RobotController : NetworkBehaviour
         Vector2 moveDirection = move.ReadValue<Vector2>();
         // Debug.Log($"[EngineerController] moveDirection: {moveDirection.x}, {moveDirection.y}");
 
-        float shootTrigger = shoot.ReadValue<float>();
-
         // Debug.Log($"[RobotController] CursorLock: {UnityEngine.Cursor.lockState}");
 
         if (UnityEngine.Cursor.lockState != CursorLockMode.Locked)
@@ -153,6 +153,17 @@ public class RobotController : NetworkBehaviour
             moveDirection = Vector2.zero;
         }
 
+        ControlServerRpc(lookDelta, moveDirection, IsSpin, Boost.ReadValue<float>(), shoot.ReadValue<float>());
+    }
+
+    bool HasHeatRedundancy(ShooterController shooter)
+    {
+        return shooter.HeatLimit.Value - shooter.Heat.Value >= (shooter.Mode.Value == 0 ? 10 : 100);
+    }
+
+    [ServerRpc]
+    void ControlServerRpc(Vector2 lookDelta, Vector2 moveDirection, bool isSpin, float boostTrigger, float shootTrigger, ServerRpcParams serverRpcParams = default)
+    {
         // Look
         if (Yaw != null)
         {
@@ -222,7 +233,7 @@ public class RobotController : NetworkBehaviour
                                             moveControllerParameters[2]);
 
         // 小陀螺 or 底盘跟随云台
-        if (IsSpin){
+        if (isSpin){
             targetVw = 1f;
         } else if (Yaw.GetComponent<HingeJoint>() != null) {
             followController.updatePara(followControllerParameters[0],
@@ -243,7 +254,7 @@ public class RobotController : NetworkBehaviour
 
         // Debug.Log($"[RobotContorller] deltaPostion {deltaPostion}");
 
-        // Debug.Log($"[RobotController] targetVx {targetVx} targetVy {targetVy} targetVw {targetVw}");
+        Debug.Log($"[RobotController] targetVx {targetVx} targetVy {targetVy} targetVw {targetVw}");
         // Debug.Log($"[RobotController] deltaX {deltaX} deltaY {deltaY} deltaW {deltaW}");
 
         vx = Mathf.Clamp(moveControllerX.Update(targetVx - deltaX, Time.deltaTime), -1f, 1f);
@@ -261,7 +272,7 @@ public class RobotController : NetworkBehaviour
         float _factor = 1;
         float powerlimit = referee.PowerLimit.Value;
 
-        if ((Boost.ReadValue<float>() > 0) || powerlimit < 0) _factor = BoostPower / powerlimit;
+        if ((boostTrigger > 0) || powerlimit < 0) _factor = BoostPower / powerlimit;
         _factor = _factor * powerlimit / Wheels.Length;
 
         for (int i=0; i< Wheels.Length; i++)
@@ -292,10 +303,5 @@ public class RobotController : NetworkBehaviour
                 }
             }
         }
-    }
-
-    bool HasHeatRedundancy(ShooterController shooter)
-    {
-        return shooter.HeatLimit.Value - shooter.Heat.Value >= (shooter.Mode.Value == 0 ? 10 : 100);
     }
 }

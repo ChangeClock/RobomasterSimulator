@@ -1,0 +1,187 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &8003418826990195140
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4380352939514084076}
+  - component: {fileID: -4173012908361315155}
+  - component: {fileID: -2263049800773060731}
+  m_Layer: 0
+  m_Name: Lidar
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4380352939514084076
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8003418826990195140}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &-4173012908361315155
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8003418826990195140}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c588dc8e7f3394e6ba6dc7fcf0bb7644, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  RobotID:
+    m_InternalValue: 0
+  robotClass:
+    m_InternalValue: 0
+  robotTags: 02000000
+  faction:
+    m_InternalValue: 3
+  spawnPoint: {fileID: 0}
+  Enabled:
+    m_InternalValue: 1
+  Immutable:
+    m_InternalValue: 0
+  Warning:
+    m_InternalValue: 0
+  OccupiedArea:
+    m_InternalValue: 0
+  Ready:
+    m_InternalValue: 0
+  Disengaged:
+    m_InternalValue: 1
+  DisengagedTime:
+    m_InternalValue: 0
+  DisengagedTimeLimit:
+    m_InternalValue: 6
+  Position: {x: 0, y: 0}
+  Direction: 0
+  PowerLimit:
+    m_InternalValue: 0
+  Power:
+    m_InternalValue: 0
+  BufferLimit:
+    m_InternalValue: 0
+  Buffer:
+    m_InternalValue: 0
+  EnergyLimit:
+    m_InternalValue: 1900
+  Energy:
+    m_InternalValue: 0
+  ShieldLimit:
+    m_InternalValue: 0
+  Shield:
+    m_InternalValue: 0
+  HPLimit:
+    m_InternalValue: 500
+  HP:
+    m_InternalValue: 500
+  Damage_Hit:
+    m_InternalValue: 0
+  Damage_17mm:
+    m_InternalValue: 0
+  Damage_42mm:
+    m_InternalValue: 0
+  Damage_Missle:
+    m_InternalValue: 0
+  Damage_OverPower:
+    m_InternalValue: 0
+  Damage_OverHeat:
+    m_InternalValue: 0
+  Damage_Warning:
+    m_InternalValue: 0
+  Reviving:
+    m_InternalValue: 0
+  MaxReviveProgress:
+    m_InternalValue: 10
+  ReviveProgressPerSec:
+    m_InternalValue: 1
+  CurrentReviveProgress:
+    m_InternalValue: 0
+  PurchaseReviveTimes:
+    m_InternalValue: 2
+  PurchaseRevivePrice:
+    m_InternalValue: 10
+  ShooterEnabled:
+    m_InternalValue: 1
+  ConsumedAmmo0:
+    m_InternalValue: 0
+  Ammo0:
+    m_InternalValue: 0
+  RealAmmo0:
+    m_InternalValue: 350
+  RealAmmo0Limit:
+    m_InternalValue: 350
+  ConsumedAmmo1:
+    m_InternalValue: 0
+  Ammo1:
+    m_InternalValue: 0
+  RealAmmo1:
+    m_InternalValue: 100
+  RealAmmo1Limit:
+    m_InternalValue: 100
+  InSupplyArea:
+    m_InternalValue: 0
+  ATKBuff:
+    m_InternalValue: 0
+  DEFBuff:
+    m_InternalValue: 0
+  DEFDeBuff:
+    m_InternalValue: 0
+  CDBuff:
+    m_InternalValue: 0
+  HealBuff:
+    m_InternalValue: 0
+  defaultBuff: {fileID: 0}
+  Level:
+    m_InternalValue: 0
+  EXP:
+    m_InternalValue: 0
+  EXPToNextLevel:
+    m_InternalValue: 0
+  EXPValue:
+    m_InternalValue: 0
+  TimeToNextEXP:
+    m_InternalValue: 0
+  ChassisMode:
+    m_InternalValue: 0
+  ChassisPerformance: {fileID: 0}
+  EXPInfo: {fileID: 0}
+  OreStorePoints: []
+  GripperPoints: []
+  ExchangeSpeed: 
+--- !u!114 &-2263049800773060731
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8003418826990195140}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  GlobalObjectIdHash: 951099334
+  AlwaysReplicateAsRoot: 0
+  SynchronizeTransform: 1
+  ActiveSceneSynchronization: 0
+  SceneMigrationSynchronization: 1
+  SpawnWithObservers: 1
+  DontDestroyWithOwner: 0
+  AutoObjectParentSync: 1

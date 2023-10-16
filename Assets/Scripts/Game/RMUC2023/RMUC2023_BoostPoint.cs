@@ -4,30 +4,29 @@ using UnityEngine;
 public class RMUC2023_BoostPoint : AreaController 
 {
     [SerializeField] private BuffEffectSO PreBoostBuff;
-    [SerializeField] private BuffEffectSO BoostBuff;
 
-    void Update()
+    protected override void FixedUpdate()
     {
-        if (!IsServer)
-        {
-            return;
-        }
+        if (!IsServer) return;
 
         if (!Enabled.Value) return;
-
-        // if (printLog) Debug.Log($"[AreaController] {ID} Area contains {RobotsInArea.Count} robots");
 
         if (RobotsInArea.Count > 0)
         {
             foreach (var _referee in RobotsInArea.Values)
             {
-                if(_referee.HasBuff(PreBoostBuff))
-                { 
+                if (_referee.HasBuff(PreBoostBuff))
+                {
+                    foreach (var _buff in BuffList)
+                    {
+                        if (_buff.buffDuration >= 0.0f)
+                        {
+                            _referee.AddBuff(_buff);
+                        }
+                    }
                     _referee.RemoveBuff(PreBoostBuff);
-                    _referee.AddBuff(BoostBuff);
-                    _referee.Buffer.Value = 250f;
                 }
             }
         }
-    }    
+    }
 }

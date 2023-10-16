@@ -25,9 +25,9 @@ public class AreaController : NetworkBehaviour
 
     public List<RobotTag> TagList = new List<RobotTag>();
 
-    [SerializeField] private BuffEffectSO[] BuffList;
+    public List<BuffEffectSO> BuffList = new List<BuffEffectSO>();
 
-    public delegate void CaptureAction();
+    public delegate void CaptureAction(RefereeController robot = null);
     public event CaptureAction OnCaptured;
 
     protected Dictionary<int, RefereeController> RobotsInArea = new Dictionary<int, RefereeController>();
@@ -97,8 +97,7 @@ public class AreaController : NetworkBehaviour
             ResetProgress.Value += ResetProgressPerSecond.Value * Time.deltaTime;
         }
 
-
-        // if (printLog) Debug.Log($"[AreaController] Capture Progress {CaptureProgress.Value}/{MaxCaptureProgress.Value}");
+        if (printLog) Debug.Log($"[AreaController] Capture Progress {CaptureProgress.Value}/{MaxCaptureProgress.Value}");
     }
 
     protected virtual void OnTriggerEnter(Collider other)
@@ -177,6 +176,39 @@ public class AreaController : NetworkBehaviour
     }
 
     protected virtual void Capture()
+    {
+        ResetCaptureProgress();
+        CaptureEvent();
+    }
+
+    protected void CaptureEvent(RefereeController referee = null)
+    {
+        if (referee == null)
+        { 
+            if(OnCaptured != null) OnCaptured();
+            return;
+        }
+        if(OnCaptured != null) OnCaptured(referee);
+    }
+
+    public void AddBuff(BuffEffectSO buff)
+    {
+        if (!BuffList.Contains(buff))
+        {
+            BuffList.Add(buff);
+        }
+        // Debug.Log($"Adding {buff.name}");
+    }
+
+    public void RemoveBuff(BuffEffectSO buff)
+    {
+        if (BuffList.Contains(buff))
+        {
+            BuffList.Remove(buff);
+        }
+    }
+
+    public virtual void Reset()
     {
 
     }

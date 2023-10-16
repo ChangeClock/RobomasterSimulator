@@ -244,14 +244,14 @@ public class GameManager : NetworkBehaviour
 
     void SpawnUpload(int robotID)
     {
-        Debug.Log($"[GameManager] Referee {robotID} SpawnUpload");
+        // Debug.Log($"[GameManager] Referee {robotID} SpawnUpload");
         SpawnRefereeServerRpc(robotID);
     }
 
     [ServerRpc]
     void SpawnRefereeServerRpc(int robotID, ServerRpcParams serverRpcParams = default)
     {
-        Debug.Log($"[GameManager] Referee {robotID} ServerRPC");
+        // Debug.Log($"[GameManager] Referee {robotID} ServerRPC");
         if (RefereeControllerList.ContainsKey(robotID))
         {
             Debug.LogError($"{robotID} exists !!!");
@@ -259,7 +259,7 @@ public class GameManager : NetworkBehaviour
         }
 
         RefereeController[] _list = GameObject.FindObjectsByType<RefereeController>(FindObjectsSortMode.None);
-        Debug.Log($"[GameManager] List Length: {_list.Length}");
+        // Debug.Log($"[GameManager] List Length: {_list.Length}");
         
         foreach (RefereeController _referee in _list)
         {
@@ -354,7 +354,7 @@ public class GameManager : NetworkBehaviour
 
     void SetUnitPerformance(RefereeController referee, int mode, RobotPerformanceSO performance)
     {
-        Debug.Log($"[GameManager] mode: {mode}, maxHealth: {performance.maxHealth[referee.Level.Value]}, level: {referee.Level.Value}");
+        // Debug.Log($"[GameManager] mode: {mode}, maxHealth: {performance.maxHealth[referee.Level.Value]}, level: {referee.Level.Value}");
         referee.ChassisMode.Value = mode;
         referee.ChassisPerformance = performance;
         float _recoverHP = performance.maxHealth[referee.Level.Value] - referee.HPLimit.Value;

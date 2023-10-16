@@ -9,8 +9,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2733361204327582666}
-  - component: {fileID: 2554494592934639069}
   - component: {fileID: 4520536718028158238}
+  - component: {fileID: 2008300432913190278}
   m_Layer: 0
   m_Name: RMUC2024_Mountain
   m_TagString: Untagged
@@ -25,6 +25,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 918789671283322373}
+  serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
@@ -41,54 +42,7 @@ Transform:
   - {fileID: 6488209045666027666}
   - {fileID: 2506519442313664568}
   m_Father: {fileID: 0}
-  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &2554494592934639069
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 918789671283322373}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a0a70cf3832b56441af13eb8ae4ed4f4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  ID:
-    m_InternalValue: 0
-  Enabled:
-    m_InternalValue: 0
-  printLog: 0
-  belongFaction:
-    m_InternalValue: 3
-  isControlPoint:
-    m_InternalValue: 0
-  Occupied:
-    m_InternalValue: 0
-  controllingFaction:
-    m_InternalValue: 3
-  MaxCaptureProgress:
-    m_InternalValue: 100
-  CaptureProgress:
-    m_InternalValue: 0
-  CaptureProgressPerSecond:
-    m_InternalValue: 1
-  MaxResetProgress:
-    m_InternalValue: 0
-  ResetProgress:
-    m_InternalValue: 0
-  ResetProgressPerSecond:
-    m_InternalValue: 1
-  TagList: 05000000
-  BuffList: []
-  Ore: {fileID: 5333309716167329316, guid: 3bc9bb2c90d162e44bd3862c07644c0e, type: 3}
-  OreStorePoints:
-  - {fileID: 2925162641756930380}
-  - {fileID: 8725970914188052870}
-  - {fileID: 68332154825058111}
-  - {fileID: 7393162721449620246}
-  - {fileID: 2877650066368898247}
 --- !u!114 &4520536718028158238
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -103,8 +57,34 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   GlobalObjectIdHash: 951099334
   AlwaysReplicateAsRoot: 0
+  SynchronizeTransform: 1
+  ActiveSceneSynchronization: 0
+  SceneMigrationSynchronization: 1
+  SpawnWithObservers: 1
   DontDestroyWithOwner: 0
   AutoObjectParentSync: 1
+--- !u!114 &2008300432913190278
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 918789671283322373}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5177b1a9c9361374ea9d72264d8eefee, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Ore: {fileID: 5333309716167329316, guid: 3bc9bb2c90d162e44bd3862c07644c0e, type: 3}
+  OreStorePoints:
+  - {fileID: 2925162641756930380}
+  - {fileID: 8725970914188052870}
+  - {fileID: 68332154825058111}
+  - {fileID: 7393162721449620246}
+  - {fileID: 2877650066368898247}
+  MiningAreas:
+  - {fileID: 8597133137444240143}
+  - {fileID: 6817275830857576646}
 --- !u!1001 &1689066931251820683
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -562,7 +542,7 @@ HingeJoint:
   m_Anchor: {x: 0, y: 0, z: 0}
   m_Axis: {x: 1, y: 0, z: 0}
   m_AutoConfigureConnectedAnchor: 1
-  m_ConnectedAnchor: {x: 0, y: 23, z: -3.2}
+  m_ConnectedAnchor: {x: -0.00000011920929, y: 10.68, z: -3.2000003}
   serializedVersion: 2
   m_UseSpring: 0
   m_Spring:
@@ -734,7 +714,7 @@ MonoBehaviour:
   controllingFaction:
     m_InternalValue: 3
   MaxCaptureProgress:
-    m_InternalValue: 100
+    m_InternalValue: 30
   CaptureProgress:
     m_InternalValue: 0
   CaptureProgressPerSecond:
@@ -747,7 +727,7 @@ MonoBehaviour:
     m_InternalValue: 1
   TagList: 05000000
   BuffList:
-  - {fileID: 11400000, guid: 463c9ca10cf190e43886e263efe56c64, type: 2}
+  - {fileID: 11400000, guid: 6d9224969e8895e4193417f9a98f4873, type: 2}
 --- !u!4 &3434859361933779183 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 58d6ba922162de74badff9310e6ba867,
@@ -905,7 +885,7 @@ MonoBehaviour:
   controllingFaction:
     m_InternalValue: 3
   MaxCaptureProgress:
-    m_InternalValue: 100
+    m_InternalValue: 30
   CaptureProgress:
     m_InternalValue: 0
   CaptureProgressPerSecond:
@@ -918,7 +898,7 @@ MonoBehaviour:
     m_InternalValue: 1
   TagList: 05000000
   BuffList:
-  - {fileID: 11400000, guid: 463c9ca10cf190e43886e263efe56c64, type: 2}
+  - {fileID: 11400000, guid: 6d9224969e8895e4193417f9a98f4873, type: 2}
 --- !u!1001 &3967981718789950398
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1495,7 +1475,7 @@ HingeJoint:
   m_Anchor: {x: 0, y: 0, z: 0}
   m_Axis: {x: 1, y: 0, z: 0}
   m_AutoConfigureConnectedAnchor: 1
-  m_ConnectedAnchor: {x: 0, y: 23, z: 3.2}
+  m_ConnectedAnchor: {x: 0.00000011920929, y: 10.68, z: 3.2000003}
   serializedVersion: 2
   m_UseSpring: 0
   m_Spring:
@@ -1618,10 +1598,6 @@ PrefabInstance:
         type: 3}
       insertIndex: -1
       addedObject: {fileID: 8857753042877657589}
-    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 29f4ee5037d0464408db47aa67956ff7,
-        type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1266890150987499796}
   m_SourcePrefab: {fileID: 100100000, guid: 29f4ee5037d0464408db47aa67956ff7, type: 3}
 --- !u!1 &8135368161017829265 stripped
 GameObject:
@@ -1651,52 +1627,6 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: -7877160491211906700, guid: 29f4ee5037d0464408db47aa67956ff7, type: 3}
---- !u!114 &1266890150987499796
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8135368161017829265}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a0a70cf3832b56441af13eb8ae4ed4f4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  ID:
-    m_InternalValue: 0
-  Enabled:
-    m_InternalValue: 0
-  printLog: 0
-  belongFaction:
-    m_InternalValue: 3
-  isControlPoint:
-    m_InternalValue: 0
-  Occupied:
-    m_InternalValue: 0
-  controllingFaction:
-    m_InternalValue: 3
-  MaxCaptureProgress:
-    m_InternalValue: 100
-  CaptureProgress:
-    m_InternalValue: 0
-  CaptureProgressPerSecond:
-    m_InternalValue: 1
-  MaxResetProgress:
-    m_InternalValue: 0
-  ResetProgress:
-    m_InternalValue: 0
-  ResetProgressPerSecond:
-    m_InternalValue: 1
-  TagList: 05000000
-  BuffList: []
-  Ore: {fileID: 5333309716167329316, guid: 3bc9bb2c90d162e44bd3862c07644c0e, type: 3}
-  OreStorePoints:
-  - {fileID: 2925162641756930380}
-  - {fileID: 8725970914188052870}
-  - {fileID: 68332154825058111}
-  - {fileID: 7393162721449620246}
-  - {fileID: 2877650066368898247}
 --- !u!4 &8911905208235052331 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 29f4ee5037d0464408db47aa67956ff7,

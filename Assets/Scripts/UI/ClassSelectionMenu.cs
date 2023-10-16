@@ -72,7 +72,7 @@ public class ClassSelectionMenu : MonoBehaviour
         // SpawnServerRpc(role, id);
 
         gameObject.SetActive(false);
-        SurroundCamera.enabled = false;
+        // SurroundCamera.enabled = false;
     }
 
     [ServerRpc(RequireOwnership = false)]

@@ -32,6 +32,7 @@ public enum RobotClass
     Missile,
     Outpost,
     Base,
+    Lidar,
     Buff,
 }
 
@@ -58,4 +59,5 @@ public enum RobotTag
     GrowingUnit,
     Miner,
     Balance,
+    Siege,
 }

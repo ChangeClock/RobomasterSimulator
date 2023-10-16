@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 3638868b60ea87c44b2b147d83fc8e17, type: 3}
-  m_Name: RMUC2023_BaseBuff
+  m_Name: RMUC2024_BaseCD200
   m_EditorClassIdentifier: 
   buffDuration: 500
   DEFBuff: 50

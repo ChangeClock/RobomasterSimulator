@@ -4,12 +4,14 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.InputSystem;
 using TMPro;
+using Cinemachine;
 
 public class FPVController : MonoBehaviour
 {
     private RefereeController referee;
 
-    [SerializeField] private Camera FPVCamera;
+    [SerializeField] private CinemachineVirtualCamera FPVCamera;
+    [SerializeField] private AudioListener FPVAudioListener;
     [SerializeField] private GameObject PlayerUI;
 
     void Awake() 
@@ -115,7 +117,15 @@ public class FPVController : MonoBehaviour
     public void TurnOnCamera()
     {
         FPVCamera.enabled = true;
+        FPVAudioListener.enabled = true;
         PlayerUI.SetActive(true);
+    }
+
+    public void TurnOffCamera()
+    {
+        FPVCamera.enabled = false;
+        FPVAudioListener.enabled = false;
+        PlayerUI.SetActive(false);
     }
 
     // // Vision and Warning status

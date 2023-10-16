@@ -60,7 +60,6 @@ public class RefereeController : NetworkBehaviour
     [Header("Player")]
     public Transform spawnPoint;
     private RobotController robotController;
-    private StarterAssetsInputs playerInput;
 
     public override void OnNetworkSpawn()
     {
@@ -72,7 +71,7 @@ public class RefereeController : NetworkBehaviour
             ResetAmmo();
         }
 
-        Debug.Log("Client:" + NetworkManager.Singleton.LocalClientId + "IsOwner?" + IsOwner);
+        // Debug.Log("Client:" + NetworkManager.Singleton.LocalClientId + "IsOwner?" + IsOwner);
         
         if (IsOwner) 
         {            
@@ -121,10 +120,7 @@ public class RefereeController : NetworkBehaviour
             OnPerformanceChange(RobotID.Value, ChassisMode.Value, shooter1Mode, shooter2Mode);
 
             robotController = this.gameObject.GetComponent<RobotController>();
-            if (robotController != null) robotController.Enabled = true;
-
-            playerInput = this.gameObject.GetComponent<StarterAssetsInputs>(); 
-            if (playerInput != null) playerInput.enabled = true;     
+            if (robotController != null) robotController.Enabled = true;  
         }
     }
 
@@ -238,11 +234,6 @@ public class RefereeController : NetworkBehaviour
             if (robotController != null)
             {
                 robotController.Enabled = Enabled.Value;
-            }
-
-            if (playerInput != null)
-            {
-                playerInput.cursorLocked = Enabled.Value;
             }
                 
             if (FPVCamera != null)
@@ -372,10 +363,10 @@ public class RefereeController : NetworkBehaviour
         {
             // Back to spawn point & disable control
             gameObject.transform.SetPositionAndRotation(spawnPoint.position, spawnPoint.rotation);
-            playerInput.enabled = false;
+            robotController.Enabled = false;
         } else {
             // enable control
-            playerInput.enabled = true;
+            robotController.Enabled = true;
         }
 
         OnReady(RobotID.Value);
@@ -383,7 +374,7 @@ public class RefereeController : NetworkBehaviour
 
     public void ToggleInput()
     {
-        playerInput.enabled = true;
+        robotController.Enabled = !robotController.Enabled;
     }
 
     [Header("Power")]
@@ -664,7 +655,7 @@ public class RefereeController : NetworkBehaviour
     [Header("Revive")]
     public NetworkVariable<bool> Reviving          = new NetworkVariable<bool>(false);
     public NetworkVariable<int> MaxReviveProgress = new NetworkVariable<int>(10);
-    public NetworkVariable<int> ReviveProgressPerSec = new NetworkVariable<int>(1);
+    public NetworkVariable<int> ReviveProgressPerSec = new NetworkVariable<int>(0);
     public NetworkVariable<float> CurrentReviveProgress = new NetworkVariable<float>(0);
 
     public NetworkVariable<int> PurchaseReviveTimes = new NetworkVariable<int>(2);
@@ -1095,7 +1086,7 @@ public class RefereeController : NetworkBehaviour
 
     void UpdateOre()
     {
-        Debug.Log($"[RefereeController] OreList {OreList.Count}");
+        // Debug.Log($"[RefereeController] OreList {OreList.Count}");
 
         int i = 0;
         foreach (var ore in OreList)
@@ -1114,26 +1105,41 @@ public class RefereeController : NetworkBehaviour
     {
         Level.Value = 0;
         EXP.Value = 0;
-        EXPToNextLevel.Value = EXPInfo.expToNextLevel[Level.Value];
-        EXPValue.Value = EXPInfo.expValue[Level.Value];
+
+        if (EXPInfo != null)
+        {
+            if (Level.Value > EXPInfo.expToNextLevel.Length) EXPToNextLevel.Value = EXPInfo.expToNextLevel[Level.Value];
+            if (Level.Value > EXPInfo.expValue.Length) EXPValue.Value = EXPInfo.expValue[Level.Value];
+        }
+
         TimeToNextEXP.Value = 0;
 
         Reviving.Value = false;
         MaxReviveProgress.Value = 10;
-        ReviveProgressPerSec.Value = defaultBuff.ReviveProgressPerSec;
+        if (defaultBuff != null)
+        {
+            ReviveProgressPerSec.Value = defaultBuff.ReviveProgressPerSec;
+        }
         CurrentReviveProgress.Value = 0;
 
-        HPLimit.Value = ChassisPerformance.maxHealth[Level.Value];
+        if (ChassisPerformance != null)
+        {
+            HPLimit.Value = ChassisPerformance.maxHealth[Level.Value];
+            PowerLimit.Value = ChassisPerformance.maxPower[Level.Value];
+        }
+
         HP.Value = HPLimit.Value;
         Shield.Value = ShieldLimit.Value;
-        PowerLimit.Value = ChassisPerformance.maxPower[Level.Value];
 
         ResetDamage();
         
-        ATKBuff.Value = defaultBuff.ATKBuff;
-        DEFBuff.Value = defaultBuff.DEFBuff;
-        CDBuff.Value = defaultBuff.CDBuff;
-        HealBuff.Value = defaultBuff.HealBuff;
+        if (defaultBuff != null)
+        {
+            ATKBuff.Value = defaultBuff.ATKBuff;
+            DEFBuff.Value = defaultBuff.DEFBuff;
+            CDBuff.Value = defaultBuff.CDBuff;
+            HealBuff.Value = defaultBuff.HealBuff;
+        }
 
         ResetAmmo();
 

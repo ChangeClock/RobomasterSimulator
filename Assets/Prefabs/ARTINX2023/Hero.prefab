@@ -318,7 +318,7 @@ MonoBehaviour:
     m_InternalValue: 0
   robotClass:
     m_InternalValue: 0
-  robotTags: 00000000010000000400000003000000
+  robotTags: 0000000001000000040000000300000007000000
   faction:
     m_InternalValue: 2
   spawnPoint: {fileID: 0}

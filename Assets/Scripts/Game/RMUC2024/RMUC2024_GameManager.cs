@@ -69,10 +69,31 @@ public class RMUC2024_GameManager : GameManager
         }
     }
 
-    #region Coin
+    #region Coin & Buff
 
-    [SerializeField] private RMUC2023_ExchangePoint RedExchangeStation;
-    [SerializeField] private RMUC2023_ExchangePoint BlueExchangeStation;
+    [SerializeField] private RMUC2024_ExchangePoint RedExchangeStation;
+    [SerializeField] private RMUC2024_ExchangePoint BlueExchangeStation;
+
+    [SerializeField] private List<RMUC2023_MineMountain> Mines = new List<RMUC2023_MineMountain>();
+    [SerializeField] private List<AreaController> MineBuffAreas = new List<AreaController>();
+
+    [SerializeField] private List<AreaController> HighLands = new List<AreaController>();
+    [SerializeField] private List<AreaController> BaseAreas = new List<AreaController>();
+    [SerializeField] private List<AreaController> BoostPoints = new List<AreaController>();
+
+    [SerializeField] private BuffEffectSO HighLandBuff_CD200;
+    [SerializeField] private BuffEffectSO HighLandBuff_CD300;
+    [SerializeField] private BuffEffectSO HighLandBuff_CD500;
+
+    [SerializeField] private BuffEffectSO BaseBuff;
+    [SerializeField] private BuffEffectSO BaseBuff_CD200;
+    [SerializeField] private BuffEffectSO BaseBuff_CD300;
+    [SerializeField] private BuffEffectSO BaseBuff_CD500;
+
+    [SerializeField] private BuffEffectSO BoostBuff;
+    [SerializeField] private BuffEffectSO BoostBuff_CD200;
+    [SerializeField] private BuffEffectSO BoostBuff_CD300;
+    [SerializeField] private BuffEffectSO BoostBuff_CD500;
 
     protected override void OnTimeLeftChange(float oldTime, float newTime)
     {
@@ -107,13 +128,51 @@ public class RMUC2024_GameManager : GameManager
         {
             AddCoin(Faction.Red, 50);
             AddCoin(Faction.Blue, 50);
+
+            foreach (var area in HighLands)
+            {
+                area.RemoveBuff(HighLandBuff_CD300);
+                area.AddBuff(HighLandBuff_CD500);
+            }
+
+            foreach (var area in BaseAreas)
+            {
+                area.RemoveBuff(BaseBuff_CD300);
+                area.AddBuff(BaseBuff_CD500);
+            }
+            
+            foreach (var area in BoostPoints)
+            {
+                area.RemoveBuff(BoostBuff_CD300);
+                area.AddBuff(BoostBuff_CD500);
+            }
+
             // Big Buff
         }
         if (oldTime >= 240.0f && newTime < 240.0f)
         {
             AddCoin(Faction.Red, 50);
             AddCoin(Faction.Blue, 50);
-            // Stop Big Buff
+
+            foreach (var area in HighLands)
+            {
+                area.RemoveBuff(HighLandBuff_CD200);
+                area.AddBuff(HighLandBuff_CD300);
+            }
+
+            foreach (var area in BaseAreas)
+            {
+                area.RemoveBuff(BaseBuff_CD200);
+                area.AddBuff(BaseBuff_CD300);
+            }
+            
+            foreach (var area in BoostPoints)
+            {
+                area.RemoveBuff(BoostBuff_CD200);
+                area.AddBuff(BoostBuff_CD300);
+            }
+
+            // Stop Small Buff
         }
         if (oldTime >= 270.0f && newTime < 270.0f)
         {
@@ -123,6 +182,28 @@ public class RMUC2024_GameManager : GameManager
         {
             AddCoin(Faction.Red, 50);
             AddCoin(Faction.Blue, 50);
+
+            foreach (var area in HighLands)
+            {
+                area.AddBuff(HighLandBuff_CD200);
+            }
+
+            foreach (var area in BaseAreas)
+            {
+                area.RemoveBuff(BaseBuff);
+                area.AddBuff(BaseBuff_CD200);
+            }
+            
+            foreach (var area in BoostPoints)
+            {
+                area.RemoveBuff(BoostBuff);
+                area.AddBuff(BoostBuff_CD200);
+            }
+
+            foreach (var area in MineBuffAreas)
+            {
+                area.Enabled.Value = false;
+            }
         }
         if (oldTime >= 330.0f && newTime < 330.0f)
         {
@@ -193,16 +274,16 @@ public class RMUC2024_GameManager : GameManager
     {
         base.DamageHandlerServerRpc(damageType, damage, armorID, attackerID, robotID);
         
-        Debug.Log($"[GameManager] AttackerID {attackerID} {RefereeControllerList.ContainsKey(attackerID)}");
-        Debug.Log($"[GameManager] VictimID {robotID} {RefereeControllerList.ContainsKey(robotID)}");
+        // Debug.Log($"[GameManager] AttackerID {attackerID} {RefereeControllerList.ContainsKey(attackerID)}");
+        // Debug.Log($"[GameManager] VictimID {robotID} {RefereeControllerList.ContainsKey(robotID)}");
 
         if (attackerID == 0 || !RefereeControllerList.ContainsKey(attackerID) || !RefereeControllerList.ContainsKey(robotID)) return;
 
         RefereeController attacker = RefereeControllerList[attackerID];
         RefereeController victim = RefereeControllerList[robotID];
 
-        Debug.Log($"[GameManager] Attacker Faction {attacker.faction.Value}");
-        Debug.Log($"[GameManager] Victim Faction {victim.faction.Value}");
+        // Debug.Log($"[GameManager] Attacker Faction {attacker.faction.Value}");
+        // Debug.Log($"[GameManager] Victim Faction {victim.faction.Value}");
 
         // Friendly Fire !!!!
         if (attacker.faction.Value == victim.faction.Value) return;
@@ -233,6 +314,14 @@ public class RMUC2024_GameManager : GameManager
 
     public override void StartGame()
     {
+        RedExchangeStation.Reset();
+        BlueExchangeStation.Reset();
+
+        foreach (var mine in Mines)
+        {
+            mine.ResetOre();
+        }
+
         foreach(var _referee in RefereeControllerList.Values)
         {
             if (_referee.robotClass.Value == RobotClass.Engineer) _referee.AddBuff(EngineerInitBuff);
@@ -241,14 +330,40 @@ public class RMUC2024_GameManager : GameManager
         if (RedSentry != null) RedSentry.Level.Value = 10;
         if (BlueSentry != null) BlueSentry.Level.Value = 10;
 
+        foreach (var area in HighLands)
+        {
+            area.RemoveBuff(HighLandBuff_CD200);
+            area.RemoveBuff(HighLandBuff_CD300);
+            area.RemoveBuff(HighLandBuff_CD500);
+        }
+
+        foreach (var area in BaseAreas)
+        {
+            area.AddBuff(BaseBuff);
+            area.RemoveBuff(BaseBuff_CD200);
+            area.RemoveBuff(BaseBuff_CD300);
+            area.RemoveBuff(BaseBuff_CD500);
+        }
+        
+        foreach (var area in BoostPoints)
+        {
+            area.AddBuff(BoostBuff);
+            area.RemoveBuff(BoostBuff_CD200);
+            area.RemoveBuff(BoostBuff_CD300);
+            area.RemoveBuff(BoostBuff_CD500);
+        }
+
+        foreach (var area in MineBuffAreas)
+        {
+            area.Enabled.Value = true;
+        }
+
         base.StartGame();
     }
 
     #endregion
 
     #region EXP & GameLogic
-
-    [SerializeField] private BuffEffectSO BoostBuff;
 
     [ServerRpc]
     protected override void DeathHandlerServerRpc(int attackerID, int robotID, ServerRpcParams serverRpcParams = default)

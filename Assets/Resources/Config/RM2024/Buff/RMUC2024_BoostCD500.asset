@@ -10,13 +10,13 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 3638868b60ea87c44b2b147d83fc8e17, type: 3}
-  m_Name: RMUC2024_BoostBuff
+  m_Name: RMUC2024_BoostCD500
   m_EditorClassIdentifier: 
   buffDuration: 20000
   DEFBuff: 25
   DEFDeBuff: 0
   ATKBuff: 0
-  CDBuff: 0
+  CDBuff: 5
   ReviveProgressPerSec: 0
   HealBuff: 0
   InSupplyArea: 0

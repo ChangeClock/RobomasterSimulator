@@ -505,6 +505,43 @@ public class RMUC2024_GameManager : GameManager
                 AddFactionBuff(faction, SmallBuff);
                 break;
             case BuffType.Big:
+                int atk = 50;
+                int def = 25;
+                if (totalScore > 15 & totalScore <= 25)
+                {
+                    atk = 55;
+                } else if (totalScore > 25 & totalScore <= 35)
+                {
+                    atk = 60;
+                } else if (totalScore > 35 & totalScore <= 40)
+                {
+                    atk = 100;
+                } else if (totalScore > 40 & totalScore <= 45)
+                {
+                    atk = 200;
+                } else if (totalScore == 46)
+                {
+                    atk = 240;
+                    def = 30;
+                } else if (totalScore == 47)
+                {
+                    atk = 280;
+                    def = 35;
+                } else if (totalScore == 48)
+                {
+                    atk = 320;
+                    def = 40;
+                } else if (totalScore == 49)
+                {
+                    atk = 360;
+                    def = 45;
+                } else if (totalScore == 50)
+                {
+                    atk = 400;
+                    def = 50;
+                }
+                BuffEffectSO BigBuff = new BuffEffectSO(45000, def, atk);
+                AddFactionBuff(faction, BigBuff);
                 break;
             default:
                 break;

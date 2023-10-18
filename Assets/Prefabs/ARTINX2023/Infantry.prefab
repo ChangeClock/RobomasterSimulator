@@ -439,15 +439,15 @@ MonoBehaviour:
   IsActivatingBuff:
     m_InternalValue: 0
   CanActivateSmallBuff:
-    m_InternalValue: 0
+    m_InternalValue: 1
   CanActivateBigBuff:
-    m_InternalValue: 0
+    m_InternalValue: 1
   SmallBuffHitRate:
-    m_InternalValue: 0
+    m_InternalValue: 0.6
   BigBuffHitRate:
-    m_InternalValue: 0
+    m_InternalValue: 0.6
   BigBuffHighestScore:
-    m_InternalValue: 0
+    m_InternalValue: 7
   ActivateIdelTime:
     m_InternalValue: 0
   ActivateInterval:

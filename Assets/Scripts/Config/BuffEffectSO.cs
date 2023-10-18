@@ -15,4 +15,11 @@ public class BuffEffectSO : ScriptableObject
     public int HealBuff = 0; // %
     public int InSupplyArea = 0; // bool
     public int IsActivatingBuff = 0;
+
+    public BuffEffectSO(int duration, int def, int atk)
+    {
+        buffDuration = duration;
+        DEFBuff = def;
+        ATKBuff = atk;
+    }
 }

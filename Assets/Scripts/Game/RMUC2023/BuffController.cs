@@ -56,6 +56,8 @@ public class BuffController : RefereeController
         if (!Enabled.Value)
         {
             motor.targetVelocity = 0;
+            Hinge.motor = motor;
+            return;
         } else {
             switch(Type.Value)
             {
@@ -95,23 +97,34 @@ public class BuffController : RefereeController
 
         if (id == NextTargetID.Value) 
         {
-            GetScore(score);
-            IdelTime.Value = 0;
+            foreach (var target in Targets)
+            {
+                if (target.TargetID == id)
+                {
+                    target.IsActive = true;
+                    target.Score = score;
+                    Scores.Add(target.Score);
+                }
+            }
+
+            if (Scores.Count >= Targets.Count)
+            {
+                int totalScore = 0;
+                foreach(var item in Scores)
+                {
+                    totalScore += item;
+                }
+                
+                Reset();
+                OnActive(faction.Value, Type.Value, totalScore);
+            } else {
+                GetNewTarget();
+                IdelTime.Value = 0;
+            }
         }
         else
         {
             Reset();
-        }
-
-        if (Scores.Count >= Targets.Count)
-        {
-            int totalScore = 0;
-            foreach(var item in Scores)
-            {
-                totalScore += item;
-            }
-            
-            OnActive(faction.Value, Type.Value, totalScore);
         }
     }
 
@@ -125,13 +138,8 @@ public class BuffController : RefereeController
 
         IdelTime.Value = 0;
 
-        int newTarget = Random.Range(0, Targets.Count);
-        while (newTarget == NextTargetID.Value || newTarget > Targets.Count)
-        {
-            newTarget = Random.Range(0, Targets.Count);
-        }
-        NextTargetID.Value = newTarget;
-        Debug.Log($"[BuffController] NextTarget {NextTargetID.Value}");
+        GetNewTarget();
+        // Debug.Log($"[BuffController] NextTarget {NextTargetID.Value}");
     }
 
     public void Toggle(bool enable, BuffType type = BuffType.Small)
@@ -140,6 +148,7 @@ public class BuffController : RefereeController
 
         foreach(var target in Targets)
         {
+            target.Reset();
             // target.Enabled = enable;
         }
 
@@ -149,19 +158,18 @@ public class BuffController : RefereeController
 
         SpinDirection = (Random.Range(-1,1) < 0) ? -1 : 1;
 
-        Reset();
+        if (enable) Reset();
     }
 
-    public void GetScore(int score)
+    void GetNewTarget()
     {
-        foreach (var target in Targets)
+        if (Scores.Count > Targets.Count) return;
+
+        int newTarget = Random.Range(0, Targets.Count);
+        while (newTarget == NextTargetID.Value || newTarget > Targets.Count || Targets[newTarget].IsActive)
         {
-            if (target.TargetID == NextTargetID.Value)
-            {
-                target.IsActive = true;
-                target.Score = score;
-                Scores.Add(target.Score);
-            }
+            newTarget = Random.Range(0, Targets.Count);
         }
+        NextTargetID.Value = newTarget;
     }
 }

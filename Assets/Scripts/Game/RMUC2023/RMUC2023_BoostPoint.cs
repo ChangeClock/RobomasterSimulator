@@ -5,6 +5,9 @@ public class RMUC2023_BoostPoint : AreaController
 {
     [SerializeField] private BuffEffectSO PreBoostBuff;
 
+    public delegate void BoostAction(RefereeController referee);
+    public static event BoostAction OnBoost;
+
     protected override void FixedUpdate()
     {
         if (!IsServer) return;
@@ -25,6 +28,7 @@ public class RMUC2023_BoostPoint : AreaController
                         }
                     }
                     _referee.RemoveBuff(PreBoostBuff);
+                    if(OnBoost != null) OnBoost(_referee);
                 }
             }
         }

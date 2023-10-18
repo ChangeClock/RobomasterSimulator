@@ -431,9 +431,35 @@ MonoBehaviour:
     m_InternalValue: 0
   ChassisPerformance: {fileID: 0}
   EXPInfo: {fileID: 0}
+  HasBoostEXP:
+    m_InternalValue: 0
   OreStorePoints: []
   GripperPoints: []
   ExchangeSpeed: 00000000
+  UseSimulationActivation:
+    m_InternalValue: 1
+  IsActivatingBuff:
+    m_InternalValue: 0
+  CanActivateSmallBuff:
+    m_InternalValue: 0
+  CanActivateBigBuff:
+    m_InternalValue: 0
+  SmallBuffHitRate:
+    m_InternalValue: 0
+  BigBuffHitRate:
+    m_InternalValue: 0
+  BigBuffHighestScore:
+    m_InternalValue: 0
+  ActivateIdelTime:
+    m_InternalValue: 0
+  ActivateInterval:
+    m_InternalValue: 2.3
+  MinEnclosingCircle_X:
+    m_InternalValue: 0
+  MinEnclosingCircle_Y:
+    m_InternalValue: 0
+  MinEnclosingCircle_Raius:
+    m_InternalValue: 0
 --- !u!114 &3100542580545602286
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -561,7 +587,7 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8413717783539453555}
   serializedVersion: 4
-  m_Mass: 300
+  m_Mass: 180
   m_Drag: 0
   m_AngularDrag: 0
   m_CenterOfMass: {x: 0, y: 0, z: 0}
@@ -836,7 +862,7 @@ PrefabInstance:
     - target: {fileID: -5817844055581765899, guid: 0e4733cbf01fe9b4483f9deb92a3f87d,
         type: 3}
       propertyPath: torque
-      value: 500
+      value: 800
       objectReference: {fileID: 0}
     - target: {fileID: 2034366288620811480, guid: 0e4733cbf01fe9b4483f9deb92a3f87d,
         type: 3}
@@ -983,7 +1009,7 @@ PrefabInstance:
     - target: {fileID: -5817844055581765899, guid: 0e4733cbf01fe9b4483f9deb92a3f87d,
         type: 3}
       propertyPath: torque
-      value: 500
+      value: 800
       objectReference: {fileID: 0}
     - target: {fileID: 2034366288620811480, guid: 0e4733cbf01fe9b4483f9deb92a3f87d,
         type: 3}
@@ -1540,7 +1566,7 @@ PrefabInstance:
     - target: {fileID: -5817844055581765899, guid: 0e4733cbf01fe9b4483f9deb92a3f87d,
         type: 3}
       propertyPath: torque
-      value: 500
+      value: 800
       objectReference: {fileID: 0}
     - target: {fileID: -5817844055581765899, guid: 0e4733cbf01fe9b4483f9deb92a3f87d,
         type: 3}
@@ -2458,7 +2484,7 @@ PrefabInstance:
     - target: {fileID: -5817844055581765899, guid: 0e4733cbf01fe9b4483f9deb92a3f87d,
         type: 3}
       propertyPath: torque
-      value: 500
+      value: 800
       objectReference: {fileID: 0}
     - target: {fileID: -5817844055581765899, guid: 0e4733cbf01fe9b4483f9deb92a3f87d,
         type: 3}

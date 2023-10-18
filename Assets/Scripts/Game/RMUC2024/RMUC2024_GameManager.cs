@@ -9,11 +9,23 @@ public class RMUC2024_GameManager : GameManager
     [SerializeField] public new RMUC2023_OutPostController RedOutpost;
     [SerializeField] public new RMUC2023_OutPostController BlueOutpost;
 
+    protected override void Start()
+    {
+        base.Start();
+
+        foreach(var fac in Factions)
+        {
+            SmallBuffAdditionalEXP.Add(0);
+        }
+    }
+
     protected override void OnEnable()
     {
         base.OnEnable();
         
         RMUC2023_ExchangePoint.OnExchanged += ExchangeUpload;
+        RMUC2023_BoostPoint.OnBoost += BoostHandler;
+        BuffController.OnActive += ActivateHandler;
     }
 
     protected override void OnDisable()
@@ -21,6 +33,8 @@ public class RMUC2024_GameManager : GameManager
         base.OnDisable();
 
         RMUC2023_ExchangePoint.OnExchanged -= ExchangeUpload;
+        RMUC2023_BoostPoint.OnBoost -= BoostHandler;
+        BuffController.OnActive -= ActivateHandler;
     }
 
     protected override void Update()
@@ -326,12 +340,6 @@ public class RMUC2024_GameManager : GameManager
     {
         if(!IsServer) return;
 
-        RedExchangeStation.Reset();
-        BlueExchangeStation.Reset();
-
-        RedActivateArea.Reset();
-        BlueActivateArea.Reset();
-
         foreach (var mine in Mines)
         {
             mine.ResetOre();
@@ -379,6 +387,10 @@ public class RMUC2024_GameManager : GameManager
     #endregion
 
     #region EXP & GameLogic
+
+    [SerializeField] BuffEffectSO SmallBuff;
+    [SerializeField] BuffEffectSO BigBuff;
+    [SerializeField] NetworkList<float> SmallBuffAdditionalEXP = new NetworkList<float>();
 
     [ServerRpc]
     protected override void DeathHandlerServerRpc(int attackerID, int robotID, ServerRpcParams serverRpcParams = default)
@@ -473,17 +485,50 @@ public class RMUC2024_GameManager : GameManager
         }
     }
 
+    void BoostHandler(RefereeController referee)
+    {
+        if (referee.robotTags.Contains(RobotTag.GroundUnit) & !referee.HasBoostEXP.Value)
+        {
+            referee.HasBoostEXP.Value = true;
+            AddEXP(referee, 300);
+        }
+    }
+
+    void ActivateHandler(Faction faction, BuffType type, int totalScore)
+    {
+        Debug.Log($"[RMUC2024_GameManager] Activate {faction} {type} with {totalScore} score.");
+        ToggleBuff(false, BuffType.Small);
+
+        switch (type)
+        {
+            case BuffType.Small:
+                AddFactionBuff(faction, SmallBuff);
+                break;
+            case BuffType.Big:
+                break;
+            default:
+                break;
+        }
+    }
+
+    void AddFactionBuff(Faction faction, BuffEffectSO buff)
+    {
+        foreach(var referee in RefereeControllerList.Values)
+        {
+            if (referee.faction.Value == faction & !referee.robotTags.Contains(RobotTag.Building)) referee.AddBuff(buff);
+        }
+    }
+
     public void AddEXP(RefereeController referee, float exp)
     {
         float _exp = exp;
 
-        // TODO: Boost Buff
-        if (referee.HasBuff(BoostBuff))
-        {
-            _exp *= 2f;
-        }
-
         // TODO: Small Buff
+        if (referee.HasBuff(SmallBuff) & SmallBuffAdditionalEXP[(int)referee.faction.Value] < 800) 
+        {
+            SmallBuffAdditionalEXP[(int)referee.faction.Value] += _exp;
+            _exp *= 2;
+        }
 
         // TODO: Half Auto Buff
 
@@ -493,6 +538,14 @@ public class RMUC2024_GameManager : GameManager
         Debug.Log($"[GameManager] Add {_exp} EXP");
 
         referee.EXP.Value += Mathf.RoundToInt(_exp);
+    }
+
+    void ResetSmallBuffAddtionalEXP()
+    {
+        foreach(var fac in Factions)
+        {
+            SmallBuffAdditionalEXP[(int)fac] = 0;
+        }
     }
 
     #endregion

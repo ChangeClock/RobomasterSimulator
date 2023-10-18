@@ -8,18 +8,18 @@ public class GameManager : NetworkBehaviour
 {
     [Header("Game Status")]
     // 0 - Not started 1 - ready 2 - checking 3 - running 4 - ending
-    [SerializeField] public NetworkVariable<int> GameStatus = new NetworkVariable<int>(0);
-    [SerializeField] public NetworkVariable<float> TimeLeft = new NetworkVariable<float>(420.0f);
-    [SerializeField] public NetworkVariable<bool> isRunning = new NetworkVariable<bool>(false);
+    public NetworkVariable<int> GameStatus = new NetworkVariable<int>(0);
+    public NetworkVariable<float> TimeLeft = new NetworkVariable<float>(420.0f);
+    public NetworkVariable<bool> isRunning = new NetworkVariable<bool>(false);
 
-    [SerializeField] private List<Faction> Factions = new List<Faction>(){Faction.Red, Faction.Blue};
+    [SerializeField] protected List<Faction> Factions = new List<Faction>(){Faction.Red, Faction.Blue};
 
-    [SerializeField] public RefereeController RedBase;
-    [SerializeField] public RefereeController BlueBase;
-    [SerializeField] public RefereeController RedOutpost;
-    [SerializeField] public RefereeController BlueOutpost;
-    [SerializeField] public RefereeController RedSentry;
-    [SerializeField] public RefereeController BlueSentry;
+    public RefereeController RedBase;
+    public RefereeController BlueBase;
+    public RefereeController RedOutpost;
+    public RefereeController BlueOutpost;
+    public RefereeController RedSentry;
+    public RefereeController BlueSentry;
 
     // 0: 中立 1: R-Hero 2: R-Engineer 3/4/5: R-Infantry 6: R-Air 7: R-Sentry 9: R-Lidar 18: R-Outpost 19: R-Base 21: B-Hero 22: B-Engineer 23/24/25: B-Infantry 26: B-Air 27: B-Sentry 29: B-Lidar 38: B-Outpost 39: B-Base;
     public Dictionary<int, RefereeController> RefereeControllerList = new Dictionary<int, RefereeController>();
@@ -118,7 +118,7 @@ public class GameManager : NetworkBehaviour
         RefereeController.OnPurchase -= PurchaseUpload;
     }
 
-    void Start() 
+    protected virtual void Start() 
     {
         if (!IsServer) return;
 
@@ -204,6 +204,7 @@ public class GameManager : NetworkBehaviour
         HasFirstGold.Value = false;
 
         ToggleBuff(false, BuffType.Small);
+        ToggleActivateArea(false);
 
         ResetCoin();
         ResetRemoteSupplyTimes();
@@ -406,7 +407,7 @@ public class GameManager : NetworkBehaviour
     [ServerRpc]
     protected virtual void DamageHandlerServerRpc(int damageType, float damage, int armorID, int attackerID, int robotID, ServerRpcParams serverRpcParams = default)
     {
-        Debug.Log("Damage Type: " + damageType + " Armor ID: " + armorID + " Robot ID: " + robotID);
+        // Debug.Log("Damage Type: " + damageType + " Armor ID: " + armorID + " Robot ID: " + robotID);
         // Not Disabled or Immutable
 
         switch(damageType){
@@ -717,10 +718,18 @@ public class GameManager : NetworkBehaviour
 
     #region Buff Devices
 
-    void ToggleBuff(bool enable, BuffType type)
+    protected void ToggleBuff(bool enable, BuffType type)
     {
-        RedBuffDevice.Toggle(false, Type);
-        BlueBuffDevice.Toggle(false, Type);
+        RedBuffDevice.Toggle(false, type);
+        BlueBuffDevice.Toggle(false, type);
+    }
+
+    protected void ToggleActivateArea(bool enable)
+    {
+        RedActivateArea.Reset();
+        BlueActivateArea.Reset();
+        RedActivateArea.Enabled.Value = enable;
+        BlueActivateArea.Enabled.Value = enable;
     }
 
     #endregion

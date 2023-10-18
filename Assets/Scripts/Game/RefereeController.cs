@@ -332,6 +332,8 @@ public class RefereeController : NetworkBehaviour
             if (EXPInfo != null & robotTags.Contains(RobotTag.GrowingUnit)) TickEXP();
 
             TickHealth();
+
+            TickActivateBuff();
         }
 
         // TickBuffServerRpc();
@@ -953,6 +955,11 @@ public class RefereeController : NetworkBehaviour
                     newBuffStat.InSupplyArea = _buff.InSupplyArea;
                 }
 
+                if (_buff.IsActivatingBuff > newBuffStat.IsActivatingBuff)
+                {
+                    newBuffStat.IsActivatingBuff = _buff.IsActivatingBuff;
+                }
+
                 _buffInfo.lastTime += Time.deltaTime;
                 if (_buffInfo.lastTime * 1000 > _buff.buffDuration) overtimeBuff.Add(_buff);
             }
@@ -976,6 +983,7 @@ public class RefereeController : NetworkBehaviour
         ATKBuff.Value = newBuffStat.ATKBuff;
         CDBuff.Value = newBuffStat.CDBuff;
         InSupplyArea.Value = (newBuffStat.InSupplyArea > 0);
+        IsActivatingBuff.Value = (newBuffStat.IsActivatingBuff > 0);
     }
 
     void DetectHandler(int areaID)
@@ -999,6 +1007,8 @@ public class RefereeController : NetworkBehaviour
     public RobotPerformanceSO ChassisPerformance;
 
     public ExpInfoSO EXPInfo;
+
+    public NetworkVariable<bool> HasBoostEXP = new NetworkVariable<bool>(false);
 
     void TickEXP()
     {        
@@ -1130,14 +1140,16 @@ public class RefereeController : NetworkBehaviour
         switch (faction.Value)
         {
             case Faction.Red:
-                if (gameManager.RedBuffDevice == null) BuffDevice = gameManager.RedBuffDevice;
+                if (gameManager.RedBuffDevice != null) BuffDevice = gameManager.RedBuffDevice;
                 break;
             case Faction.Blue:
-                if (gameManager.BlueBuffDevice == null) BuffDevice = gameManager.BlueBuffDevice;
+                if (gameManager.BlueBuffDevice != null) BuffDevice = gameManager.BlueBuffDevice;
                 break;
             default:
                 break;
         }
+
+        // Debug.Log($"[RefereeController] BuffDevice exsits? {BuffDevice == null}");
 
         if (BuffDevice == null) return;
 
@@ -1162,7 +1174,7 @@ public class RefereeController : NetworkBehaviour
                     Debug.Log("[RefereeController] Activate Failed");
                     BuffDevice.Reset();
                 } else {
-                    Debug.Log("[RefereeController] Activate Success");
+                    // Debug.Log("[RefereeController] Activate Success");
                     BuffDevice.HitHandler(BuffDevice.NextTargetID.Value);
                 }
                 ActivateIdelTime.Value = 0;

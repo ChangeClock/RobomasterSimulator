@@ -719,7 +719,8 @@ public class GameManager : NetworkBehaviour
 
     void ToggleBuff(bool enable, BuffType type)
     {
-        RedBuffDevice.Toggle()
+        RedBuffDevice.Toggle(false, Type);
+        BlueBuffDevice.Toggle(false, Type);
     }
 
     #endregion

@@ -14,4 +14,5 @@ public class BuffEffectSO : ScriptableObject
     public int ReviveProgressPerSec = 0; // %
     public int HealBuff = 0; // %
     public int InSupplyArea = 0; // bool
+    public int IsActivatingBuff = 0;
 }

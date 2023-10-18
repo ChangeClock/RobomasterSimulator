@@ -14,7 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   buffDuration: 500
   DEFBuff: 50
+  DEFDeBuff: 0
   ATKBuff: 0
-  CDBuff: 3
+  CDBuff: 2
   ReviveProgressPerSec: 0
   HealBuff: 0
+  InSupplyArea: 0

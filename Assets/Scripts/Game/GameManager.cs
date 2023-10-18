@@ -49,11 +49,16 @@ public class GameManager : NetworkBehaviour
     [SerializeField] private BuffEffectSO ReviveBuff;
     [SerializeField] private BuffEffectSO PurchaseReviveBuff;
 
+    public BuffController RedBuffDevice;
+    public BuffController BlueBuffDevice;
+
     [Header("Area")]
     [SerializeField] private AreaController[] RedPatrolPoints;
     [SerializeField] private AreaController[] BluePatrolPoints;
     [SerializeField] private AreaController RedRepairStation;
     [SerializeField] private AreaController BlueRepairStation;
+    [SerializeField] private AreaController RedActivateArea;
+    [SerializeField] private AreaController BlueActivateArea;
 
     // [Header("Coin")]
     public int InitialCoin = 400;
@@ -197,6 +202,8 @@ public class GameManager : NetworkBehaviour
     {
         HasFirstBlood.Value = false;
         HasFirstGold.Value = false;
+
+        ToggleBuff(false, BuffType.Small);
 
         ResetCoin();
         ResetRemoteSupplyTimes();
@@ -707,4 +714,13 @@ public class GameManager : NetworkBehaviour
             RemoteAmmo1Times[(int)fac] = RemoteAmmo1TimesLimit;
         }
     }
+
+    #region Buff Devices
+
+    void ToggleBuff(bool enable, BuffType type)
+    {
+        RedBuffDevice.Toggle()
+    }
+
+    #endregion
 }

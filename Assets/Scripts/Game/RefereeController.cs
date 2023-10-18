@@ -146,7 +146,7 @@ public class RefereeController : NetworkBehaviour
 
     }
 
-    void OnEnable()
+    protected virtual void OnEnable()
     {
         foreach(ArmorController _armor in Armors)
         {
@@ -169,7 +169,7 @@ public class RefereeController : NetworkBehaviour
         if (RFID != null) RFID.OnDetect += DetectHandler;        
     }
 
-    void OnDisable()
+    protected virtual void OnDisable()
     {
         // Debug.Log("Disable Armors: "+ Armors.Length);
         foreach(ArmorController _armor in Armors)
@@ -1101,6 +1101,93 @@ public class RefereeController : NetworkBehaviour
 
     #endregion
 
+    #region Buff Activate & Shoot Precision
+
+    public NetworkVariable<bool> UseSimulationActivation = new NetworkVariable<bool>(true);
+    public NetworkVariable<bool> IsActivatingBuff = new NetworkVariable<bool>(false);
+
+    private BuffController BuffDevice;
+
+    public NetworkVariable<bool> CanActivateSmallBuff = new NetworkVariable<bool>(false);
+    public NetworkVariable<bool> CanActivateBigBuff = new NetworkVariable<bool>(false);
+    public NetworkVariable<float> SmallBuffHitRate          = new NetworkVariable<float>(0);
+    public NetworkVariable<float> BigBuffHitRate            = new NetworkVariable<float>(0);
+    public NetworkVariable<int> BigBuffHighestScore            = new NetworkVariable<int>(0);
+
+    public NetworkVariable<float> ActivateIdelTime            = new NetworkVariable<float>(0);
+    public NetworkVariable<float> ActivateInterval            = new NetworkVariable<float>(2.3f);
+
+    public NetworkVariable<float> MinEnclosingCircle_X            = new NetworkVariable<float>(0);
+    public NetworkVariable<float> MinEnclosingCircle_Y               = new NetworkVariable<float>(0);
+    public NetworkVariable<float> MinEnclosingCircle_Raius             = new NetworkVariable<float>(0);
+
+    void TickActivateBuff()
+    {
+        if (!UseSimulationActivation.Value) return;
+
+        if (!IsActivatingBuff.Value) return;
+
+        switch (faction.Value)
+        {
+            case Faction.Red:
+                if (gameManager.RedBuffDevice == null) BuffDevice = gameManager.RedBuffDevice;
+                break;
+            case Faction.Blue:
+                if (gameManager.BlueBuffDevice == null) BuffDevice = gameManager.BlueBuffDevice;
+                break;
+            default:
+                break;
+        }
+
+        if (BuffDevice == null) return;
+
+        if (ActivateIdelTime.Value < ActivateInterval.Value)
+        {
+            ActivateIdelTime.Value += Time.deltaTime;
+            return;
+        }
+
+        if (!BuffDevice.Enabled.Value) return;
+
+        // Get max shootspeed
+        // Get distance
+        // Get distance / shootspeed = activatefrequency
+        switch (BuffDevice.Type.Value)
+        {
+            case BuffType.Small:
+                if (!CanActivateSmallBuff.Value) return;
+                // Simulate Activate
+                if (Random.Range(0,1) > SmallBuffHitRate.Value)
+                {
+                    Debug.Log("[RefereeController] Activate Failed");
+                    BuffDevice.Reset();
+                } else {
+                    Debug.Log("[RefereeController] Activate Success");
+                    BuffDevice.HitHandler(BuffDevice.NextTargetID.Value);
+                }
+                ActivateIdelTime.Value = 0;
+                break;
+            case BuffType.Big:
+                if (!CanActivateBigBuff.Value) return;
+                // Simulate Activate
+                if (Random.Range(0,1) > BigBuffHitRate.Value)
+                {
+                    Debug.Log("[RefereeController] Activate Failed");
+                    BuffDevice.Reset();
+                } else {
+                    int score = Random.Range(1, BigBuffHighestScore.Value);
+                    Debug.Log($"[RefereeController] Activate Success with Score {score}");
+                    BuffDevice.HitHandler(BuffDevice.NextTargetID.Value, score);
+                }
+                ActivateIdelTime.Value = 0;
+                break;
+            default:
+                break;
+        }
+    }
+
+    #endregion
+
     public virtual void Reset()
     {
         Level.Value = 0;
@@ -1152,7 +1239,7 @@ public class RefereeController : NetworkBehaviour
 
         while(OreList.Count > 0)
         {
-            Destroy(OreList.Pop());
+            Destroy(OreList.Pop().gameObject);
         }
 
         Enabled.Value = true;

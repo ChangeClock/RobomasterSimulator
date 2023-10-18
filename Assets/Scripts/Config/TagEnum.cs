@@ -61,3 +61,9 @@ public enum RobotTag
     Balance,
     Siege,
 }
+
+public enum BuffType
+{
+    Small,
+    Big
+}

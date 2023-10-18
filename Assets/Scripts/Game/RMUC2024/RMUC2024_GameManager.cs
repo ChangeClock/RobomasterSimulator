@@ -100,6 +100,7 @@ public class RMUC2024_GameManager : GameManager
         
         if (oldTime >= 30.0f && newTime < 30.0f) 
         {
+            ToggleBuff(true, BuffType.Big);
             // Big Buff
         }
         if (oldTime >= 60.0f && newTime < 60.0f) 
@@ -109,10 +110,12 @@ public class RMUC2024_GameManager : GameManager
         }
         if (oldTime >= 74.0f && newTime < 74.0f) 
         {
+            ToggleBuff(false, BuffType.Big);
             // Stop Big Buff
         }
         if (oldTime >= 104.0f && newTime < 104.0f)
         {
+            ToggleBuff(true, BuffType.Big);
             // Big Buff
         }
         if (oldTime >= 120.0f && newTime < 120.0f)
@@ -122,6 +125,7 @@ public class RMUC2024_GameManager : GameManager
         }
         if (oldTime >= 150.0f && newTime < 150.0f)
         {
+            ToggleBuff(false, BuffType.Big);
             // Stop Big Buff
         }
         if (oldTime >= 180.0f && newTime < 180.0f)
@@ -147,6 +151,7 @@ public class RMUC2024_GameManager : GameManager
                 area.AddBuff(BoostBuff_CD500);
             }
 
+            ToggleBuff(true, BuffType.Big);
             // Big Buff
         }
         if (oldTime >= 240.0f && newTime < 240.0f)
@@ -171,11 +176,14 @@ public class RMUC2024_GameManager : GameManager
                 area.RemoveBuff(BoostBuff_CD200);
                 area.AddBuff(BoostBuff_CD300);
             }
+            
+            ToggleBuff(false, BuffType.Small);
 
             // Stop Small Buff
         }
         if (oldTime >= 270.0f && newTime < 270.0f)
         {
+            ToggleBuff(true, BuffType.Small);
             // Small Buff
         }
         if (oldTime >= 300.0f && newTime < 300.0f)
@@ -207,12 +215,14 @@ public class RMUC2024_GameManager : GameManager
         }
         if (oldTime >= 330.0f && newTime < 330.0f)
         {
+            ToggleBuff(false, BuffType.Small);
             // Stop Small Buff
         }
         if (oldTime >= 360.0f && newTime < 360.0f)
         {
             AddCoin(Faction.Red, 50);
             AddCoin(Faction.Blue, 50);
+            ToggleBuff(true, BuffType.Small);
             // Small Buff
         }
     }
@@ -314,8 +324,13 @@ public class RMUC2024_GameManager : GameManager
 
     public override void StartGame()
     {
+        if(!IsServer) return;
+
         RedExchangeStation.Reset();
         BlueExchangeStation.Reset();
+
+        RedActivateArea.Reset();
+        BlueActivateArea.Reset();
 
         foreach (var mine in Mines)
         {

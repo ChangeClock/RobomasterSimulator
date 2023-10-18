@@ -28,9 +28,11 @@ public class RMUC2023_MineMountain : NetworkBehaviour
 
     public void ResetOre()
     {
+        if (!IsServer) return;
+
         while(OreList.Count > 0)
         {
-            Destroy(OreList.Pop());
+            Destroy(OreList.Pop().gameObject);
         }
 
         if (OreStorePoints.Count > 0)

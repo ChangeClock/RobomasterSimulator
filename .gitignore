@@ -2,6 +2,9 @@
 /Logs
 /Temp
 /UserSettings
+/Assets/Smooth Sync
+/Assets/MHLab
+/PATCHWorkspace
 
 .vscode/
 .vsconfig

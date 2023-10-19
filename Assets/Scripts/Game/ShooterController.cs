@@ -5,7 +5,7 @@ using UnityEngine.UI;
 using Unity.Netcode;
 using TMPro;
 
-public class ShooterController : NetworkBehaviour
+public class ShooterController : NetworkBehaviour 
 {
     // Only upload the shooter postion, velocity and ShooterID, all the other details like whether this shootaction is valid will be judged by refereecontroller
     // This is called trigger action is because the player only pulls the trigger, whether there will be a bullet is determined by other factors...
@@ -15,11 +15,12 @@ public class ShooterController : NetworkBehaviour
     public GameObject ShootPoint;
 
     [SerializeField] public NetworkVariable<bool> Enabled  = new NetworkVariable<bool>(true);
-
+    // public bool Enabled = false;
     public int ID = 0;
 
     // // Shooter Type: 0 - 17mm 1 - 42mm
     public NetworkVariable<int> Type      = new NetworkVariable<int>(0);
+
 
     // Shooter 17mm Mode: 0 - None 1 - Boost 2 - CD 3 - Speed
     // Shooter 42mm Mode: 0 - None 1 - Boost 2 - Speed

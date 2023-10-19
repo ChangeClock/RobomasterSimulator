@@ -22,7 +22,7 @@ public class FPVController : MonoBehaviour
         
         if (referee.robotClass.Value == RobotClass.Engineer)
         {
-            RemotePurchaseAction.performed += context => ToggleExchangeMenu();
+            // RemotePurchaseAction.performed += context => ToggleExchangeMenu();
         } else {
             RemotePurchaseAction.performed += context => ToggleRemotePurchaseMenu();
         }
@@ -710,14 +710,45 @@ public class FPVController : MonoBehaviour
 
     #endregion
 
-    #region Exchange
+    #region Exchange & Mine
 
-    private GameObject ExchangeMenu;
+    [SerializeField] private GameObject ExchangeMenu;
+    [SerializeField] private GameObject HintTextOpenExchange;
+    [SerializeField] private GameObject HintTextCloseExchange;
+    [SerializeField] private GameObject HintTextUnavailableExchange;
 
-    void ToggleExchangeMenu()
+    [SerializeField] private GameObject LevelChoiceMenu;
+    [SerializeField] private List<GameObject> LevelItems = new List<GameObject>();
+    [SerializeField] private Button ConfirmExchangeChoice;
+
+    [SerializeField] private GameObject Level;
+
+    [SerializeField] private BarController ExchangeProgress;
+    [SerializeField] private BarController MineProgress;
+
+    void ToggleExchangeMenu(bool enable, int leastLevel)
     {
 
     }
+
+    void ChooseExchangeLevel()
+    {
+
+    }
+
+    void SetExchangeStatus(int level, int status, float progress, float maxprogress)
+    {
+
+    }
+
+    void SetMineStatus(OreType type, int status, float progress, float maxprogress)
+    {
+
+    }
+
+    #endregion
+
+    #region Shoot
 
     #endregion
 

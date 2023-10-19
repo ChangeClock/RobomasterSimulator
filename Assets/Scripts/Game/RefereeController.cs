@@ -99,7 +99,7 @@ public class RefereeController : NetworkBehaviour
 
                     ShooterControllerList.Add(id, _shooter);
 
-                    // _shooter.gameObject.GetComponent<NetworkObject>().SpawnAsPlayerObject(this.gameObject.GetComponent<NetworkObject>().OwnerClientId);
+                    _shooter.gameObject.GetComponent<NetworkObject>().SpawnAsPlayerObject(this.gameObject.GetComponent<NetworkObject>().OwnerClientId);
                     _shooter.Enabled.Value = enabled;
                     _shooter.OnTrigger += TriggerHandler;
 
@@ -108,7 +108,7 @@ public class RefereeController : NetworkBehaviour
                         case 0:
                             shooter1Mode = _shooter.Mode.Value;
                             break;
-                        case 2:
+                        case 1:
                             shooter2Mode = _shooter.Mode.Value;
                             break;
                         default:
@@ -720,6 +720,54 @@ public class RefereeController : NetworkBehaviour
     public NetworkVariable<int> Ammo1             = new NetworkVariable<int>(0);
     public NetworkVariable<int> RealAmmo1         = new NetworkVariable<int>(100);
     public NetworkVariable<int> RealAmmo1Limit         = new NetworkVariable<int>(100);
+
+    public NetworkList<ShooterInfo> ShooterInfoList = new NetworkList<ShooterInfo>();
+
+    public struct ShooterInfo : INetworkSerializable, System.IEquatable<ShooterInfo>
+    {
+        public bool Enabled;
+        public int ID;
+        public int Type;
+        public int Mode;
+        public int Level;
+        public float HeatLimit;
+        public float Heat;
+        public int CD;
+        public int SpeedLimit;
+
+        public void NetworkSerialize<T>(BufferSerializer<T> serializer) where T : IReaderWriter
+        {
+            if (serializer.IsReader)
+            {
+                var reader = serializer.GetFastBufferReader();
+                reader.ReadValueSafe(out ID);
+                reader.ReadValueSafe(out Type);
+                reader.ReadValueSafe(out Mode);
+                reader.ReadValueSafe(out Level);
+                reader.ReadValueSafe(out HeatLimit);
+                reader.ReadValueSafe(out Heat);
+                reader.ReadValueSafe(out CD);
+                reader.ReadValueSafe(out SpeedLimit);
+            }
+            else
+            {
+                var writer = serializer.GetFastBufferWriter();
+                writer.WriteValueSafe(ID);
+                writer.WriteValueSafe(Type);
+                writer.WriteValueSafe(Mode);
+                writer.WriteValueSafe(Level);
+                writer.WriteValueSafe(HeatLimit);
+                writer.WriteValueSafe(Heat);
+                writer.WriteValueSafe(CD);
+                writer.WriteValueSafe(SpeedLimit);
+            }
+        }
+        
+        public bool Equals(ShooterInfo other)
+        {
+            return ID == other.ID;
+        }
+    }
 
     void TriggerHandler(int ID, Vector3 Position, Vector3 Velocity)
     {

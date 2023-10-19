@@ -6,12 +6,18 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
+    path: Assets/MHLab/Patch/Launcher/Scenes/Launcher.unity
+    guid: 62bbf456ac1f00d47a1374cb8f720350
+  - enabled: 0
+    path: Assets/MHLab/Patch/Launcher/Scenes/PreGame.unity
+    guid: 98697cd740c1eb148b123f3c1128479b
+  - enabled: 0
     path: Assets/Scenes/Welcome.unity
     guid: 479c8a1a7d91a31428ddf46d7f158fd0
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/RMUC2024.unity
     guid: 23e1da9ce339d2a47a2a7f94c0d8c1be
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/RMUC2023.unity
     guid: 707acc8dffb72b144bb1ffbe1c965f3d
   m_configObjects:

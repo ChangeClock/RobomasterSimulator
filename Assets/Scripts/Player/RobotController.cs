@@ -54,6 +54,8 @@ public class RobotController : NetworkBehaviour
     [SerializeField] private float yawTargetAngle = 0;
     [SerializeField] private float pitchTargetAngle = 0;
 
+    [SerializeField] private float yawDeathZone = 0.1f;
+
     [SerializeField] private float pitchMax;
     [SerializeField] private float pitchMin;
     
@@ -241,6 +243,9 @@ public class RobotController : NetworkBehaviour
                                         followControllerParameters[2]);
             
             float _angle = Vector3.SignedAngle(Yaw.transform.right, Base.transform.right, Base.transform.up);
+
+            if (Mathf.Abs(_angle) < yawDeathZone) _angle = 0;
+
             float _vw = followController.Update(_angle, Time.deltaTime);
             targetVw = -Mathf.Clamp(_vw, -1f, 1f);
             // Debug.Log("vw: " + Mathf.Clamp(_vw, -1f, 1f));

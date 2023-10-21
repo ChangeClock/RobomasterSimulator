@@ -529,7 +529,7 @@ public class GameManager : NetworkBehaviour
         }
     }
 
-    protected void DistributeEXP(Faction faction, int exp)
+    protected void DistributeEXP(Faction faction, float exp)
     {
         List<int> _idList = new List<int>();
 

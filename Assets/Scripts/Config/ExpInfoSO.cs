@@ -7,6 +7,6 @@ public class ExpInfoSO : ScriptableObject
 {
     // Seconds taken per point
     public int expGrowth;
-    public int[] expToNextLevel;
+    public float[] expToNextLevel;
     public int[] expValue;
 }

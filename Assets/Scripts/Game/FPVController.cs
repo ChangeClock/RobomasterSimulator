@@ -278,7 +278,7 @@ public class FPVController : MonoBehaviour
         }
     }
 
-    public void SetExpInfo(int EXP, int EXPToNextLevel)
+    public void SetExpInfo(float EXP, float EXPToNextLevel)
     {
         EXPBar.SetMaxValue(EXPToNextLevel);
         EXPBar.SetValue(EXP);

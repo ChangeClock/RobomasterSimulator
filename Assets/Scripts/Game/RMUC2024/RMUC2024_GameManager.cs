@@ -312,21 +312,15 @@ public class RMUC2024_GameManager : GameManager
         // Friendly Fire !!!!
         if (attacker.faction.Value == victim.faction.Value) return;
 
-        switch (damageType)
+        float factor = 1f;
+
+        if (!victim.robotTags.Contains(RobotTag.Building)) factor = 4f;
+
+        if (!attacker.robotTags.Contains(RobotTag.GrowingUnit))
         {
-            case 1:
-                AddEXP(attacker, 4 * damage);
-                break;
-            case 2:
-                AddEXP(attacker, 1 * damage);
-                break;
-            case 3:
-                // Missle damage
-                // TODO: Add EXP to attackerID belong team
-                break;
-            default:
-                Debug.LogWarning("Unknown Damage Type" + damageType);
-                break;
+            AddEXP(attacker, damage * factor);
+        } else {
+            DistributeEXP(attacker.faction.Value, damage * factor);
         }
     }
 

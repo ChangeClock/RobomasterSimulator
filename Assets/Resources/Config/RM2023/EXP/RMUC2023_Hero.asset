@@ -13,5 +13,8 @@ MonoBehaviour:
   m_Name: RMUC2023_Hero
   m_EditorClassIdentifier: 
   expGrowth: 6
-  expToNextLevel: 3c0000008c000000ffffffff
+  expToNextLevel:
+  - 60
+  - 140
+  - 0
   expValue: 460000006400000096000000

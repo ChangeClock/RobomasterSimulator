@@ -13,5 +13,15 @@ MonoBehaviour:
   m_Name: RMUC2024_GroundUnit
   m_EditorClassIdentifier: 
   expGrowth: -1
-  expToNextLevel: 260200002602000026020000260200002602000026020000260200002602000058020000ffffffff
+  expToNextLevel:
+  - 550
+  - 550
+  - 550
+  - 550
+  - 550
+  - 550
+  - 550
+  - 550
+  - 550
+  - 600
   expValue: 

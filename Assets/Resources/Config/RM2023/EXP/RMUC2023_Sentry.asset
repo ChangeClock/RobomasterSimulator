@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: RMUC2023_Sentry
   m_EditorClassIdentifier: 
   expGrowth: 0
-  expToNextLevel: 
+  expToNextLevel: []
   expValue: 4b000000

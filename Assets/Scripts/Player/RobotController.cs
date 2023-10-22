@@ -52,6 +52,7 @@ public class RobotController : NetworkBehaviour
     [SerializeField] private float[] yawControllerParameters = {80f, 0f, 0.015f};
     [SerializeField] private float[] pitchControllerParameters = {50f, 0f, 0.015f};
     [SerializeField] private float yawTargetAngle = 0;
+    [SerializeField] private float lastYawTargetAngle = 0;
     [SerializeField] private float pitchTargetAngle = 0;
 
     [SerializeField] private float yawDeathZone = 0.1f;
@@ -177,10 +178,12 @@ public class RobotController : NetworkBehaviour
 
                 JointMotor yawMotor = Yaw.GetComponent<HingeJoint>().motor;
 
+                lastYawTargetAngle = yawTargetAngle;
                 yawTargetAngle += lookDelta[0];
                 if (yawTargetAngle < 0) yawTargetAngle += 360;
                 if (yawTargetAngle > 360) yawTargetAngle -= 360;
                 float _yawDifference = yawTargetAngle - Yaw.transform.eulerAngles.y;
+                // Debug.Log($"[RobotController] yawTargetAngle {yawTargetAngle} yawDifference {_yawDifference} Yaw {Yaw.transform.eulerAngles.y}");
 
                 // Yaw joint exists
                 if (_yawDifference > 180) {
@@ -190,6 +193,20 @@ public class RobotController : NetworkBehaviour
                 } else {
                     yawMotor.targetVelocity = yawController.Update(_yawDifference, Time.deltaTime);
                 }
+
+                // float targetYaw = yawTargetAngle;
+
+                // if (_yawDifference > 180) {
+                //     targetYaw = yawTargetAngle + 360;
+                //     // yawMotor.targetVelocity = yawController.Update(yawTargetAngle - 360, Time.deltaTime);
+                // } else if (_yawDifference < -180) {
+                //     targetYaw = yawTargetAngle - 360;
+                //     // yawMotor.targetVelocity = yawController.Update(360 + yawTargetAngle, Time.deltaTime);
+                // } else {
+                //     // yawMotor.targetVelocity = yawController.Update(yawTargetAngle, Time.deltaTime);
+                // }
+                // Debug.Log($"[RobotController] targetYaw {targetYaw} Yaw {Yaw.transform.eulerAngles.y}");
+                // yawMotor.targetVelocity = -yawController.Update(targetYaw, Time.deltaTime);
 
                 Yaw.GetComponent<HingeJoint>().motor = yawMotor;
             } else {
@@ -246,9 +263,10 @@ public class RobotController : NetworkBehaviour
 
             if (Mathf.Abs(_angle) < yawDeathZone) _angle = 0;
 
-            float _vw = followController.Update(_angle, Time.deltaTime);
+            // float _vw = - (yawTargetAngle - lastYawTargetAngle) + followController.Update(_angle, Time.deltaTime);
+            float _vw = - (1/Time.deltaTime) * (yawTargetAngle - lastYawTargetAngle) + followController.Update(_angle, Time.deltaTime);
             targetVw = -Mathf.Clamp(_vw, -1f, 1f);
-            // Debug.Log("vw: " + Mathf.Clamp(_vw, -1f, 1f));
+            Debug.Log("vw: " + targetVw);
         }
 
         Vector3 deltaPostion = Base.transform.position - LastPostion;

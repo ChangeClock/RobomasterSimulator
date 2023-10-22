@@ -13,5 +13,8 @@ MonoBehaviour:
   m_Name: RMUC2023_Infantry
   m_EditorClassIdentifier: 
   expGrowth: 3
-  expToNextLevel: 1e0000005a000000ffffffff
+  expToNextLevel:
+  - 30
+  - 90
+  - 0
   expValue: 19000000320000004b000000

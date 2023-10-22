@@ -31,6 +31,16 @@ public class BuffController : RefereeController
         if (IsServer) Hinge.useMotor = true;
     }
 
+    protected override void Start()
+    {
+        base.Start();
+
+        foreach(var target in Targets)
+        {
+            Scores.Add(target.Score);
+        }
+    } 
+
     protected override void OnEnable()
     {
         foreach(var target in Targets)

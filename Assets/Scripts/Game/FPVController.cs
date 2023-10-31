@@ -22,14 +22,24 @@ public class FPVController : MonoBehaviour
         
         if (referee.robotClass.Value == RobotClass.Engineer)
         {
-            // RemotePurchaseAction.performed += context => ToggleExchangeMenu();
+            ExchangeMenu.SetActive(true);
+            RemotePurchaseMenu.SetActive(false);
+            RemotePurchaseAction.performed += context => ToggleExchangeMenu();
         } else {
+            ExchangeMenu.SetActive(false);
+            RemotePurchaseMenu.SetActive(true);
             RemotePurchaseAction.performed += context => ToggleRemotePurchaseMenu();
         }
 
         Ammo0PurchaseAction.performed += context => ToggleAmmo0PurchaseMenu();
         Ammo1PurchaseAction.performed += context => ToggleAmmo1PurchaseMenu();
 
+        int i = 0;
+        foreach (var item in LevelItems)
+        {
+            item.gameObject.GetComponent<Button>().onClick.AddListener(() => ChangeLevelHandler(i));
+            i ++;
+        }
     }
 
     void Start()
@@ -38,6 +48,8 @@ public class FPVController : MonoBehaviour
         {
             PurchaseRevive.onClick.AddListener(() => referee.Revive(1));
             FreeRevive.onClick.AddListener(() => referee.Revive(0));
+            SetRobotSetting.onClick.AddListener(() => ToggleRobotSettingMenu(true));
+            SaveSettingsButton.onClick.AddListener(() => ToggleRobotSettingMenu(false));
             GetReady.onClick.AddListener(() => referee.GetReady());
 
             RemotePurchaseHPAction.performed += context => {referee.RemotePurchase(PurchaseType.Remote_HP);};
@@ -57,6 +69,8 @@ public class FPVController : MonoBehaviour
             Ammo1_20.onClick.AddListener(() => referee.Purchase(PurchaseType.Ammo1, 20));
             Ammo1_25.onClick.AddListener(() => referee.Purchase(PurchaseType.Ammo1, 25));
             Ammo1_30.onClick.AddListener(() => referee.Purchase(PurchaseType.Ammo1, 30));
+        
+            ConfirmExchangeChoice.onClick.AddListener(() => ChooseExchangeLevel());
         }
 
         ChassisMode.onValueChanged.AddListener(delegate {SetPerformance(ChassisMode);});
@@ -96,22 +110,27 @@ public class FPVController : MonoBehaviour
             if (referee.Disengaged.Value)
             {
                 HintTextUnavailable.SetActive(false);
-                HintTextOpen.SetActive(!RemotePurchaseMenu.activeSelf);
-                HintTextClose.SetActive(RemotePurchaseMenu.activeSelf);
+                HintTextOpen.SetActive(!RemotePurchaseList.activeSelf);
+                HintTextClose.SetActive(RemotePurchaseList.activeSelf);
             } else {
                 HintTextUnavailable.SetActive(true);
-                RemotePurchaseMenu.SetActive(false);
+                RemotePurchaseList.SetActive(false);
                 HintTextOpen.SetActive(false);
                 HintTextClose.SetActive(false);
             }
+        } else {
+            HintTextOpenExchange.SetActive(LevelChoiceMenu.activeSelf);
+            HintTextCloseExchange.SetActive(LevelChoiceMenu.activeSelf);
         }
 
-        if (ReviveWindow.activeSelf || SettingMenu.activeSelf || Ammo0PurchaseMenu.activeSelf || Ammo1PurchaseMenu.activeSelf)
+        if (ReviveWindow.activeSelf || SettingMenu.activeSelf || Ammo0PurchaseMenu.activeSelf || Ammo1PurchaseMenu.activeSelf || LevelChoiceMenu.activeSelf)
         {
             UnityEngine.Cursor.lockState = CursorLockMode.Confined;
         } else {
             UnityEngine.Cursor.lockState = CursorLockMode.Locked;
         }
+
+        SetRobotSetting.interactable = !referee.Ready.Value;
     }
 
     public void TurnOnCamera()
@@ -359,6 +378,7 @@ public class FPVController : MonoBehaviour
 
     [SerializeField] private InputAction SettingMenuAction;
     [SerializeField] private GameObject SettingMenu;
+    [SerializeField] private Button SetRobotSetting;
     [SerializeField] private Button GetReady;
     [SerializeField] private TMP_Text State;
     [SerializeField] private TMP_Text Role;
@@ -644,11 +664,13 @@ public class FPVController : MonoBehaviour
 
     #endregion
 
-    #region RemotePurchase
-
     [SerializeField] private InputAction RemotePurchaseAction;
 
+    #region RemotePurchase
+
     [SerializeField] private GameObject RemotePurchaseMenu;
+
+    [SerializeField] private GameObject RemotePurchaseList;
     [SerializeField] private GameObject HintTextOpen;
     [SerializeField] private GameObject HintTextClose;
     [SerializeField] private GameObject HintTextUnavailable;
@@ -675,7 +697,7 @@ public class FPVController : MonoBehaviour
     {
         if (!referee.Disengaged.Value) return;
 
-        RemotePurchaseMenu.SetActive(!RemotePurchaseMenu.activeSelf);
+        RemotePurchaseList.SetActive(!RemotePurchaseList.activeSelf);
     }
 
     public void SetPurchaseItem(bool hp, int hpTimes, bool bullet_17, int bullet_17Times, bool bullet_42, int bullet_42Times)
@@ -713,12 +735,12 @@ public class FPVController : MonoBehaviour
     #region Exchange & Mine
 
     [SerializeField] private GameObject ExchangeMenu;
-    [SerializeField] private GameObject HintTextOpenExchange;
-    [SerializeField] private GameObject HintTextCloseExchange;
-    [SerializeField] private GameObject HintTextUnavailableExchange;
 
     [SerializeField] private GameObject LevelChoiceMenu;
-    [SerializeField] private List<GameObject> LevelItems = new List<GameObject>();
+    [SerializeField] private GameObject HintTextOpenExchange;
+    [SerializeField] private GameObject HintTextCloseExchange;
+
+    [SerializeField] private List<ExchangeLevelItemController> LevelItems = new List<ExchangeLevelItemController>();
     [SerializeField] private Button ConfirmExchangeChoice;
 
     [SerializeField] private GameObject Level;
@@ -726,24 +748,69 @@ public class FPVController : MonoBehaviour
     [SerializeField] private BarController ExchangeProgress;
     [SerializeField] private BarController MineProgress;
 
-    void ToggleExchangeMenu(bool enable, int leastLevel)
+    void ToggleExchangeMenu()
     {
+        LevelChoiceMenu.SetActive(!LevelChoiceMenu.activeSelf);
+    }
 
+    public void SetExchangeMenu(ExchangePriceSO priceInfo, int leastLevel)
+    {
+        int i = 0;
+        foreach (var item in LevelItems)
+        {
+            item.SetAvailability(leastLevel <= i);
+            item.SetContent("Level" + (i + 1).ToString(), priceInfo.silverPrice[i].ToString(), priceInfo.goldPrice[i].ToString());
+            i ++;
+        }
+    }
+
+    public void SetExchangeStatus(int level, int status, float progress, float maxprogress, float loss)
+    {
+        Level.SetActive(status >= 1);
+        if (status == 1)
+        {
+            Level.GetComponentInChildren<TMP_Text>().text = "Level" + (level+1).ToString() + " Loss: " + (loss * 100).ToString("F1") + "%";
+            ExchangeProgress.SetMaxValue(maxprogress);
+            ExchangeProgress.SetValue(progress);
+        } else if (status == 2)
+        {
+            Level.GetComponentInChildren<TMP_Text>().text = "Resetting";
+        }
+    }
+
+    public void SetMineStatus(OreType type, int status, float progress, float maxprogress)
+    {
+        
+    }
+
+    void ChangeLevelHandler(int level)
+    {
+        int i = 0;
+        foreach (var item in LevelItems)
+        {
+            item.Toggle(level == i);
+            i ++;
+        }
     }
 
     void ChooseExchangeLevel()
     {
-
+        int i = 0;
+        foreach (var item in LevelItems)
+        {
+            if (item.Checked)
+            {
+                referee.ChooseExchangeLevel(true, i);
+                ToggleExchangeMenu();
+                return;
+            }
+            i ++;
+        }
     }
 
-    void SetExchangeStatus(int level, int status, float progress, float maxprogress)
+    void CancelExchange()
     {
-
-    }
-
-    void SetMineStatus(OreType type, int status, float progress, float maxprogress)
-    {
-
+        referee.ChooseExchangeLevel(false);
     }
 
     #endregion
@@ -753,4 +820,72 @@ public class FPVController : MonoBehaviour
     #endregion
 
     // Start is called before the first frame update
+
+    [Header("Robot Settings")]
+    [SerializeField] private CinemachineVirtualCamera ThirdPersonCamera;
+    [SerializeField] private GameObject RobotSettingMenu;
+
+    [SerializeField] private GameObject ShooterSettings;
+    [SerializeField] private TMP_InputField RealAmmo0Input;
+    [SerializeField] private TMP_InputField RealAmmo1Input;
+    [SerializeField] private TMP_InputField MinEnclosingCircleRaiusInput;
+
+    [SerializeField] private GameObject BuffActivateSettings;
+    [SerializeField] private TMP_InputField SmallBuffHitRateInput;
+    [SerializeField] private TMP_InputField BigBuffHitRateInput;
+    [SerializeField] private TMP_InputField BigBuffHighestScoreInput;
+
+    [SerializeField] private GameObject ExchangeSettings;
+    [SerializeField] private TMP_InputField MineSilverSpeedInput;
+    [SerializeField] private TMP_InputField MineGoldSpeedInput;
+    [SerializeField] private List<TMP_InputField> ExchangeSpeedInput = new List<TMP_InputField>();
+
+    [SerializeField] private Button SaveSettingsButton;
+
+    void InitSettingMenu()
+    {
+        if (referee.ShooterControllerList.Count > 0)
+        {
+            ShooterSettings.SetActive(true);
+            BuffActivateSettings.SetActive(true);
+            RealAmmo0Input.text = referee.RealAmmo0Limit.Value.ToString();
+            RealAmmo1Input.text = referee.RealAmmo1Limit.Value.ToString();
+            MinEnclosingCircleRaiusInput.text = referee.MinEnclosingCircle_Raius.Value.ToString();
+        } else {
+            ShooterSettings.SetActive(false);
+            BuffActivateSettings.SetActive(false);
+        }
+    }
+
+    void ToggleRobotSettingMenu(bool enable)
+    {
+        RobotSettingMenu.SetActive(enable);
+
+        if (!RobotSettingMenu.activeSelf) 
+        {
+            ApplyRobotSettings();
+        }
+    }
+
+    void ToggleThirdPersonCamera(bool enable)
+    {
+        FPVCamera.enabled = !enable;
+        ThirdPersonCamera.enabled = enable;
+    }
+
+    void ApplyRobotSettings()
+    {
+        referee.RealAmmo0Limit.Value = int.Parse(RealAmmo0Input.text);
+        referee.RealAmmo1Limit.Value = int.Parse(RealAmmo1Input.text);
+        referee.MinEnclosingCircle_Raius.Value = float.Parse(MinEnclosingCircleRaiusInput.text);
+        referee.SmallBuffHitRate.Value = float.Parse(SmallBuffHitRateInput.text);
+        referee.BigBuffHitRate.Value = float.Parse(BigBuffHitRateInput.text);
+        referee.BigBuffHighestScore.Value = int.Parse(BigBuffHighestScoreInput.text);
+        referee.MineSilverSpeed.Value = int.Parse(MineSilverSpeedInput.text);
+        referee.MineGoldSpeed.Value = int.Parse(MineGoldSpeedInput.text);
+        for (int i = 0; i < ExchangeSpeedInput.Count; i++)
+        {
+            referee.ExchangeSpeed[i] = int.Parse(ExchangeSpeedInput[i].text);
+        }
+    }
 }

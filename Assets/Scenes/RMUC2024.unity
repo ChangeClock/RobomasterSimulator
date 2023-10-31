@@ -1357,8 +1357,6 @@ MonoBehaviour:
   SentryDefaultBuff: {fileID: 11400000, guid: fd14d92e86e85b84bbfce1f876d67a14, type: 2}
   ReviveBuff: {fileID: 11400000, guid: 0acdb99461a10d54c814aecacc63ec07, type: 2}
   PurchaseReviveBuff: {fileID: 11400000, guid: 16f998a02a4f5a8488dc44bac5eaca03, type: 2}
-  RedBuffDevice: {fileID: 1448395867}
-  BlueBuffDevice: {fileID: 2102897083}
   RedPatrolPoints:
   - {fileID: 1416622046}
   - {fileID: 1416622042}
@@ -1388,10 +1386,13 @@ MonoBehaviour:
   RemoteAmmo0SupplyAmount: 100
   RemoteAmmo1TimesLimit: 2
   RemoteAmmo1SupplyAmount: 10
-  RedOutpost: {fileID: 405291678}
-  BlueOutpost: {fileID: 543465513}
+  RedBuffDevice: {fileID: 1448395867}
+  BlueBuffDevice: {fileID: 2102897083}
+  PriceInfo: {fileID: 11400000, guid: 286d1f82da7212544bf5dbe894c186a1, type: 2}
   RedExchangeStation: {fileID: 488185136}
   BlueExchangeStation: {fileID: 1447267557}
+  RedOutpost: {fileID: 405291678}
+  BlueOutpost: {fileID: 543465513}
   Mines:
   - {fileID: 1641487447}
   - {fileID: 2014578770}
@@ -5039,6 +5040,22 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Motor.force
       value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 449810753545553779, guid: 924391338f032c34d8448b6fe276613f,
+        type: 3}
+      propertyPath: 'BuffList.Array.data[0]'
+      value: 
+      objectReference: {fileID: 11400000, guid: de7d6e932f4d2574db154367077bc9c9,
+        type: 2}
+    - target: {fileID: 449810753545553779, guid: 924391338f032c34d8448b6fe276613f,
+        type: 3}
+      propertyPath: belongFaction.m_InternalValue
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 449810753545553779, guid: 924391338f032c34d8448b6fe276613f,
+        type: 3}
+      propertyPath: MaxResetProgress.m_InternalValue
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 462089183220424329, guid: 924391338f032c34d8448b6fe276613f,
         type: 3}

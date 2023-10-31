@@ -1,9 +1,11 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using Unity.Netcode;
-using TMPro;
 using Unity.Collections;
+using TMPro;
+using Cinemachine;
 
 public class RefereeController : NetworkBehaviour
 {
@@ -40,8 +42,6 @@ public class RefereeController : NetworkBehaviour
     public delegate void PurchaseAction(int robotID, PurchaseType type, int amount = 1);
     public static event PurchaseAction OnPurchase;
 
-    // public DataTransmission.RobotStatus Status = new DataTransmission.RobotStatus();
-
     [Header("Referee")]
     private ArmorController[] Armors;
     public Dictionary<int, ShooterController> ShooterControllerList = new Dictionary<int, ShooterController>();
@@ -69,17 +69,29 @@ public class RefereeController : NetworkBehaviour
             // Debug.Log($"[RefereeController] {RobotID.Value} Spawned");
 
             ResetAmmo();
+
+            if (gameManager.PriceInfo != null)
+            {
+                PriceInfo = gameManager.PriceInfo;
+                
+                for (int i = 0; i < PriceInfo.silverPrice.Length; i ++)
+                {
+                    ExchangeSpeed.Add(PriceInfo.silverPrice[i]);
+                }
+            }
         }
 
         // Debug.Log("Client:" + NetworkManager.Singleton.LocalClientId + "IsOwner?" + IsOwner);
         
         if (IsOwner) 
-        {            
+        {
             if (FPVCamera != null & !robotTags.Contains(RobotTag.Building))
             {
                 FPVCamera.TurnOnCamera();
                 FPVCamera.SetRoleInfo(faction.Value, RobotID.Value, robotClass.Value);
-            }  
+            }
+
+            // InitSettingMenu();
 
             ShooterController[] Shooters = this.gameObject.GetComponentsInChildren<ShooterController>();
             int shooter1Mode = 0;
@@ -121,6 +133,18 @@ public class RefereeController : NetworkBehaviour
 
             robotController = this.gameObject.GetComponent<RobotController>();
             if (robotController != null) robotController.Enabled = true;  
+        
+            switch (faction.Value)
+            {
+                case Faction.Red:
+                    if (gameManager.RedExchangeStation != null) ExchangeStation = gameManager.RedExchangeStation;
+                    break;
+                case Faction.Blue:
+                    if (gameManager.BlueExchangeStation != null) ExchangeStation = gameManager.BlueExchangeStation;
+                    break;
+                default:
+                    break;
+            }
         }
     }
 
@@ -143,7 +167,10 @@ public class RefereeController : NetworkBehaviour
 
     protected virtual void Start()
     {
+        if (IsOwner)
+        {
 
+        }
     }
 
     protected virtual void OnEnable()
@@ -304,6 +331,10 @@ public class RefereeController : NetworkBehaviour
                 }
                 FPVCamera.SetBuffer(Buffer.Value, BufferLimit.Value);
                 FPVCamera.SetEnergy(Energy.Value, EnergyLimit.Value);
+            
+                FPVCamera.SetExchangeMenu(gameManager.PriceInfo, ExchangeStation.GetLeastLevel());
+                
+                FPVCamera.SetExchangeStatus(ExchangeStation.Level.Value, ExchangeStation.Status.Value, ExchangeStation.CaptureProgress.Value, ExchangeStation.MaxCaptureProgress.Value, ExchangeStation.LossRatio.Value);
             }
         }
 
@@ -402,7 +433,7 @@ public class RefereeController : NetworkBehaviour
             realPower += Mathf.Abs(wheel.GetPower());
         }
 
-        if (PowerLimit.Value <= 0 || !Enabled.Value) return;
+        if (PowerLimit.Value <= 0) return;
 
         float _deltaPower = (PowerLimit.Value - realPower) * Time.deltaTime;
 
@@ -799,12 +830,21 @@ public class RefereeController : NetworkBehaviour
                 RealAmmo1.Value --;
                 break;
             default:
-                Debug.LogWarning("[GameManager] Unknown shooter ID");
+                Debug.LogWarning("[RefereeController] Unknown shooter ID");
                 break;
         }
 
         Disengaged.Value = false;
         DisengagedTime.Value = 0f;
+
+        // Debug.Log($"[RefereeController] Velocity {Velocity}");
+        float maxAngleDifference = Mathf.Rad2Deg * Mathf.Atan(MinEnclosingCircle_Raius.Value / 5000);
+        Vector3 randomAxis = Vector3.Cross(Velocity, Random.insideUnitSphere).normalized;
+
+        Velocity = Quaternion.AngleAxis(Random.Range(-maxAngleDifference, maxAngleDifference), randomAxis) * Velocity;
+        // Velocity = Velocity.magnitude * (Random.insideUnitSphere * MinEnclosingCircle_Raius.Value + Velocity).normalized;
+
+        Debug.Log($"[RefereeController] Velocity {Velocity}");
 
         OnShoot(ID, shooter.Type.Value, RobotID.Value, Position, Velocity);
     }
@@ -1118,11 +1158,33 @@ public class RefereeController : NetworkBehaviour
     #endregion
 
     #region Mine
-    
+
+    private ExchangePriceSO PriceInfo;
+    private ExchangePoint ExchangeStation;
+
+    public NetworkVariable<bool> UseSimulationExchange = new NetworkVariable<bool>(false);
+
+    public NetworkVariable<bool> IsExchanging = new NetworkVariable<bool>(false);
+    public NetworkList<int> ExchangeSpeed = new NetworkList<int>();
+
+    public NetworkVariable<int> MineSilverSpeed = new NetworkVariable<int>(20);
+    public NetworkVariable<int> MineGoldSpeed = new NetworkVariable<int>(30);
+
     public Stack<OreController> OreList = new Stack<OreController>();
     public List<Transform> OreStorePoints = new List<Transform>();
     public List<GripperController> GripperPoints = new List<GripperController>();
-    public List<int> ExchangeSpeed = new List<int>();
+
+    public void ChooseExchangeLevel(bool enable, int level = 0)
+    {
+        ChooseExchangeLevelServerRpc(enable, level);
+    }
+
+    [ServerRpc]
+    void ChooseExchangeLevelServerRpc(bool enable, int level, ServerRpcParams serverRpcParams = default)
+    {
+        ExchangeStation.MaxCaptureProgress.Value = ExchangeSpeed[level];
+        ExchangeStation.SetLevel(enable, level);
+    }
 
     public void AddOre(OreController ore)
     {

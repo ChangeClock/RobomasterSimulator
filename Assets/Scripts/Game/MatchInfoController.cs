@@ -117,7 +117,7 @@ public class MatchInfoController : NetworkBehaviour
 
             if (BlueUnitInfo[i-21].activeSelf)
             {
-                BlueUnitInfo[i-21].GetComponent<UnitInfoController>().SetID(i);
+                BlueUnitInfo[i-21].GetComponent<UnitInfoController>().SetID(i - 20);
                 BlueUnitInfo[i-21].GetComponent<UnitInfoController>().SetHP(gameManager.RefereeControllerList[i].HP.Value, gameManager.RefereeControllerList[i].HPLimit.Value);
                 BlueUnitInfo[i-21].GetComponent<UnitInfoController>().SetLevel(gameManager.RefereeControllerList[i].Level.Value);
                 BlueUnitInfo[i-21].GetComponent<UnitInfoController>().SetReviveTime(gameManager.RefereeControllerList[i].Reviving.Value, (gameManager.RefereeControllerList[i].MaxReviveProgress.Value - gameManager.RefereeControllerList[i].CurrentReviveProgress.Value) / gameManager.RefereeControllerList[i].ReviveProgressPerSec.Value);

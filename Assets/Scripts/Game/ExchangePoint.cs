@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Unity.Netcode;
 
-public class RMUC2024_ExchangePoint : AreaController 
+public class ExchangePoint : AreaController 
 {
     public ExchangePriceSO PriceInfo;
 
@@ -26,26 +26,26 @@ public class RMUC2024_ExchangePoint : AreaController
 
     void Update()
     {
-        switch (Status.Value)
+        if (ResetProgress.Value < MaxResetProgress.Value)
+        { 
+            Status.Value = 2;
+        } else {
+            Status.Value = 0;
+        }
+
+        if (Status.Value != 1)
         {
-            case 0:
-                WaitTime.Value = 0;
-                break;
-            case 1:
-                WaitTime.Value += Time.deltaTime;
-                if (WaitTime.Value > 15 & WaitTime.Value <= 50) 
-                {
-                    LossRatio.Value = 0.02f * (WaitTime.Value - 15);
-                } else if (WaitTime.Value > 50) {
-                    LossRatio.Value = 1;
-                }
-                break;
-            case 2:
-                WaitTime.Value = 0;
-                break;
-            default:
-                WaitTime.Value = 0;
-                break;
+            WaitTime.Value = 0;
+            LossRatio.Value = 0;
+            CaptureProgress.Value = 0;
+        } else {
+            WaitTime.Value += Time.deltaTime;
+            if (WaitTime.Value > 15 & WaitTime.Value <= 50) 
+            {
+                LossRatio.Value = 0.02f * (WaitTime.Value - 15);
+            } else if (WaitTime.Value > 50) {
+                LossRatio.Value = 1;
+            }
         }
     }
 
@@ -100,6 +100,8 @@ public class RMUC2024_ExchangePoint : AreaController
                     if (Level.Value > 0) loss = (price - lastLevelPrice) * LossRatio.Value;
 
                     Destroy(ore.gameObject);
+                    Status.Value = 2;
+                    WaitTime.Value = 0;
                     OnExchanged(belongFaction.Value, ore.Type.Value, Mathf.RoundToInt((price - loss) * factor));
                 }
             }
@@ -145,6 +147,7 @@ public class RMUC2024_ExchangePoint : AreaController
 
         Status.Value = 0;
         WaitTime.Value = 0;
+        LossRatio.Value = 0;
         ExchangedCoin.Value = 0;
     }
 }

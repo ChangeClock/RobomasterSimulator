@@ -202,7 +202,7 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3898229241804226063}
   serializedVersion: 4
-  m_Mass: 600
+  m_Mass: 400
   m_Drag: 0
   m_AngularDrag: 0
   m_CenterOfMass: {x: 0, y: 0, z: 0}
@@ -284,8 +284,6 @@ Transform:
   - {fileID: 2768081122295733505}
   - {fileID: 2026693512713943218}
   - {fileID: 882548553386832740}
-  - {fileID: 5976731441550432847}
-  - {fileID: 8954676956766591978}
   - {fileID: 5421670043603511344}
   - {fileID: 5745187047315468003}
   - {fileID: 6584643088873573680}
@@ -293,6 +291,8 @@ Transform:
   - {fileID: 8564556900388440478}
   - {fileID: 8368223487568988175}
   - {fileID: 2408420161441554558}
+  - {fileID: 5976731441550432847}
+  - {fileID: 8954676956766591978}
   - {fileID: 4730485624144350318}
   - {fileID: 5863619921652167232}
   - {fileID: 5228420862252322021}
@@ -451,11 +451,14 @@ MonoBehaviour:
   EXPInfo: {fileID: 11400000, guid: 7723b419b52ed2a42ba413a7a285e4c2, type: 2}
   HasBoostEXP:
     m_InternalValue: 0
+  UseSimulationExchange:
+    m_InternalValue: 0
+  IsExchanging:
+    m_InternalValue: 0
   OreStorePoints:
   - {fileID: 8564556900388440478}
   - {fileID: 8368223487568988175}
   GripperPoints: []
-  ExchangeSpeed: 14000000
   UseSimulationActivation:
     m_InternalValue: 1
   IsActivatingBuff:
@@ -557,6 +560,7 @@ MonoBehaviour:
   lastYawTargetAngle: 0
   pitchTargetAngle: 0
   yawDeathZone: 0.1
+  feedForwardFactor: 0.5
   pitchMax: 0
   pitchMin: 0
   ShooterList: []
@@ -1950,7 +1954,7 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3252130759470122939}
   serializedVersion: 4
-  m_Mass: 50
+  m_Mass: 1
   m_Drag: 0
   m_AngularDrag: 0.05
   m_CenterOfMass: {x: 0, y: 0, z: 0}
@@ -2492,6 +2496,11 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: -5817844055581765899, guid: 0e4733cbf01fe9b4483f9deb92a3f87d,
         type: 3}
+      propertyPath: torque
+      value: 1200
+      objectReference: {fileID: 0}
+    - target: {fileID: -5817844055581765899, guid: 0e4733cbf01fe9b4483f9deb92a3f87d,
+        type: 3}
       propertyPath: wheelForceDirection.z
       value: -1
       objectReference: {fileID: 0}
@@ -2659,6 +2668,11 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 3921029436340559644}
     m_Modifications:
+    - target: {fileID: -5817844055581765899, guid: 0e4733cbf01fe9b4483f9deb92a3f87d,
+        type: 3}
+      propertyPath: torque
+      value: 1200
+      objectReference: {fileID: 0}
     - target: {fileID: 2034366288620811480, guid: 0e4733cbf01fe9b4483f9deb92a3f87d,
         type: 3}
       propertyPath: m_Spring.damper
@@ -2692,7 +2706,7 @@ PrefabInstance:
     - target: {fileID: 3144970954933668828, guid: 0e4733cbf01fe9b4483f9deb92a3f87d,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.024999995
+      value: 0.025
       objectReference: {fileID: 0}
     - target: {fileID: 3144970954933668828, guid: 0e4733cbf01fe9b4483f9deb92a3f87d,
         type: 3}
@@ -3044,7 +3058,7 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 9187695666096837030}
   serializedVersion: 4
-  m_Mass: 50
+  m_Mass: 1
   m_Drag: 0
   m_AngularDrag: 0.05
   m_CenterOfMass: {x: 0, y: 0, z: 0}
@@ -3107,6 +3121,11 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 3921029436340559644}
     m_Modifications:
+    - target: {fileID: -5817844055581765899, guid: 0e4733cbf01fe9b4483f9deb92a3f87d,
+        type: 3}
+      propertyPath: torque
+      value: 1200
+      objectReference: {fileID: 0}
     - target: {fileID: 2034366288620811480, guid: 0e4733cbf01fe9b4483f9deb92a3f87d,
         type: 3}
       propertyPath: m_Spring.damper
@@ -3125,7 +3144,7 @@ PrefabInstance:
     - target: {fileID: 3144970954933668828, guid: 0e4733cbf01fe9b4483f9deb92a3f87d,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.024999995
+      value: 0.025
       objectReference: {fileID: 0}
     - target: {fileID: 3144970954933668828, guid: 0e4733cbf01fe9b4483f9deb92a3f87d,
         type: 3}
@@ -3273,6 +3292,11 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: -5817844055581765899, guid: 0e4733cbf01fe9b4483f9deb92a3f87d,
         type: 3}
+      propertyPath: torque
+      value: 1200
+      objectReference: {fileID: 0}
+    - target: {fileID: -5817844055581765899, guid: 0e4733cbf01fe9b4483f9deb92a3f87d,
+        type: 3}
       propertyPath: wheelForceDirection.z
       value: -1
       objectReference: {fileID: 0}
@@ -3294,7 +3318,7 @@ PrefabInstance:
     - target: {fileID: 3144970954933668828, guid: 0e4733cbf01fe9b4483f9deb92a3f87d,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.024999995
+      value: 0.025
       objectReference: {fileID: 0}
     - target: {fileID: 3144970954933668828, guid: 0e4733cbf01fe9b4483f9deb92a3f87d,
         type: 3}

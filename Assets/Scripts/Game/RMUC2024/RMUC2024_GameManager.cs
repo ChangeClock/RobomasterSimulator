@@ -23,7 +23,6 @@ public class RMUC2024_GameManager : GameManager
     {
         base.OnEnable();
         
-        RMUC2023_ExchangePoint.OnExchanged += ExchangeUpload;
         RMUC2023_BoostPoint.OnBoost += BoostHandler;
         BuffController.OnActive += ActivateHandler;
     }
@@ -32,7 +31,6 @@ public class RMUC2024_GameManager : GameManager
     {
         base.OnDisable();
 
-        RMUC2023_ExchangePoint.OnExchanged -= ExchangeUpload;
         RMUC2023_BoostPoint.OnBoost -= BoostHandler;
         BuffController.OnActive -= ActivateHandler;
     }
@@ -84,9 +82,6 @@ public class RMUC2024_GameManager : GameManager
     }
 
     #region Coin & Buff
-
-    [SerializeField] private RMUC2024_ExchangePoint RedExchangeStation;
-    [SerializeField] private RMUC2024_ExchangePoint BlueExchangeStation;
 
     [SerializeField] private List<RMUC2023_MineMountain> Mines = new List<RMUC2023_MineMountain>();
     [SerializeField] private List<AreaController> MineBuffAreas = new List<AreaController>();
@@ -239,25 +234,6 @@ public class RMUC2024_GameManager : GameManager
             ToggleBuff(true, BuffType.Small);
             // Small Buff
         }
-    }
-
-    void ExchangeUpload(Faction faction, OreType type, int value)
-    {
-        ExchangeHandlerServerRpc(faction, type, value);
-    }
-
-    [ServerRpc]
-    void ExchangeHandlerServerRpc(Faction faction, OreType type, int value, ServerRpcParams serverRpcParams = default)
-    {
-        int coin = value;
-
-        if (type == OreType.Gold && !HasFirstGold.Value)
-        {
-            coin += 250;
-            HasFirstGold.Value = true;
-        }
-
-        AddCoin(faction, coin);
     }
 
     #endregion

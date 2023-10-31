@@ -49,9 +49,6 @@ public class GameManager : NetworkBehaviour
     [SerializeField] private BuffEffectSO ReviveBuff;
     [SerializeField] private BuffEffectSO PurchaseReviveBuff;
 
-    public BuffController RedBuffDevice;
-    public BuffController BlueBuffDevice;
-
     [Header("Area")]
     [SerializeField] private AreaController[] RedPatrolPoints;
     [SerializeField] private AreaController[] BluePatrolPoints;
@@ -102,6 +99,8 @@ public class GameManager : NetworkBehaviour
         RefereeController.OnDeath += DeathUpload;
         RefereeController.OnReady += ReadyUpload;
         RefereeController.OnPurchase += PurchaseUpload;
+
+        ExchangePoint.OnExchanged += ExchangeUpload;
     }
 
     protected virtual void OnDisable()
@@ -116,10 +115,15 @@ public class GameManager : NetworkBehaviour
         RefereeController.OnDeath -= DeathUpload;
         RefereeController.OnReady -= ReadyUpload;
         RefereeController.OnPurchase -= PurchaseUpload;
+
+        ExchangePoint.OnExchanged -= ExchangeUpload;
     }
 
     protected virtual void Start() 
     {
+        RedExchangeStation.PriceInfo = PriceInfo;
+        BlueExchangeStation.PriceInfo = PriceInfo;
+
         if (!IsServer) return;
 
         RefereeControllerList.Add(RedBase.RobotID.Value, RedBase);
@@ -202,6 +206,9 @@ public class GameManager : NetworkBehaviour
     {
         HasFirstBlood.Value = false;
         HasFirstGold.Value = false;
+
+        RedExchangeStation.Reset();
+        BlueExchangeStation.Reset();
 
         ToggleBuff(false, BuffType.Small);
         ToggleActivateArea(false);
@@ -717,6 +724,9 @@ public class GameManager : NetworkBehaviour
     }
 
     #region Buff Devices
+    
+    public BuffController RedBuffDevice;
+    public BuffController BlueBuffDevice;
 
     protected void ToggleBuff(bool enable, BuffType type)
     {
@@ -730,6 +740,35 @@ public class GameManager : NetworkBehaviour
         BlueActivateArea.Reset();
         RedActivateArea.Enabled.Value = enable;
         BlueActivateArea.Enabled.Value = enable;
+    }
+
+    #endregion
+    
+    #region Exchange Staion
+
+    public ExchangePriceSO PriceInfo;
+
+    public ExchangePoint RedExchangeStation;
+    public ExchangePoint BlueExchangeStation;
+
+    
+    void ExchangeUpload(Faction faction, OreType type, int value)
+    {
+        ExchangeHandlerServerRpc(faction, type, value);
+    }
+
+    [ServerRpc]
+    void ExchangeHandlerServerRpc(Faction faction, OreType type, int value, ServerRpcParams serverRpcParams = default)
+    {
+        int coin = value;
+
+        if (type == OreType.Gold && !HasFirstGold.Value)
+        {
+            coin += 250;
+            HasFirstGold.Value = true;
+        }
+
+        AddCoin(faction, coin);
     }
 
     #endregion

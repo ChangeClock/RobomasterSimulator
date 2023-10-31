@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.UI;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -14,6 +15,11 @@ public class ExchangeLevelItemController : MonoBehaviour
     [SerializeField] private TMP_Text Silver;
     [SerializeField] private TMP_Text Gold;
 
+    void OnEnable()
+    {
+        gameObject.GetComponent<Button>().onClick.AddListener(() => Toggle(true));
+    }
+
     public void Toggle(bool enable)
     {
         Checked = enable;
@@ -26,5 +32,11 @@ public class ExchangeLevelItemController : MonoBehaviour
         Level.text = level;
         Silver.text  = silverValue;
         Gold.text = goldValue;
+    }
+
+    public void SetAvailability(bool enable)
+    {
+        gameObject.GetComponent<Button>().interactable = enable;
+        gameObject.GetComponent<CanvasGroup>().alpha = enable ? 1 : 0.4f;
     }
 }

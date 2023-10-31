@@ -55,8 +55,6 @@ public class RobotController : NetworkBehaviour
     [SerializeField] private float lastYawTargetAngle = 0;
     [SerializeField] private float pitchTargetAngle = 0;
 
-    [SerializeField] private float yawDeathZone = 0.1f;
-
     [SerializeField] private float pitchMax;
     [SerializeField] private float pitchMin;
     
@@ -182,37 +180,30 @@ public class RobotController : NetworkBehaviour
                 yawTargetAngle += lookDelta[0];
                 if (yawTargetAngle < 0) yawTargetAngle += 360;
                 if (yawTargetAngle > 360) yawTargetAngle -= 360;
+
                 float _yawDifference = yawTargetAngle - Yaw.transform.eulerAngles.y;
-                // Debug.Log($"[RobotController] yawTargetAngle {yawTargetAngle} yawDifference {_yawDifference} Yaw {Yaw.transform.eulerAngles.y}");
 
                 // Yaw joint exists
                 if (_yawDifference > 180) {
-                    yawMotor.targetVelocity = yawController.Update(_yawDifference - 360, Time.deltaTime);
+                    _yawDifference -= 360;
                 } else if (_yawDifference < -180) {
-                    yawMotor.targetVelocity = yawController.Update(360 + _yawDifference, Time.deltaTime);
-                } else {
-                    yawMotor.targetVelocity = yawController.Update(_yawDifference, Time.deltaTime);
+                    _yawDifference += 360;
                 }
 
-                // float targetYaw = yawTargetAngle;
+                Yaw.transform.Rotate(new Vector3(0, _yawDifference, 0));
 
-                // if (_yawDifference > 180) {
-                //     targetYaw = yawTargetAngle + 360;
-                //     // yawMotor.targetVelocity = yawController.Update(yawTargetAngle - 360, Time.deltaTime);
-                // } else if (_yawDifference < -180) {
-                //     targetYaw = yawTargetAngle - 360;
-                //     // yawMotor.targetVelocity = yawController.Update(360 + yawTargetAngle, Time.deltaTime);
-                // } else {
-                //     // yawMotor.targetVelocity = yawController.Update(yawTargetAngle, Time.deltaTime);
-                // }
-                // Debug.Log($"[RobotController] targetYaw {targetYaw} Yaw {Yaw.transform.eulerAngles.y}");
-                // yawMotor.targetVelocity = -yawController.Update(targetYaw, Time.deltaTime);
+                // yawMotor.targetVelocity = yawController.Update(_yawDifference, Time.deltaTime);
 
-                Yaw.GetComponent<HingeJoint>().motor = yawMotor;
+                // Debug.Log($"[RobotController] yawTargetAngle {yawTargetAngle} yawDifference {_yawDifference} Yaw {Yaw.transform.eulerAngles.y} targetVelocity {yawMotor.targetVelocity}");
+
+                // Yaw.GetComponent<HingeJoint>().motor = yawMotor;
             } else {
                 // No Yaw Joint, update vw only;
                 targetVw = Mathf.Clamp(lookDelta[0] / 100, -1f, 1f);
             }
+
+            Debug.DrawLine(Yaw.transform.position, Yaw.transform.position + Yaw.transform.right * 10, Color.blue);
+            // Debug.DrawLine(Yaw.transform.position, Yaw.transform.position + Yaw.transform.right * 10, Color.yellow);
         }
         
         if (Pitch != null)
@@ -261,12 +252,12 @@ public class RobotController : NetworkBehaviour
             
             float _angle = Vector3.SignedAngle(Yaw.transform.right, Base.transform.right, Base.transform.up);
 
-            if (Mathf.Abs(_angle) < yawDeathZone) _angle = 0;
-
             // float _vw = - (yawTargetAngle - lastYawTargetAngle) + followController.Update(_angle, Time.deltaTime);
-            float _vw = - (1/Time.deltaTime) * (yawTargetAngle - lastYawTargetAngle) + followController.Update(_angle, Time.deltaTime);
+            // float _vw = - (1/Time.deltaTime) * (yawTargetAngle - lastYawTargetAngle) * feedForwardFactor + followController.Update(_angle, Time.deltaTime);
+            float _vw = followController.Update(_angle, Time.deltaTime);
+            
             targetVw = -Mathf.Clamp(_vw, -1f, 1f);
-            Debug.Log("vw: " + targetVw);
+            // Debug.Log("vw: " + targetVw);
         }
 
         Vector3 deltaPostion = Base.transform.position - LastPostion;

@@ -4,11 +4,9 @@ using UnityEngine;
 
 public class WheelController : MonoBehaviour
 {
-    // 为了使轮子的物理效果更加真实，有以下的改进项
-
     // A boolean property to store whether the gameobject is currently colliding with anything.
-    private bool isColliding = false;
-    private int isCollidingCounter = 10;
+    [SerializeField] private bool isColliding = false;
+    [SerializeField] private int isCollidingCounter = 10;
 
     private Vector3 lastPos;
 

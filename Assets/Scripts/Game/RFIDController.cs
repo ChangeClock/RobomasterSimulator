@@ -4,28 +4,27 @@ using UnityEngine;
 
 public class RFIDController : MonoBehaviour
 {
-    public delegate void DetectAction(int areaID);
+    public delegate void DetectAction(AreaController area);
     public event DetectAction OnDetect;
 
     private bool isColliding = false;
     private int isCollidingCounter = 10;
 
     // 0: 中立区、无意义 
-    private int areaID = 0;
+    private AreaController area;
 
     private void OnTriggerStay(Collider other)
     {
         // Debug.Log($"[RFIDController] OnTriggerStay {other.tag}");
         if (other.tag == "Area")
         {
-            AreaCardController _areaCard = other.gameObject.GetComponent<AreaCardController>();
+            area = other.gameObject.GetComponent<AreaController>();
             // Debug.Log($"[RFIDController] {other.gameObject}");
-            if (_areaCard == null) return;
-            if (!_areaCard.Enabled.Value) return;
+            if (area == null) return;
+            if (!area.Enabled.Value) return;
 
             isColliding = true;
             isCollidingCounter = 10;
-            areaID = _areaCard.ID.Value;
         }
     }
 
@@ -36,13 +35,13 @@ public class RFIDController : MonoBehaviour
             isCollidingCounter --;
         } else {
             isColliding = false;
-            areaID = 0;
+            area = null;
         }
 
         if (isColliding)
         {
-            Debug.Log($"[RFIDController] RFID detects area {areaID}");
-            OnDetect(areaID);
+            // Debug.Log($"[RFIDController] RFID detects area {area.ID.Value}");
+            OnDetect(area);
         }
     }
 }

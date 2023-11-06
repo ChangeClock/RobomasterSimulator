@@ -20,6 +20,8 @@ public class GameManager : NetworkBehaviour
     public RefereeController BlueOutpost;
     public RefereeController RedSentry;
     public RefereeController BlueSentry;
+    public RefereeController RedLidar;
+    public RefereeController BlueLidar;
 
     // 0: 中立 1: R-Hero 2: R-Engineer 3/4/5: R-Infantry 6: R-Air 7: R-Sentry 9: R-Lidar 18: R-Outpost 19: R-Base 21: B-Hero 22: B-Engineer 23/24/25: B-Infantry 26: B-Air 27: B-Sentry 29: B-Lidar 38: B-Outpost 39: B-Base;
     public Dictionary<int, RefereeController> RefereeControllerList = new Dictionary<int, RefereeController>();
@@ -130,6 +132,10 @@ public class GameManager : NetworkBehaviour
         RefereeControllerList.Add(BlueBase.RobotID.Value, BlueBase);
         RefereeControllerList.Add(RedOutpost.RobotID.Value, RedOutpost);
         RefereeControllerList.Add(BlueOutpost.RobotID.Value, BlueOutpost);
+        if (RedSentry != null) RefereeControllerList.Add(RedSentry.RobotID.Value, RedSentry);
+        if (BlueSentry != null) RefereeControllerList.Add(BlueSentry.RobotID.Value, BlueSentry);
+        if (RedLidar != null) RefereeControllerList.Add(RedLidar.RobotID.Value, RedLidar);
+        if (BlueLidar != null) RefereeControllerList.Add(BlueLidar.RobotID.Value, BlueLidar);
 
         foreach(var fac in Factions)
         {

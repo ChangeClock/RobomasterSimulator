@@ -81,4 +81,35 @@ public class MapController : MonoBehaviour
                 break;
         }
     }
+
+    public void SetPoint(int id, Faction faction, Vector2 location)
+    {
+        if (!UnitPoints.ContainsKey(id))
+        {
+            GameObject _point = Instantiate(UnitPoint, gameObject.transform);
+            _point.GetComponent<UnitPointController>().SetID(id);
+            UnitPoints.Add(id, new UnitPointInfo(_point, id));
+        }
+        
+        UnitPoints[id].resetLastTime();
+        // Debug.Log($"[MapController] Position {location}");
+        UnitPoints[id].point.GetComponent<RectTransform>().anchoredPosition = location;
+        // Debug.Log($"[MapController] Position {UnitPoints[id].point.transform.position}");
+        // UnitPoints[id].point.GetComponent<UnitPointController>().SetDirection(direction);
+
+        switch (faction)
+        {
+            case Faction.Self:
+                UnitPoints[id].point.GetComponent<UnitPointController>().SetColor(Color.green);
+                break;
+            case Faction.Red:
+                UnitPoints[id].point.GetComponent<UnitPointController>().SetColor(Color.red);
+                break;
+            case Faction.Blue:
+                UnitPoints[id].point.GetComponent<UnitPointController>().SetColor(Color.blue);
+                break;
+            default:
+                break;
+        }
+    }
 }

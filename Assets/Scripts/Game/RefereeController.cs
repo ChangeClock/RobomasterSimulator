@@ -9,7 +9,7 @@ using Cinemachine;
 
 public class RefereeController : NetworkBehaviour
 {
-    private GameManager gameManager;
+    protected GameManager gameManager;
 
     public delegate void SpawnAction(int robotID);
     public static event SpawnAction OnSpawn;
@@ -42,6 +42,15 @@ public class RefereeController : NetworkBehaviour
     public delegate void PurchaseAction(int robotID, PurchaseType type, int amount = 1);
     public static event PurchaseAction OnPurchase;
 
+    public delegate void MarkAction(int robotID, int markID, Vector2 position);
+    public static event MarkAction OnMark;
+
+    public delegate void MarkResetAction(int robotID);
+    public static event MarkResetAction OnMarkReset;
+
+    public delegate void LockedAction(int robotID);
+    public static event LockedAction OnLocked;
+
     [Header("Referee")]
     private ArmorController[] Armors;
     public Dictionary<int, ShooterController> ShooterControllerList = new Dictionary<int, ShooterController>();
@@ -66,7 +75,7 @@ public class RefereeController : NetworkBehaviour
         if (IsServer)
         {
             OnSpawn(RobotID.Value);
-            // Debug.Log($"[RefereeController] {RobotID.Value} Spawned");
+            Debug.Log($"[RefereeController] {RobotID.Value} Spawned");
 
             ResetAmmo();
 
@@ -74,6 +83,7 @@ public class RefereeController : NetworkBehaviour
             {
                 PriceInfo = gameManager.PriceInfo;
                 
+                ExchangeSpeed.Clear();
                 for (int i = 0; i < PriceInfo.silverPrice.Length; i ++)
                 {
                     ExchangeSpeed.Add(PriceInfo.silverPrice[i]);
@@ -167,6 +177,11 @@ public class RefereeController : NetworkBehaviour
 
     protected virtual void Start()
     {
+        if (IsServer)
+        {
+            ExchangeSpeed.Add(20);
+        }
+
         if (IsOwner)
         {
 
@@ -317,8 +332,11 @@ public class RefereeController : NetworkBehaviour
 
                 FPVCamera.SetHealBuff(HealBuff.Value > 0, HealBuff.Value);
                 FPVCamera.SetDEFBuff(DEFBuff.Value > 0, DEFBuff.Value);
+                FPVCamera.SetDEFDeBuff(DEFDeBuff.Value > 0, DEFDeBuff.Value);
                 FPVCamera.SetATKBuff(ATKBuff.Value > 0, ATKBuff.Value);
                 FPVCamera.SetCDBuff(CDBuff.Value > 0, CDBuff.Value);
+
+                FPVCamera.SetMarkedStatus(IsMarked);
 
                 FPVCamera.SetExpInfo(EXP.Value, EXPToNextLevel.Value);
                 FPVCamera.SetLevelInfo(Level.Value);
@@ -329,12 +347,19 @@ public class RefereeController : NetworkBehaviour
                 } else {
                     FPVCamera.SetPower(Power.Value);
                 }
+                
                 FPVCamera.SetBuffer(Buffer.Value, BufferLimit.Value);
                 FPVCamera.SetEnergy(Energy.Value, EnergyLimit.Value);
             
                 FPVCamera.SetExchangeMenu(gameManager.PriceInfo, ExchangeStation.GetLeastLevel());
                 
                 FPVCamera.SetExchangeStatus(ExchangeStation.Level.Value, ExchangeStation.Status.Value, ExchangeStation.CaptureProgress.Value, ExchangeStation.MaxCaptureProgress.Value, ExchangeStation.LossRatio.Value);
+            
+                if (IsMining.Value)
+                {
+                    FPVCamera.SetMiningStatus(OreType.Silver, OccupyArea.CaptureProgress.Value, OccupyArea.MaxCaptureProgress.Value);
+                }
+            
             }
         }
 
@@ -357,6 +382,8 @@ public class RefereeController : NetworkBehaviour
             TickHeat();
 
             TickBuff();
+
+            TickMark();
 
             if (!Enabled.Value) return;
 
@@ -942,6 +969,7 @@ public class RefereeController : NetworkBehaviour
     #region Buff Related
     
     [Header("Buff Related")]
+    [SerializeField] private AreaController OccupyArea;
     
     public NetworkVariable<int> ATKBuff         = new NetworkVariable<int>(0);
     public NetworkVariable<int> DEFBuff         = new NetworkVariable<int>(0);
@@ -1048,6 +1076,11 @@ public class RefereeController : NetworkBehaviour
                     newBuffStat.IsActivatingBuff = _buff.IsActivatingBuff;
                 }
 
+                if (_buff.IsMining > newBuffStat.IsMining)
+                {
+                    newBuffStat.IsMining = _buff.IsMining;
+                }
+
                 _buffInfo.lastTime += Time.deltaTime;
                 if (_buffInfo.lastTime * 1000 > _buff.buffDuration) overtimeBuff.Add(_buff);
             }
@@ -1072,13 +1105,19 @@ public class RefereeController : NetworkBehaviour
         CDBuff.Value = newBuffStat.CDBuff;
         InSupplyArea.Value = (newBuffStat.InSupplyArea > 0);
         IsActivatingBuff.Value = (newBuffStat.IsActivatingBuff > 0);
+        IsMining.Value = (newBuffStat.IsMining > 0);
     }
 
-    void DetectHandler(int areaID)
+    void DetectHandler(AreaController area)
     {
         if (!Enabled.Value) return;
 
-        OnOccupy(areaID, RobotID.Value);
+        if (area.controllingFaction.Value == faction.Value)
+        {
+            OccupyArea = area;
+        }
+
+        // OnOccupy(areaID, RobotID.Value);
     }
 
     #endregion
@@ -1167,7 +1206,10 @@ public class RefereeController : NetworkBehaviour
     public NetworkVariable<bool> IsExchanging = new NetworkVariable<bool>(false);
     public NetworkList<int> ExchangeSpeed = new NetworkList<int>();
 
+    public NetworkVariable<bool> IsMining = new NetworkVariable<bool>(false);
+    public NetworkVariable<int> MineSilverSuccessRate = new NetworkVariable<int>(95);
     public NetworkVariable<int> MineSilverSpeed = new NetworkVariable<int>(20);
+    public NetworkVariable<int> MineGoldSuccessRate = new NetworkVariable<int>(60);
     public NetworkVariable<int> MineGoldSpeed = new NetworkVariable<int>(30);
 
     public Stack<OreController> OreList = new Stack<OreController>();
@@ -1217,6 +1259,26 @@ public class RefereeController : NetworkBehaviour
               
             i ++;
         }
+    }
+
+    T FindClosestWithScript<T>(Vector3 currentPosition) where T : MonoBehaviour
+    {
+        T[] instances = GameObject.FindObjectsOfType<T>();
+        T closest = null;
+        float closestDistanceSqr = Mathf.Infinity;
+
+        foreach (T instance in instances)
+        {
+            Vector3 directionToTarget = instance.transform.position - currentPosition;
+            float dSqrToTarget = directionToTarget.sqrMagnitude;
+            if (dSqrToTarget < closestDistanceSqr)
+            {
+                closestDistanceSqr = dSqrToTarget;
+                closest = instance;
+            }
+        }
+
+        return closest;
     }
 
     #endregion
@@ -1310,6 +1372,57 @@ public class RefereeController : NetworkBehaviour
 
     #endregion
 
+    #region Mark
+    // Used in RMUC 2023 & RMUC 2024
+
+    public NetworkVariable<float> MarkedTime = new NetworkVariable<float>(0f);
+    public NetworkVariable<float> MarkedTimeThreadHold = new NetworkVariable<float>(60.0f);
+
+    public NetworkVariable<float> MarkedThreadhold = new NetworkVariable<float>(100.0f);
+    public NetworkVariable<float> MaxMarkProgress = new NetworkVariable<float>(120.0f);
+    public NetworkVariable<float> CurrentMarkProgress = new NetworkVariable<float>(0f);
+    public NetworkVariable<float> LastMarkProgress = new NetworkVariable<float>(0f);
+
+    public NetworkVariable<float> MaxMarkResetProgress = new NetworkVariable<float>(0.5f);
+    public NetworkVariable<float> CurrentMarkResetProgress = new NetworkVariable<float>(0f);
+
+    public bool IsMarked
+    {
+        get { return CurrentMarkProgress.Value >= MarkedThreadhold.Value; }
+    }
+
+    void TickMark()
+    {
+        if (CurrentMarkProgress.Value <= 0f) return;
+
+        CurrentMarkResetProgress.Value += Time.deltaTime;
+
+        if (CurrentMarkResetProgress.Value >= MaxMarkResetProgress.Value)
+        {
+            OnMarkReset(RobotID.Value);
+        }
+
+        if (CurrentMarkProgress.Value >= MarkedThreadhold.Value)
+        {
+            MarkedTime.Value += Time.deltaTime;
+        }
+
+        if (MarkedTime.Value >= MarkedTimeThreadHold.Value)
+        {
+            MarkedTime.Value = 0f;
+            OnLocked(RobotID.Value);
+        }
+
+        Debug.Log($"[RefereeController] MarkedTime {MarkedTime.Value} LastMarkProgress {LastMarkProgress.Value}");
+    }
+
+    protected void MarkRequestHandler(int markID, Vector2 position)
+    {
+        OnMark(RobotID.Value, markID, position);
+    }
+
+    #endregion
+
     public virtual void Reset()
     {
         Level.Value = 0;
@@ -1363,6 +1476,11 @@ public class RefereeController : NetworkBehaviour
         {
             Destroy(OreList.Pop().gameObject);
         }
+
+        CurrentMarkProgress.Value = 0f;
+        LastMarkProgress.Value = 0f;
+        CurrentMarkResetProgress.Value = 0f;
+        MarkedTime.Value = 0f;
 
         Enabled.Value = true;
         Warning.Value = 0;

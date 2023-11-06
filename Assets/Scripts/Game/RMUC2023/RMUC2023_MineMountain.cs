@@ -9,13 +9,14 @@ public class RMUC2023_MineMountain : NetworkBehaviour
     public Stack<OreController> OreList = new Stack<OreController>();
     public List<Transform> OreStorePoints = new List<Transform>();
 
-    [SerializeField] List<AreaController> MiningAreas = new List<AreaController>();
+    [SerializeField] List<RMUC2023_MineArea> MiningAreas = new List<RMUC2023_MineArea>();
 
     void OnEnable()
     {
         foreach (var area in MiningAreas)
         {
             area.OnCaptured += Mined;
+            area.Type = Ore.GetComponent<OreController>().Type.Value;
         }
     }
 

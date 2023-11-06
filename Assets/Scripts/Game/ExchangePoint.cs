@@ -7,7 +7,7 @@ public class ExchangePoint : AreaController
 {
     public ExchangePriceSO PriceInfo;
 
-    // 0: Idle 1: Exchanging 2: Resetting
+    // 0: Idle 1: Exchanging
     public NetworkVariable<int> Status = new NetworkVariable<int>(0); 
     public NetworkVariable<int> Level = new NetworkVariable<int>(0);
 
@@ -26,12 +26,12 @@ public class ExchangePoint : AreaController
 
     void Update()
     {
-        if (ResetProgress.Value < MaxResetProgress.Value)
-        { 
-            Status.Value = 2;
-        } else {
-            Status.Value = 0;
-        }
+        // if (ResetProgress.Value < MaxResetProgress.Value)
+        // { 
+        //     Status.Value = 2;
+        // } else {
+        //     Status.Value = 0;
+        // }
 
         if (Status.Value != 1)
         {
@@ -100,7 +100,7 @@ public class ExchangePoint : AreaController
                     if (Level.Value > 0) loss = (price - lastLevelPrice) * LossRatio.Value;
 
                     Destroy(ore.gameObject);
-                    Status.Value = 2;
+                    Status.Value = 0;
                     WaitTime.Value = 0;
                     OnExchanged(belongFaction.Value, ore.Type.Value, Mathf.RoundToInt((price - loss) * factor));
                 }
@@ -132,6 +132,9 @@ public class ExchangePoint : AreaController
         } else {
             Status.Value = 1;
         }
+
+        WaitTime.Value = 0;
+        LossRatio.Value = 0;
 
         if (level < GetLeastLevel())
         {

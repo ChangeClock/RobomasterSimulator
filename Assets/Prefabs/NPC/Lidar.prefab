@@ -178,7 +178,7 @@ GameObject:
   - component: {fileID: 4380352939514084076}
   - component: {fileID: 5028262079280678825}
   - component: {fileID: 4805977475892391462}
-  - component: {fileID: -4173012908361315155}
+  - component: {fileID: 3290860460211105206}
   - component: {fileID: -2263049800773060731}
   m_Layer: 0
   m_Name: Lidar
@@ -253,7 +253,7 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!114 &-4173012908361315155
+--- !u!114 &3290860460211105206
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -262,13 +262,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 8003418826990195140}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c588dc8e7f3394e6ba6dc7fcf0bb7644, type: 3}
+  m_Script: {fileID: 11500000, guid: 83cf8af2013c57249afb4505ef4ee31f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   RobotID:
     m_InternalValue: 0
   robotClass:
-    m_InternalValue: 0
+    m_InternalValue: 8
   robotTags: 02000000
   faction:
     m_InternalValue: 3
@@ -330,7 +330,7 @@ MonoBehaviour:
   MaxReviveProgress:
     m_InternalValue: 10
   ReviveProgressPerSec:
-    m_InternalValue: 1
+    m_InternalValue: 0
   CurrentReviveProgress:
     m_InternalValue: 0
   PurchaseReviveTimes:
@@ -357,6 +357,7 @@ MonoBehaviour:
     m_InternalValue: 100
   InSupplyArea:
     m_InternalValue: 0
+  OccupyArea: {fileID: 0}
   ATKBuff:
     m_InternalValue: 0
   DEFBuff:
@@ -382,9 +383,64 @@ MonoBehaviour:
     m_InternalValue: 0
   ChassisPerformance: {fileID: 0}
   EXPInfo: {fileID: 0}
+  HasBoostEXP:
+    m_InternalValue: 0
+  UseSimulationExchange:
+    m_InternalValue: 0
+  IsExchanging:
+    m_InternalValue: 0
+  IsMining:
+    m_InternalValue: 0
+  MineSilverSuccessRate:
+    m_InternalValue: 95
+  MineSilverSpeed:
+    m_InternalValue: 20
+  MineGoldSuccessRate:
+    m_InternalValue: 60
+  MineGoldSpeed:
+    m_InternalValue: 30
   OreStorePoints: []
   GripperPoints: []
-  ExchangeSpeed: 
+  UseSimulationActivation:
+    m_InternalValue: 1
+  IsActivatingBuff:
+    m_InternalValue: 0
+  CanActivateSmallBuff:
+    m_InternalValue: 0
+  CanActivateBigBuff:
+    m_InternalValue: 0
+  SmallBuffHitRate:
+    m_InternalValue: 0
+  BigBuffHitRate:
+    m_InternalValue: 0
+  BigBuffHighestScore:
+    m_InternalValue: 0
+  ActivateIdelTime:
+    m_InternalValue: 0
+  ActivateInterval:
+    m_InternalValue: 2.3
+  MinEnclosingCircle_X:
+    m_InternalValue: 0
+  MinEnclosingCircle_Y:
+    m_InternalValue: 0
+  MinEnclosingCircle_Raius:
+    m_InternalValue: 0
+  MarkedTime:
+    m_InternalValue: 0
+  MarkedTimeThreadHold:
+    m_InternalValue: 60
+  MarkedThreadhold:
+    m_InternalValue: 100
+  MaxMarkProgress:
+    m_InternalValue: 120
+  CurrentMarkProgress:
+    m_InternalValue: 0
+  LastMarkProgress:
+    m_InternalValue: 0
+  MaxMarkResetProgress:
+    m_InternalValue: 0.5
+  CurrentMarkResetProgress:
+    m_InternalValue: 0
 --- !u!114 &-2263049800773060731
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -119,7 +119,7 @@ public class FPVController : MonoBehaviour
                 HintTextClose.SetActive(false);
             }
         } else {
-            HintTextOpenExchange.SetActive(LevelChoiceMenu.activeSelf);
+            HintTextOpenExchange.SetActive(!LevelChoiceMenu.activeSelf);
             HintTextCloseExchange.SetActive(LevelChoiceMenu.activeSelf);
         }
 
@@ -305,14 +305,27 @@ public class FPVController : MonoBehaviour
 
     #endregion
 
+    #region MarkStatus
+
+    [SerializeField] private GameObject MarkedStatus;
+
+    public void SetMarkedStatus(bool enable)
+    {
+        MarkedStatus.SetActive(enable);
+    }
+
+    #endregion
+
     #region BuffStatus
 
     [SerializeField] private GameObject HealBuff;
     [SerializeField] private GameObject DEFBuff;
+    [SerializeField] private GameObject DEFDownBuff;
     [SerializeField] private GameObject CDBuff;
     [SerializeField] private GameObject ATKBuff;
     [SerializeField] private TextMeshProUGUI HealBuffValue;
     [SerializeField] private TextMeshProUGUI DEFBuffValue;
+    [SerializeField] private TextMeshProUGUI DEFDownBuffValue;
     [SerializeField] private TextMeshProUGUI CDBuffValue;
     [SerializeField] private TextMeshProUGUI ATKBuffValue;
 
@@ -326,6 +339,12 @@ public class FPVController : MonoBehaviour
     {
         DEFBuff.SetActive(enable);
         DEFBuffValue.text = buffValue.ToString() + "%";
+    }
+
+    public void SetDEFDeBuff(bool enable, int buffValue = 25)
+    {
+        DEFDownBuff.SetActive(enable);
+        DEFDownBuffValue.text = "-" + buffValue.ToString() + "%";
     }
 
     public void SetCDBuff(bool enable, int buffValue = 3)
@@ -778,9 +797,11 @@ public class FPVController : MonoBehaviour
         }
     }
 
-    public void SetMineStatus(OreType type, int status, float progress, float maxprogress)
+    public void SetMiningStatus(OreType type, float progress, float maxprogress)
     {
-        
+        MineProgress.SetColor((type == OreType.Silver) ? Color.white : Color.yellow);
+        MineProgress.SetMaxValue(maxprogress);
+        MineProgress.SetValue(progress);
     }
 
     void ChangeLevelHandler(int level)

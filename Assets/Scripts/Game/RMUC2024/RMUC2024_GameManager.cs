@@ -25,6 +25,8 @@ public class RMUC2024_GameManager : GameManager
         
         RMUC2023_BoostPoint.OnBoost += BoostHandler;
         BuffController.OnActive += ActivateHandler;
+        RefereeController.OnMark += MarkUploadHandler;
+        RefereeController.OnMarkReset += MarkResetUploadHandler;
     }
 
     protected override void OnDisable()
@@ -33,6 +35,8 @@ public class RMUC2024_GameManager : GameManager
 
         RMUC2023_BoostPoint.OnBoost -= BoostHandler;
         BuffController.OnActive -= ActivateHandler;
+        RefereeController.OnMark -= MarkUploadHandler;
+        RefereeController.OnMarkReset -= MarkResetUploadHandler;
     }
 
     protected override void Update()
@@ -553,6 +557,89 @@ public class RMUC2024_GameManager : GameManager
         {
             SmallBuffAdditionalEXP[(int)fac] = 0;
         }
+    }
+
+    #endregion
+
+    #region Mark
+
+    [SerializeField] private BuffEffectSO MarkedBuff;
+
+    void MarkUploadHandler(int robotID, int markID, Vector2 markPostion)
+    {
+        MarkHandlerServerRpc(robotID, markID, markPostion);
+    }
+
+    void MarkResetUploadHandler(int robotID)
+    {
+        MarkResetHandlerServerRpc(robotID);
+    }
+
+    [ServerRpc]
+    void MarkHandlerServerRpc(int robotID, int markID, Vector2 markPostion, ServerRpcParams serverRpcParams = default)
+    {
+        // Debug.Log($"[RMUC2024_GameManager] MarkHandlerServerRpc {robotID} {markID} {markPostion}");
+
+        // Debug.Log($"[RMUC2024_GameManager] MarkHandlerServerRpc {RefereeControllerList.ContainsKey(robotID)} {RefereeControllerList.ContainsKey(markID)}");
+
+        if (!RefereeControllerList.ContainsKey(robotID)) return;
+        if (!RefereeControllerList.ContainsKey(markID)) return;
+        
+        RefereeController referee = RefereeControllerList[robotID];
+        RefereeController markedUnit = RefereeControllerList[markID];
+
+        // Debug.Log($"[RMUC2024_GameManager] MarkHandlerServerRpc {referee.robotClass.Value} {markedUnit.faction.Value} {referee.faction.Value}");
+
+        if (referee.robotClass.Value != RobotClass.Lidar) return;
+        if (markedUnit.faction.Value == referee.faction.Value) return;
+
+        float error = Vector2.Distance(markPostion, markedUnit.Position);
+        float gainedProgress = 0f;
+
+        // Debug.Log($"[RMUC2024_GameManager] MarkHandlerServerRpc {error}");
+
+        if (markedUnit.IsMarked) 
+        {
+            markedUnit.AddBuff(MarkedBuff);
+        }
+
+        markedUnit.CurrentMarkResetProgress.Value = 0f;
+
+        if (markedUnit.CurrentMarkProgress.Value >= markedUnit.MaxMarkProgress.Value & error < 1.6) return;
+        if (markedUnit.CurrentMarkProgress.Value <= 0f & error >= 1.6) return;
+
+        if (error < 0.8)
+        {
+            if (markedUnit.LastMarkProgress.Value < 0f) markedUnit.LastMarkProgress.Value = 0f;
+            gainedProgress = 1 + markedUnit.LastMarkProgress.Value;
+            markedUnit.CurrentMarkProgress.Value += gainedProgress;
+            markedUnit.LastMarkProgress.Value = gainedProgress;
+        } else if (error < 1.6)
+        {
+            if (markedUnit.LastMarkProgress.Value < 0f) markedUnit.LastMarkProgress.Value = 0f;
+            gainedProgress = 0.5f + markedUnit.LastMarkProgress.Value;
+            markedUnit.CurrentMarkProgress.Value += gainedProgress;
+            markedUnit.LastMarkProgress.Value = gainedProgress;
+        } else {
+            gainedProgress = -0.8f + markedUnit.LastMarkProgress.Value;
+            markedUnit.CurrentMarkProgress.Value += gainedProgress;
+            markedUnit.LastMarkProgress.Value = 0f;
+        }
+
+        if (markedUnit.CurrentMarkProgress.Value <= 0f) markedUnit.CurrentMarkProgress.Value = 0f;
+        if (markedUnit.CurrentMarkProgress.Value >= markedUnit.MaxMarkProgress.Value) markedUnit.CurrentMarkProgress.Value = markedUnit.MaxMarkProgress.Value;
+    }
+
+    [ServerRpc]
+    void MarkResetHandlerServerRpc(int robotID, ServerRpcParams serverRpcParams = default)
+    {
+        if (!RefereeControllerList.ContainsKey(robotID)) return;
+        
+        RefereeController referee = RefereeControllerList[robotID];
+
+        float gainedProgress = -0.8f + referee.LastMarkProgress.Value;
+        referee.CurrentMarkProgress.Value += gainedProgress;
+        referee.LastMarkProgress.Value = 0f;
     }
 
     #endregion

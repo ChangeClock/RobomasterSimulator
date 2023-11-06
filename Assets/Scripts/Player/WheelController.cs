@@ -29,12 +29,20 @@ public class WheelController : MonoBehaviour
         }
     }
 
+    void OnCollisionExit(Collision collision)
+    {
+        if (collision.gameObject.tag == "Ground") 
+        {
+            Debug.Log("Exit");
+        }
+    }
+
     void Start()
     {
         lastPos = transform.position;
     }
 
-    private void Update() 
+    private void FixedUpdate()
     {
         if (isCollidingCounter > 0)
         {
@@ -42,10 +50,7 @@ public class WheelController : MonoBehaviour
         } else {
             isColliding = false;
         }
-    }
 
-    private void FixedUpdate()
-    {
         if (power > powerLimit) power = powerLimit;
 
         float displacement = 100 * Vector3.Distance(transform.position, lastPos) + 1.0f;

@@ -355,10 +355,10 @@ public class RefereeController : NetworkBehaviour
                 
                 FPVCamera.SetExchangeStatus(ExchangeStation.Level.Value, ExchangeStation.Status.Value, ExchangeStation.CaptureProgress.Value, ExchangeStation.MaxCaptureProgress.Value, ExchangeStation.LossRatio.Value);
             
-                if (IsMining.Value)
-                {
-                    FPVCamera.SetMiningStatus(OreType.Silver, OccupyArea.CaptureProgress.Value, OccupyArea.MaxCaptureProgress.Value);
-                }
+                // if (IsMining.Value)
+                // {
+                //     FPVCamera.SetMiningStatus(OreType.Silver, OccupyArea.CaptureProgress.Value, OccupyArea.MaxCaptureProgress.Value);
+                // }
             
             }
         }
@@ -1413,7 +1413,7 @@ public class RefereeController : NetworkBehaviour
             OnLocked(RobotID.Value);
         }
 
-        Debug.Log($"[RefereeController] MarkedTime {MarkedTime.Value} LastMarkProgress {LastMarkProgress.Value}");
+        // Debug.Log($"[RefereeController] MarkedTime {MarkedTime.Value} LastMarkProgress {LastMarkProgress.Value}");
     }
 
     protected void MarkRequestHandler(int markID, Vector2 position)

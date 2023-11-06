@@ -16,6 +16,7 @@ public class RobotController : NetworkBehaviour
     private InputAction move;
     private InputAction look;
     private InputAction shoot;
+    [SerializeField] private InputAction Aim;
     [SerializeField] private InputAction Boost;
     [SerializeField] private float BoostPower = 240;
     [SerializeField] private InputAction Spin;
@@ -63,6 +64,10 @@ public class RobotController : NetworkBehaviour
     [SerializeField]private int CurrentShooter = 0;
     [SerializeField]private float ShootFrequency = 25f;
     private float _shootTimeoutDelta = 0f;
+
+    [Header("Camera")]
+    [SerializeField] private List<CameraController> CameraList = new List<CameraController>();
+    private Vector3 LastTargetPosition;
 
     public override void OnNetworkSpawn()
     {
@@ -121,8 +126,14 @@ public class RobotController : NetworkBehaviour
         look.Enable();
         shoot = Input.Player.Shoot;
         shoot.Enable();
+        Aim.Enable();
         Boost.Enable();
         Spin.Enable();
+
+        foreach (var cam in CameraList)
+        {
+            cam.OnTargetDetected += TargetDetectedHandler;
+        }
     }
 
     void OnDisable()
@@ -130,8 +141,14 @@ public class RobotController : NetworkBehaviour
         move.Disable();
         look.Disable();
         shoot.Disable();
+        Aim.Disable();
         Boost.Disable();
         Spin.Disable();
+
+        foreach (var cam in CameraList)
+        {
+            cam.OnTargetDetected += TargetDetectedHandler;
+        }
     }
 
     void FixedUpdate()
@@ -147,6 +164,19 @@ public class RobotController : NetworkBehaviour
         // Debug.Log($"[EngineerController] moveDirection: {moveDirection.x}, {moveDirection.y}");
 
         // Debug.Log($"[RobotController] CursorLock: {UnityEngine.Cursor.lockState}");
+
+        // Rotate to the last target position
+        if (Aim.ReadValue<float>() > 0)
+        {
+            Quaternion _lookRotation = Quaternion.LookRotation(LastTargetPosition - Pitch.transform.position);
+
+            float _yawDifference = _lookRotation.eulerAngles.y - Yaw.transform.eulerAngles.y;
+            float _pitchDifference = _lookRotation.eulerAngles.x - Pitch.transform.eulerAngles.z;
+
+            Debug.Log($"[RobotController] _yawDifference {_yawDifference} _pitchDifference {_pitchDifference}");
+
+            // lookDelta = new Vector2(_lookRotation.eulerAngles.y - Yaw.transform.eulerAngles.y, _lookRotation.eulerAngles.x - Pitch.transform.eulerAngles.z);
+        }
 
         if (UnityEngine.Cursor.lockState != CursorLockMode.Locked)
         {
@@ -316,6 +346,19 @@ public class RobotController : NetworkBehaviour
                     _shootTimeoutDelta += Time.deltaTime;
                 }
             }
+        }
+    }
+
+    void TargetDetectedHandler(int id, Faction fac, Vector3 position)
+    {
+        Debug.Log($"[RobotController] TargetDetectedHandler {id} {fac} {position}");
+    
+        if (fac == Faction.Neu) return;
+        if (fac == referee.faction.Value) return;
+
+        if (Vector3.Distance(position, transform.position) < Vector3.Distance(LastTargetPosition, transform.position))
+        {
+            LastTargetPosition = position;
         }
     }
 }

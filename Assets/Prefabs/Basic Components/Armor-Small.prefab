@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 5920901610762163388}
   - component: {fileID: 2087589598418905570}
   - component: {fileID: 4260439120525712104}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Armor-Small
   m_TagString: Armor
   m_Icon: {fileID: 0}
@@ -28,6 +28,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5920901610762163391}
+  serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
@@ -35,7 +36,6 @@ Transform:
   m_Children:
   - {fileID: 5312201350450933435}
   m_Father: {fileID: 0}
-  m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &5920901610762163387
 MeshFilter:
@@ -99,15 +99,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8d47ff735ea42a74d941b77c473a40dc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  velocityThresholdImpact: 6
-  velocityThreshold17mm: 12
-  velocityThreshold42mm: 8
-  velocityThresholdMissle: 6
   ArmorID: 0
   Enabled: 0
   IsBlink: 0
   LightColor: 0
-  damageDetection: 01010100
+  velocityThreshold:
+  - 6
+  - 12
+  - 8
+  - 6
+  damage:
+  - 2
+  - 10
+  - 100
+  - 0
 --- !u!54 &2087589598418905570
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -169,7 +174,7 @@ GameObject:
   - component: {fileID: 3143174513778369508}
   - component: {fileID: 1674020192503713916}
   - component: {fileID: 7789811748642896501}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Light
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -183,13 +188,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6061553835842980662}
+  serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: -0.055, z: 0.015}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 5920901610762163384}
-  m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &3143174513778369508
 MeshFilter:

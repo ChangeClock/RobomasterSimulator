@@ -502,6 +502,23 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Enabled: 0
+  Aim:
+    m_Name: Aim
+    m_Type: 0
+    m_ExpectedControlType: 
+    m_Id: b4ffdc00-52c9-46cb-ba1c-8347a2c8878e
+    m_Processors: 
+    m_Interactions: 
+    m_SingletonActionBindings:
+    - m_Name: 
+      m_Id: b1ffe2e7-2a3e-4ca9-a450-2a9f95b71bad
+      m_Path: <Mouse>/rightButton
+      m_Interactions: 
+      m_Processors: 
+      m_Groups: 
+      m_Action: Aim
+      m_Flags: 0
+    m_Flags: 0
   Boost:
     m_Name: Boost
     m_Type: 0
@@ -572,6 +589,8 @@ MonoBehaviour:
   - {fileID: 266857224345066673}
   CurrentShooter: 0
   ShootFrequency: 20
+  CameraList:
+  - {fileID: 2611525189120350315}
 --- !u!114 &2516057975928682575
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1641,15 +1660,20 @@ PrefabInstance:
       propertyPath: m_Name
       value: Camera
       objectReference: {fileID: 0}
+    - target: {fileID: 1614908118280208390, guid: 8b3b1fc496cd355498cdc034e343b447,
+        type: 3}
+      propertyPath: printLog
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 7664834908519787481, guid: 8b3b1fc496cd355498cdc034e343b447,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 1.361
+      value: 1.549
       objectReference: {fileID: 0}
     - target: {fileID: 7664834908519787481, guid: 8b3b1fc496cd355498cdc034e343b447,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 2.986
+      value: 3.049
       objectReference: {fileID: 0}
     - target: {fileID: 7664834908519787481, guid: 8b3b1fc496cd355498cdc034e343b447,
         type: 3}
@@ -1704,6 +1728,18 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 5173334903769681879}
   m_SourcePrefab: {fileID: 100100000, guid: 8b3b1fc496cd355498cdc034e343b447, type: 3}
+--- !u!114 &2611525189120350315 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1614908118280208390, guid: 8b3b1fc496cd355498cdc034e343b447,
+    type: 3}
+  m_PrefabInstance: {fileID: 3627454002288679021}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4319876633800128098}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aef7bf6d3e22ba64a8b63ff6fd4514bb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &4319876633800128098 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 694687780362972687, guid: 8b3b1fc496cd355498cdc034e343b447,

@@ -523,6 +523,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Enabled: 0
+  Aim:
+    m_Name: 
+    m_Type: 0
+    m_ExpectedControlType: 
+    m_Id: 95171492-7abe-4f90-872a-71a27c224c14
+    m_Processors: 
+    m_Interactions: 
+    m_SingletonActionBindings: []
+    m_Flags: 0
   Boost:
     m_Name: Boost
     m_Type: 0
@@ -591,6 +600,7 @@ MonoBehaviour:
   ShooterList: []
   CurrentShooter: 0
   ShootFrequency: 20
+  CameraList: []
 --- !u!54 &6013511136643624831
 Rigidbody:
   m_ObjectHideFlags: 0

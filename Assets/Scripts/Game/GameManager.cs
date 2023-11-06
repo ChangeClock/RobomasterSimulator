@@ -132,10 +132,30 @@ public class GameManager : NetworkBehaviour
         RefereeControllerList.Add(BlueBase.RobotID.Value, BlueBase);
         RefereeControllerList.Add(RedOutpost.RobotID.Value, RedOutpost);
         RefereeControllerList.Add(BlueOutpost.RobotID.Value, BlueOutpost);
-        if (RedSentry != null) RefereeControllerList.Add(RedSentry.RobotID.Value, RedSentry);
-        if (BlueSentry != null) RefereeControllerList.Add(BlueSentry.RobotID.Value, BlueSentry);
+        if (RedSentry != null) SpawnUpload(RedSentry.RobotID.Value);
+        if (BlueSentry != null) SpawnUpload(BlueSentry.RobotID.Value);
         if (RedLidar != null) RefereeControllerList.Add(RedLidar.RobotID.Value, RedLidar);
         if (BlueLidar != null) RefereeControllerList.Add(BlueLidar.RobotID.Value, BlueLidar);
+
+        if (SentryPerformance != null)
+        {
+            SetUnitPerformance(RedSentry, 0, SentryPerformance);
+            foreach (var _shooter in RedSentry.ShooterControllerList.Values)
+            {
+                SetShooterPerformance(_shooter, 0, SentryPerformance);
+            }
+            SetUnitPerformance(BlueSentry, 0, SentryPerformance);
+            foreach (var _shooter in BlueSentry.ShooterControllerList.Values)
+            {
+                SetShooterPerformance(_shooter, 0, SentryPerformance);
+            }
+        }
+
+        if (SentryExpInfo != null)
+        {
+            SetUnitEXPInfo(RedSentry, SentryExpInfo);
+            SetUnitEXPInfo(BlueSentry, SentryExpInfo);
+        }
 
         foreach(var fac in Factions)
         {

@@ -6,6 +6,7 @@ public class WheelController : MonoBehaviour
 {
     // A boolean property to store whether the gameobject is currently colliding with anything.
     [SerializeField] private bool isColliding = false;
+    [SerializeField] private bool isCollidingCounterLock = false;
     [SerializeField] private int isCollidingCounter = 10;
 
     private Vector3 lastPos;
@@ -25,6 +26,7 @@ public class WheelController : MonoBehaviour
         if (collision.gameObject.tag == "Ground") 
         {
             isColliding = true;
+            isCollidingCounterLock = true;
             isCollidingCounter = 10;
         }
     }
@@ -34,6 +36,7 @@ public class WheelController : MonoBehaviour
         if (collision.gameObject.tag == "Ground") 
         {
             Debug.Log("Exit");
+            isCollidingCounterLock = false;
         }
     }
 
@@ -46,7 +49,7 @@ public class WheelController : MonoBehaviour
     {
         if (isCollidingCounter > 0)
         {
-            isCollidingCounter --;
+            if (!isCollidingCounterLock) isCollidingCounter --;
         } else {
             isColliding = false;
         }

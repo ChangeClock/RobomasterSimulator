@@ -121,7 +121,8 @@ public class RefereeController : NetworkBehaviour
 
                     ShooterControllerList.Add(id, _shooter);
 
-                    _shooter.gameObject.GetComponent<NetworkObject>().SpawnAsPlayerObject(this.gameObject.GetComponent<NetworkObject>().OwnerClientId);
+                    if (!_shooter.gameObject.GetComponent<NetworkObject>().IsSpawned) _shooter.gameObject.GetComponent<NetworkObject>().SpawnAsPlayerObject(this.gameObject.GetComponent<NetworkObject>().OwnerClientId);
+                    
                     _shooter.Enabled.Value = enabled;
                     _shooter.OnTrigger += TriggerHandler;
 
@@ -142,7 +143,7 @@ public class RefereeController : NetworkBehaviour
             OnPerformanceChange(RobotID.Value, ChassisMode.Value, shooter1Mode, shooter2Mode);
 
             robotController = this.gameObject.GetComponent<RobotController>();
-            if (robotController != null) robotController.Enabled = true;  
+            if (robotController != null) robotController.Enabled.Value = true;  
         
             switch (faction.Value)
             {
@@ -275,7 +276,7 @@ public class RefereeController : NetworkBehaviour
         {
             if (robotController != null)
             {
-                robotController.Enabled = Enabled.Value;
+                robotController.Enabled.Value = Enabled.Value;
             }
                 
             if (FPVCamera != null)
@@ -423,10 +424,10 @@ public class RefereeController : NetworkBehaviour
         {
             // Back to spawn point & disable control
             gameObject.transform.SetPositionAndRotation(spawnPoint.position, spawnPoint.rotation);
-            robotController.Enabled = false;
+            robotController.Enabled.Value = false;
         } else {
             // enable control
-            robotController.Enabled = true;
+            robotController.Enabled.Value = true;
         }
 
         OnReady(RobotID.Value);
@@ -434,7 +435,7 @@ public class RefereeController : NetworkBehaviour
 
     public void ToggleInput()
     {
-        robotController.Enabled = !robotController.Enabled;
+        robotController.Enabled.Value = !robotController.Enabled.Value;
     }
 
     [Header("Power")]
@@ -1410,7 +1411,7 @@ public class RefereeController : NetworkBehaviour
         if (MarkedTime.Value >= MarkedTimeThreadHold.Value)
         {
             MarkedTime.Value = 0f;
-            OnLocked(RobotID.Value);
+            if (OnLocked != null) OnLocked(RobotID.Value);
         }
 
         // Debug.Log($"[RefereeController] MarkedTime {MarkedTime.Value} LastMarkProgress {LastMarkProgress.Value}");

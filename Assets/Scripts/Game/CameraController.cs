@@ -11,6 +11,8 @@ public class CameraController : MonoBehaviour
     [SerializeField] private float DetectRange = 80f;
     [SerializeField] private bool printLog = false;
 
+    [SerializeField] private Vector3 camOffset = new Vector3(0f, 0f, 0f);
+
     void Start() 
     {
         rt = new RenderTexture(640, 480, 32);
@@ -76,9 +78,9 @@ public class CameraController : MonoBehaviour
         // Visualize the line
         if (Physics.Linecast(c.transform.position + Vector3.forward * c.nearClipPlane, point, out hit))
         {
-            Debug.DrawLine(c.transform.position + Vector3.forward * c.nearClipPlane, point, Color.cyan);
+            // Debug.DrawLine(c.transform.position + Vector3.forward * c.nearClipPlane, point, Color.cyan);
             
-            Debug.DrawLine(c.transform.position + Vector3.forward * c.nearClipPlane, hit.point, Color.green);
+            // Debug.DrawLine(c.transform.position + Vector3.forward * c.nearClipPlane, hit.point, Color.green);
             // check it the first object in the line is the target or its child
             if (hit.transform.gameObject == target || hit.transform.IsChildOf(target.transform))
             {

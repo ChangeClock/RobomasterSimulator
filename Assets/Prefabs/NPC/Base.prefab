@@ -33,7 +33,6 @@ RectTransform:
   m_Children:
   - {fileID: 8210442512630503037}
   m_Father: {fileID: 2692620355474462488}
-  m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 0, y: 90, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -135,7 +134,6 @@ RectTransform:
   m_Children:
   - {fileID: 403568600106634970}
   m_Father: {fileID: 4713827778882663053}
-  m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
@@ -211,7 +209,6 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 8210442512630503037}
-  m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
@@ -340,6 +337,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5978541172563179709}
+  serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
@@ -352,7 +350,6 @@ Transform:
   - {fileID: 5419395278352327667}
   - {fileID: 7981953076361079749}
   m_Father: {fileID: 0}
-  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &5998494943730457770
 MonoBehaviour:
@@ -366,7 +363,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f0fe0951a61b0964589b1f42f3014aed, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  FPV: {fileID: 0}
   RobotID:
     m_InternalValue: 0
   robotClass:
@@ -374,6 +370,7 @@ MonoBehaviour:
   robotTags: 02000000
   faction:
     m_InternalValue: 3
+  spawnPoint: {fileID: 0}
   Enabled:
     m_InternalValue: 1
   Immutable:
@@ -382,6 +379,14 @@ MonoBehaviour:
     m_InternalValue: 0
   OccupiedArea:
     m_InternalValue: 0
+  Ready:
+    m_InternalValue: 0
+  Disengaged:
+    m_InternalValue: 1
+  DisengagedTime:
+    m_InternalValue: 0
+  DisengagedTimeLimit:
+    m_InternalValue: 6
   Position: {x: 0, y: 0}
   Direction: 0
   PowerLimit:
@@ -392,6 +397,10 @@ MonoBehaviour:
     m_InternalValue: 0
   Buffer:
     m_InternalValue: 0
+  EnergyLimit:
+    m_InternalValue: 1900
+  Energy:
+    m_InternalValue: 0
   ShieldLimit:
     m_InternalValue: 250
   Shield:
@@ -400,6 +409,20 @@ MonoBehaviour:
     m_InternalValue: 5000
   HP:
     m_InternalValue: 5000
+  Damage_Hit:
+    m_InternalValue: 0
+  Damage_17mm:
+    m_InternalValue: 0
+  Damage_42mm:
+    m_InternalValue: 0
+  Damage_Missle:
+    m_InternalValue: 0
+  Damage_OverPower:
+    m_InternalValue: 0
+  Damage_OverHeat:
+    m_InternalValue: 0
+  Damage_Warning:
+    m_InternalValue: 0
   Reviving:
     m_InternalValue: 0
   MaxReviveProgress:
@@ -408,6 +431,10 @@ MonoBehaviour:
     m_InternalValue: 1
   CurrentReviveProgress:
     m_InternalValue: 0
+  PurchaseReviveTimes:
+    m_InternalValue: 2
+  PurchaseRevivePrice:
+    m_InternalValue: 10
   ShooterEnabled:
     m_InternalValue: 1
   ConsumedAmmo0:
@@ -426,9 +453,14 @@ MonoBehaviour:
     m_InternalValue: 100
   RealAmmo1Limit:
     m_InternalValue: 100
+  InSupplyArea:
+    m_InternalValue: 0
+  OccupyArea: {fileID: 0}
   ATKBuff:
     m_InternalValue: 0
   DEFBuff:
+    m_InternalValue: 0
+  DEFDeBuff:
     m_InternalValue: 0
   CDBuff:
     m_InternalValue: 0
@@ -449,6 +481,64 @@ MonoBehaviour:
     m_InternalValue: 0
   ChassisPerformance: {fileID: 0}
   EXPInfo: {fileID: 0}
+  HasBoostEXP:
+    m_InternalValue: 0
+  UseSimulationExchange:
+    m_InternalValue: 0
+  IsExchanging:
+    m_InternalValue: 0
+  IsMining:
+    m_InternalValue: 0
+  MineSilverSuccessRate:
+    m_InternalValue: 95
+  MineSilverSpeed:
+    m_InternalValue: 20
+  MineGoldSuccessRate:
+    m_InternalValue: 60
+  MineGoldSpeed:
+    m_InternalValue: 30
+  OreStorePoints: []
+  GripperPoints: []
+  UseSimulationActivation:
+    m_InternalValue: 1
+  IsActivatingBuff:
+    m_InternalValue: 0
+  CanActivateSmallBuff:
+    m_InternalValue: 0
+  CanActivateBigBuff:
+    m_InternalValue: 0
+  SmallBuffHitRate:
+    m_InternalValue: 0
+  BigBuffHitRate:
+    m_InternalValue: 0
+  BigBuffHighestScore:
+    m_InternalValue: 0
+  ActivateIdelTime:
+    m_InternalValue: 0
+  ActivateInterval:
+    m_InternalValue: 2.3
+  MinEnclosingCircle_X:
+    m_InternalValue: 0
+  MinEnclosingCircle_Y:
+    m_InternalValue: 0
+  MinEnclosingCircle_Raius:
+    m_InternalValue: 0
+  MarkedTime:
+    m_InternalValue: 0
+  MarkedTimeThreadHold:
+    m_InternalValue: 60
+  MarkedThreadhold:
+    m_InternalValue: 100
+  MaxMarkProgress:
+    m_InternalValue: 120
+  CurrentMarkProgress:
+    m_InternalValue: 0
+  LastMarkProgress:
+    m_InternalValue: 0
+  MaxMarkResetProgress:
+    m_InternalValue: 0.5
+  CurrentMarkResetProgress:
+    m_InternalValue: 0
 --- !u!114 &6359216570982049240
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -463,6 +553,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   GlobalObjectIdHash: 951099334
   AlwaysReplicateAsRoot: 0
+  SynchronizeTransform: 1
+  ActiveSceneSynchronization: 0
+  SceneMigrationSynchronization: 1
+  SpawnWithObservers: 1
   DontDestroyWithOwner: 0
   AutoObjectParentSync: 1
 --- !u!1001 &2994574805171750460
@@ -473,6 +567,11 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 2692620355474462488}
     m_Modifications:
+    - target: {fileID: 68476869709280452, guid: c2e9a63499f3a4d58bcc5fb63079bc35,
+        type: 3}
+      propertyPath: m_ConnectedBody
+      value: 
+      objectReference: {fileID: 7988502172677522890}
     - target: {fileID: 4389355960283839329, guid: c2e9a63499f3a4d58bcc5fb63079bc35,
         type: 3}
       propertyPath: m_Name
@@ -541,11 +640,7 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 4389355960283839329, guid: c2e9a63499f3a4d58bcc5fb63079bc35,
-        type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 9125303073753852342}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c2e9a63499f3a4d58bcc5fb63079bc35, type: 3}
 --- !u!4 &1541570373000035674 stripped
 Transform:
@@ -553,27 +648,6 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 2994574805171750460}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &1541570373000035677 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 4389355960283839329, guid: c2e9a63499f3a4d58bcc5fb63079bc35,
-    type: 3}
-  m_PrefabInstance: {fileID: 2994574805171750460}
-  m_PrefabAsset: {fileID: 0}
---- !u!138 &9125303073753852342
-FixedJoint:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1541570373000035677}
-  m_ConnectedBody: {fileID: 7988502172677522890}
-  m_ConnectedArticulationBody: {fileID: 0}
-  m_BreakForce: Infinity
-  m_BreakTorque: Infinity
-  m_EnableCollision: 0
-  m_EnablePreprocessing: 1
-  m_MassScale: 1
-  m_ConnectedMassScale: 1
 --- !u!1001 &6666358057489341554
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -582,6 +656,11 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 2692620355474462488}
     m_Modifications:
+    - target: {fileID: 1035662961434015765, guid: 5718c094de6c8480e91f009e930d52e3,
+        type: 3}
+      propertyPath: m_ConnectedBody
+      value: 
+      objectReference: {fileID: 7988502172677522890}
     - target: {fileID: 3622637226713790384, guid: 5718c094de6c8480e91f009e930d52e3,
         type: 3}
       propertyPath: m_Name
@@ -650,33 +729,8 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 3622637226713790384, guid: 5718c094de6c8480e91f009e930d52e3,
-        type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1492304654292317028}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 5718c094de6c8480e91f009e930d52e3, type: 3}
---- !u!1 &7981953076361079746 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 3622637226713790384, guid: 5718c094de6c8480e91f009e930d52e3,
-    type: 3}
-  m_PrefabInstance: {fileID: 6666358057489341554}
-  m_PrefabAsset: {fileID: 0}
---- !u!138 &1492304654292317028
-FixedJoint:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7981953076361079746}
-  m_ConnectedBody: {fileID: 7988502172677522890}
-  m_ConnectedArticulationBody: {fileID: 0}
-  m_BreakForce: Infinity
-  m_BreakTorque: Infinity
-  m_EnableCollision: 0
-  m_EnablePreprocessing: 1
-  m_MassScale: 1
-  m_ConnectedMassScale: 1
 --- !u!4 &7981953076361079749 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3622637226713790391, guid: 5718c094de6c8480e91f009e930d52e3,
@@ -756,6 +810,11 @@ PrefabInstance:
       propertyPath: disabled
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3732397721117628661, guid: 10906340bd5614ab1a7ab81faec9e1ce,
+        type: 3}
+      propertyPath: m_ConnectedBody
+      value: 
+      objectReference: {fileID: 7988502172677522890}
     - target: {fileID: 4685613194508954125, guid: 10906340bd5614ab1a7ab81faec9e1ce,
         type: 3}
       propertyPath: m_IsKinematic
@@ -764,33 +823,8 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 1140953694546532176, guid: 10906340bd5614ab1a7ab81faec9e1ce,
-        type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 3719620015312912284}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 10906340bd5614ab1a7ab81faec9e1ce, type: 3}
---- !u!1 &7083284470124395323 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 1140953694546532176, guid: 10906340bd5614ab1a7ab81faec9e1ce,
-    type: 3}
-  m_PrefabInstance: {fileID: 7897513731122506859}
-  m_PrefabAsset: {fileID: 0}
---- !u!138 &3719620015312912284
-FixedJoint:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7083284470124395323}
-  m_ConnectedBody: {fileID: 7988502172677522890}
-  m_ConnectedArticulationBody: {fileID: 0}
-  m_BreakForce: Infinity
-  m_BreakTorque: Infinity
-  m_EnableCollision: 0
-  m_EnablePreprocessing: 1
-  m_MassScale: 1
-  m_ConnectedMassScale: 1
 --- !u!4 &7083284470124395324 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1140953694546532183, guid: 10906340bd5614ab1a7ab81faec9e1ce,
@@ -957,6 +991,11 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 2692620355474462488}
     m_Modifications:
+    - target: {fileID: 1035662961434015765, guid: 5718c094de6c8480e91f009e930d52e3,
+        type: 3}
+      propertyPath: m_ConnectedBody
+      value: 
+      objectReference: {fileID: 7988502172677522890}
     - target: {fileID: 3622637226713790384, guid: 5718c094de6c8480e91f009e930d52e3,
         type: 3}
       propertyPath: m_Name
@@ -1025,11 +1064,7 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 3622637226713790384, guid: 5718c094de6c8480e91f009e930d52e3,
-        type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 3355408192191490855}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 5718c094de6c8480e91f009e930d52e3, type: 3}
 --- !u!4 &5419395278352327667 stripped
 Transform:
@@ -1037,24 +1072,3 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 8751547510796784708}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &5419395278352327668 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 3622637226713790384, guid: 5718c094de6c8480e91f009e930d52e3,
-    type: 3}
-  m_PrefabInstance: {fileID: 8751547510796784708}
-  m_PrefabAsset: {fileID: 0}
---- !u!138 &3355408192191490855
-FixedJoint:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5419395278352327668}
-  m_ConnectedBody: {fileID: 7988502172677522890}
-  m_ConnectedArticulationBody: {fileID: 0}
-  m_BreakForce: Infinity
-  m_BreakTorque: Infinity
-  m_EnableCollision: 0
-  m_EnablePreprocessing: 1
-  m_MassScale: 1
-  m_ConnectedMassScale: 1

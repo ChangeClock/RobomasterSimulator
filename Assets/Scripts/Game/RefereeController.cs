@@ -86,7 +86,7 @@ public class RefereeController : NetworkBehaviour
                 ExchangeSpeed.Clear();
                 for (int i = 0; i < PriceInfo.silverPrice.Length; i ++)
                 {
-                    ExchangeSpeed.Add(PriceInfo.silverPrice[i]);
+                    ExchangeSpeed.Add(PriceInfo.silverPrice[i] / 10);
                 }
             }
         }
@@ -102,6 +102,9 @@ public class RefereeController : NetworkBehaviour
             }
 
             // InitSettingMenu();
+            
+            robotController = this.gameObject.GetComponent<RobotController>();
+            if (robotController != null) robotController.Enabled.Value = true;  
 
             ShooterController[] Shooters = this.gameObject.GetComponentsInChildren<ShooterController>();
             int shooter1Mode = 0;
@@ -137,13 +140,16 @@ public class RefereeController : NetworkBehaviour
                         default:
                             break;
                     }
+
+                    if (robotController != null)
+                    {
+                        if (!robotController.AutoOperate.Value) _shooter.ToggleUI();
+                    }
                 }
             }
 
             OnPerformanceChange(RobotID.Value, ChassisMode.Value, shooter1Mode, shooter2Mode);
 
-            robotController = this.gameObject.GetComponent<RobotController>();
-            if (robotController != null) robotController.Enabled.Value = true;  
         
             switch (faction.Value)
             {
@@ -1154,7 +1160,7 @@ public class RefereeController : NetworkBehaviour
         
         // Add up EXP but don't level up if the performance are not chosen yet
 
-        if (Level.Value > EXPInfo.expToNextLevel.Length) return;
+        if (Level.Value >= EXPInfo.expToNextLevel.Length) return;
 
         // Level up
         if (EXP.Value >= EXPInfo.expToNextLevel[Level.Value] && EXPInfo.expToNextLevel[Level.Value] >= 0)

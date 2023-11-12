@@ -17,7 +17,7 @@ public class UnitPointController : MonoBehaviour
 
     public void SetID(int id)
     {
-        if (id == 7)
+        if (id == 7 || id == 27)
         {
             Sentry.SetActive(true);
             ID.text = "";

@@ -85,6 +85,11 @@ public class ShooterController : NetworkBehaviour
         // Round heat bar
     }
 
+    public void ToggleUI()
+    {
+        UI.SetActive(!UI.activeSelf);
+    }
+
     public void Reset()
     {
         Level.Value = 0;

@@ -23,6 +23,12 @@ public class AreaController : NetworkBehaviour
     public NetworkVariable<float> ResetProgress = new NetworkVariable<float>(0.0f);
     public NetworkVariable<float> ResetProgressPerSecond = new NetworkVariable<float>(1.0f);
 
+    public bool IsResetting{
+        get{
+            return ResetProgress.Value < MaxResetProgress.Value;
+        }
+    }
+
     public List<RobotTag> TagList = new List<RobotTag>();
 
     public List<BuffEffectSO> BuffList = new List<BuffEffectSO>();

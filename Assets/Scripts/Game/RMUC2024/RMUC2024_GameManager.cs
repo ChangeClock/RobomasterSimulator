@@ -312,7 +312,7 @@ public class RMUC2024_GameManager : GameManager
 
     public override void StartGame()
     {
-        if(!IsServer) return;
+        base.StartGame();
 
         foreach (var mine in Mines)
         {
@@ -354,8 +354,6 @@ public class RMUC2024_GameManager : GameManager
         {
             area.Enabled.Value = true;
         }
-
-        base.StartGame();
     }
 
     #endregion

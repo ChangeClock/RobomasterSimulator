@@ -39,7 +39,7 @@ public class ExchangePoint : AreaController
             LossRatio.Value = 0;
             CaptureProgress.Value = 0;
         } else {
-            WaitTime.Value += Time.deltaTime;
+            if (!IsResetting) WaitTime.Value += Time.deltaTime;
             if (WaitTime.Value > 15 & WaitTime.Value <= 50) 
             {
                 LossRatio.Value = 0.02f * (WaitTime.Value - 15);

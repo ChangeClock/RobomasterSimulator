@@ -53,11 +53,14 @@ public class MapController : MonoBehaviour
 
     public void SetPoint(int id, Faction faction, Vector2 location, float direction)
     {
+        int displayID = id;
+        if (faction == Faction.Blue) displayID -= 20;
+
         if (!UnitPoints.ContainsKey(id))
         {
             GameObject _point = Instantiate(UnitPoint, gameObject.transform);
-            _point.GetComponent<UnitPointController>().SetID(id);
-            UnitPoints.Add(id, new UnitPointInfo(_point, id));
+            _point.GetComponent<UnitPointController>().SetID(displayID);
+            UnitPoints.Add(id, new UnitPointInfo(_point, displayID));
         }
         
         UnitPoints[id].resetLastTime();
@@ -84,11 +87,14 @@ public class MapController : MonoBehaviour
 
     public void SetPoint(int id, Faction faction, Vector2 location)
     {
+        int displayID = id;
+        if (faction == Faction.Blue) displayID -= 20;
+
         if (!UnitPoints.ContainsKey(id))
         {
             GameObject _point = Instantiate(UnitPoint, gameObject.transform);
-            _point.GetComponent<UnitPointController>().SetID(id);
-            UnitPoints.Add(id, new UnitPointInfo(_point, id));
+            _point.GetComponent<UnitPointController>().SetID(displayID);
+            UnitPoints.Add(id, new UnitPointInfo(_point, displayID));
         }
         
         UnitPoints[id].resetLastTime();

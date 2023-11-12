@@ -2407,7 +2407,7 @@ PrefabInstance:
     - target: {fileID: 5077731995182089655, guid: 15ec1a962bbe3c64996a54d93db51efa,
         type: 3}
       propertyPath: m_text
-      value: Min Enclosing Radius
+      value: Min Enclosing Radius (5m)
       objectReference: {fileID: 0}
     - target: {fileID: 5077731995182089655, guid: 15ec1a962bbe3c64996a54d93db51efa,
         type: 3}
@@ -4065,7 +4065,7 @@ PrefabInstance:
     - target: {fileID: 5077731995182089655, guid: 15ec1a962bbe3c64996a54d93db51efa,
         type: 3}
       propertyPath: m_text
-      value: Min Average Enclosing Raius
+      value: Min Average Enclosing Raius (No use now)
       objectReference: {fileID: 0}
     - target: {fileID: 5077731995182089655, guid: 15ec1a962bbe3c64996a54d93db51efa,
         type: 3}

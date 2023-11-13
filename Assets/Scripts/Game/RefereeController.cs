@@ -306,7 +306,7 @@ public class RefereeController : NetworkBehaviour
                 FPVCamera.SetReviveWindow(Reviving.Value);
                 FPVCamera.SetReviveProgress(CurrentReviveProgress.Value, MaxReviveProgress.Value, (MaxReviveProgress.Value - CurrentReviveProgress.Value) / ReviveProgressPerSec.Value);
 
-                FPVCamera.SetPurchaseRevive(PurchaseRevivePrice.Value >= gameManager.Coins[(int)faction.Value], PurchaseRevivePrice.Value);
+                FPVCamera.SetPurchaseRevive(PurchaseRevivePrice.Value <= gameManager.Coins[(int)faction.Value], PurchaseRevivePrice.Value);
 
                 FPVCamera.SetFreeRevive(CurrentReviveProgress.Value >= MaxReviveProgress.Value);
 
@@ -753,7 +753,7 @@ public class RefereeController : NetworkBehaviour
                 HP.Value = HPLimit.Value * 10 / 100;
                 Enabled.Value = true;
 
-                OnRevived(RobotID.Value);
+                OnRevived(RobotID.Value, mode);
                 break;
             case 1:
                 // TODO: Pay to win
@@ -762,6 +762,8 @@ public class RefereeController : NetworkBehaviour
                 HP.Value = HPLimit.Value;
                 ShooterEnabled.Value = true;
                 Enabled.Value = true;
+
+                OnRevived(RobotID.Value, mode);
                 break;
             default:
                 break;

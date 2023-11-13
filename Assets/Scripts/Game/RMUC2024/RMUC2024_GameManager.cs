@@ -411,7 +411,7 @@ public class RMUC2024_GameManager : GameManager
             default:
                 // TODO: If the robot is penalty to death, disable revival
                 Victim.MaxReviveProgress.Value = (int)Math.Round(10.0f + (420.0f - TimeLeft.Value) / 10.0f);
-                Victim.PurchaseRevivePrice.Value = (int)Math.Round(((420 - TimeLeft.Value) / 60) * 100 + (Victim.Level.Value + 1) * 50);
+                Victim.PurchaseRevivePrice.Value = (int)Math.Round(((420 - TimeLeft.Value) / 60) * 80 + (Victim.Level.Value + 1) * 20);
                 Victim.Reviving.Value = true;
                 Victim.Enabled.Value = false;
                 break;
@@ -454,6 +454,61 @@ public class RMUC2024_GameManager : GameManager
         if (!HasFirstBlood.Value)
         {
             HasFirstBlood.Value = true;
+        }
+    }
+
+    [ServerRpc]
+    protected override void PurchaseHandlerServerRpc(int id, PurchaseType type, int amount, ServerRpcParams serverRpcParams = default)
+    {
+        RefereeController referee = RefereeControllerList[id];
+        Faction faction = referee.faction.Value;
+
+        int cost = 0;
+
+        switch (type)
+        {
+            case PurchaseType.Remote_HP:
+                cost = 50 + Mathf.CeilToInt((420 - TimeLeft.Value) / 60) * 20;
+                if (CostCoin(faction, cost)) 
+                {
+                    RemoteHPTimes[(int)faction] --;
+                    StartCoroutine(RemoteHealthSupply(referee));
+                }
+                break;
+            case PurchaseType.Remote_Ammo0:
+                cost = 150;
+                if (CostCoin(faction, cost)) 
+                {
+                    RemoteAmmo0Times[(int)faction] --;
+                    StartCoroutine(RemoteAmmo0Supply(referee));
+                }
+                break;
+            case PurchaseType.Remote_Ammo1:
+                cost = 200;
+                if (CostCoin(faction, cost)) 
+                {
+                    RemoteAmmo1Times[(int)faction] --;
+                    StartCoroutine(RemoteAmmo1Supply(referee));
+                }
+                break;
+            case PurchaseType.Ammo0:
+                cost = amount;
+                if (CostCoin(faction, cost)) 
+                {
+                    Ammo0Supply[(int)faction] -= amount;
+                    referee.Ammo0.Value += amount;
+                }
+                break;
+            case PurchaseType.Ammo1:
+                cost = amount * 15;
+                if (CostCoin(faction, cost)) 
+                {
+                    Ammo1Supply[(int)faction] -= amount;
+                    referee.Ammo1.Value += amount;
+                }
+                break;
+            default:
+                break;
         }
     }
 

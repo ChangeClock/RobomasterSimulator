@@ -726,8 +726,10 @@ public class FPVController : MonoBehaviour
             PurchaseItemHP.alpha = 1f;
             if (PurchaseItemHPPoint1 != null) PurchaseItemHPPoint1.color = (hpTimes >=1) ? ActiveColor : InactiveColor;
             if (PurchaseItemHPPoint2 != null) PurchaseItemHPPoint2.color = (hpTimes >=2) ? ActiveColor : InactiveColor;
+            RemotePurchaseHPAction.Enable();
         } else {
             PurchaseItemHP.alpha = 0.4f;
+            RemotePurchaseHPAction.Disable();
         }
         
         if (bullet_17)
@@ -735,8 +737,10 @@ public class FPVController : MonoBehaviour
             PurchaseItem17mm.alpha = 1f;
             if (PurchaseItem17mmPoint1 != null) PurchaseItem17mmPoint1.color = (bullet_17Times >=1) ? ActiveColor : InactiveColor;
             if (PurchaseItem17mmPoint2 != null) PurchaseItem17mmPoint2.color = (bullet_17Times >=2) ? ActiveColor : InactiveColor;
+            RemotePurchaseAmmo0Action.Enable();
         } else {
             PurchaseItem17mm.alpha = 0.4f;
+            RemotePurchaseAmmo0Action.Disable();
         }
         
         if (bullet_42)
@@ -744,8 +748,10 @@ public class FPVController : MonoBehaviour
             PurchaseItem42mm.alpha = 1f;
             if (PurchaseItem42mmPoint1 != null) PurchaseItem42mmPoint1.color = (bullet_42Times >=1) ? ActiveColor : InactiveColor;
             if (PurchaseItem42mmPoint2 != null) PurchaseItem42mmPoint2.color = (bullet_42Times >=2) ? ActiveColor : InactiveColor;
+            RemotePurchaseAmmo1Action.Enable();
         } else {
             PurchaseItem42mm.alpha = 0.4f;
+            RemotePurchaseAmmo1Action.Disable();
         }
     }
 

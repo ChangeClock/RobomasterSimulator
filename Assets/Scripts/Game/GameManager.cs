@@ -533,7 +533,7 @@ public class GameManager : NetworkBehaviour
             default:
                 // TODO: If the robot is penalty to death, disable revival
                 Victim.MaxReviveProgress.Value = (int)Math.Round(10.0f + (420.0f - TimeLeft.Value) / 10.0f);
-                Victim.PurchaseRevivePrice.Value = (int)Math.Round(((420 - TimeLeft.Value) / 60) * 100 + Victim.Level.Value * 50);
+                Victim.PurchaseRevivePrice.Value = (int)Math.Round(((420 - TimeLeft.Value) / 60) * 100 + (Victim.Level.Value + 1) * 50);
                 Victim.Reviving.Value = true;
                 Victim.Enabled.Value = false;
                 break;
@@ -595,6 +595,7 @@ public class GameManager : NetworkBehaviour
                 break;
             case 1:
                 // TODO: If the robot used purchase to revival, revival time will add 20s for each purchase
+                Coins[(int)RefereeControllerList[id].faction.Value] -= RefereeControllerList[id].PurchaseRevivePrice.Value;
                 RefereeControllerList[id].MaxReviveProgress.Value += 20;
                 RefereeControllerList[id].AddBuff(PurchaseReviveBuff);
                 break;

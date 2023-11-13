@@ -410,8 +410,8 @@ public class RMUC2024_GameManager : GameManager
             
             default:
                 // TODO: If the robot is penalty to death, disable revival
-                Victim.MaxReviveProgress.Value = Mathf.RoundToInt(10.0f + (420.0f - TimeLeft.Value) / 10.0f);
-                Victim.PurchaseRevivePrice.Value = Mathf.RoundToInt(((420 - TimeLeft.Value) / 60) * 100 + Victim.Level.Value * 50);
+                Victim.MaxReviveProgress.Value = (int)Math.Round(10.0f + (420.0f - TimeLeft.Value) / 10.0f);
+                Victim.PurchaseRevivePrice.Value = (int)Math.Round(((420 - TimeLeft.Value) / 60) * 100 + (Victim.Level.Value + 1) * 50);
                 Victim.Reviving.Value = true;
                 Victim.Enabled.Value = false;
                 break;

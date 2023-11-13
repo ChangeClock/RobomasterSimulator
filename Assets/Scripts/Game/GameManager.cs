@@ -645,6 +645,7 @@ public class GameManager : NetworkBehaviour
 
         int cost = 0;
 
+        // TODO #37
         switch (type)
         {
             case PurchaseType.Remote_HP:
@@ -692,7 +693,7 @@ public class GameManager : NetworkBehaviour
         }
     }
 
-    bool CostCoin(Faction faction, int cost)
+    protected bool CostCoin(Faction faction, int cost)
     {
         if (Coins[(int)faction] >= cost)
         {
@@ -702,7 +703,7 @@ public class GameManager : NetworkBehaviour
         return false;
     }
 
-    IEnumerator RemoteHealthSupply(RefereeController robot)
+    protected IEnumerator RemoteHealthSupply(RefereeController robot)
     {
         yield return new WaitForSeconds(RemoteSupplyApplyInterval);
 
@@ -716,7 +717,7 @@ public class GameManager : NetworkBehaviour
         }
     }
 
-    IEnumerator RemoteAmmo0Supply(RefereeController robot)
+    protected IEnumerator RemoteAmmo0Supply(RefereeController robot)
     {
         yield return new WaitForSeconds(RemoteSupplyApplyInterval);
 
@@ -724,7 +725,7 @@ public class GameManager : NetworkBehaviour
         robot.Ammo0.Value += RemoteAmmo0SupplyAmount;
     }
 
-    IEnumerator RemoteAmmo1Supply(RefereeController robot)
+    protected IEnumerator RemoteAmmo1Supply(RefereeController robot)
     {
         yield return new WaitForSeconds(RemoteSupplyApplyInterval);
 

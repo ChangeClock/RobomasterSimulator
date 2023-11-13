@@ -1501,17 +1501,13 @@ MonoBehaviour:
   RealAmmo0SupplyLimit: 400
   Ammo0SupplyLimit: 1500
   Ammo1SupplyLimit: 100
-  PurchaseRevivePrice: 100 + (420 - time) / 60 * 50 + level * 50
   RemoteSupplyApplyInterval: 6
   RemoteHPTimesLimit: -1
   RemoteHPSupplyAmount: 0.6
-  RemoteHPCost: 100 + (420 - time) / 60 * 20
   RemoteAmmo0TimesLimit: -1
   RemoteAmmo0SupplyAmount: 100
-  RemoteAmmo0Cost: 200
   RemoteAmmo1TimesLimit: -1
   RemoteAmmo1SupplyAmount: 10
-  RemoteAmmo1Cost: 300
   RedBuffDevice: {fileID: 1448395867}
   BlueBuffDevice: {fileID: 2102897083}
   PriceInfo: {fileID: 11400000, guid: 286d1f82da7212544bf5dbe894c186a1, type: 2}

@@ -86,7 +86,7 @@ public class ArmorController : MonoBehaviour
 
         }
 
-        // Debug.Log("Bullet hit armor" + perpendicularVelocity + " " + perpendicularVelocity.magnitude);
+        // Debug.Log($"[ArmorController] Bullet hit armor" + perpendicularVelocity + " " + perpendicularVelocity.magnitude);
     }
 
     IEnumerator Blink()

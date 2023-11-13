@@ -627,6 +627,8 @@ MonoBehaviour:
     m_InternalValue: 0
   pitchMax: 11.5
   pitchMin: -11.5
+  DisplayYaw: 0
+  DisplayPitch: 0
   ShooterList:
   - {fileID: 8801609716689365590}
   CurrentShooter: 0
@@ -748,7 +750,7 @@ Rigidbody:
   m_IsKinematic: 0
   m_Interpolate: 0
   m_Constraints: 0
-  m_CollisionDetection: 0
+  m_CollisionDetection: 1
 --- !u!65 &1395484117681446107
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -790,7 +792,7 @@ BoxCollider:
   m_Enabled: 1
   serializedVersion: 3
   m_Size: {x: 5.8, y: 0.15, z: 0.2}
-  m_Center: {x: -0.00036919117, y: 0.1, z: -2.25}
+  m_Center: {x: -0.00036919117, y: 0.1, z: -2.05}
 --- !u!65 &552194708332848096
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -811,7 +813,7 @@ BoxCollider:
   m_Enabled: 1
   serializedVersion: 3
   m_Size: {x: 5.8, y: 0.15, z: 0.2}
-  m_Center: {x: -0.00036919117, y: 0.1, z: 2.25}
+  m_Center: {x: -0.00036919117, y: 0.1, z: 2.05}
 --- !u!138 &1086222983887010005
 FixedJoint:
   m_ObjectHideFlags: 0
@@ -1710,7 +1712,7 @@ PrefabInstance:
     - target: {fileID: 5920901610762163384, guid: 689528988214a3645a74d7083dd62c64,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0.212
+      value: -0.21200001
       objectReference: {fileID: 0}
     - target: {fileID: 5920901610762163384, guid: 689528988214a3645a74d7083dd62c64,
         type: 3}
@@ -1798,7 +1800,7 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents:
-    - {fileID: 2087589598418905570, guid: 689528988214a3645a74d7083dd62c64, type: 3}
+    - {fileID: 0}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
@@ -2010,7 +2012,7 @@ PrefabInstance:
     - target: {fileID: 5920901610762163384, guid: 689528988214a3645a74d7083dd62c64,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.32
+      value: 0.31999993
       objectReference: {fileID: 0}
     - target: {fileID: 5920901610762163384, guid: 689528988214a3645a74d7083dd62c64,
         type: 3}
@@ -2549,7 +2551,7 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents:
-    - {fileID: 2087589598418905570, guid: 689528988214a3645a74d7083dd62c64, type: 3}
+    - {fileID: 0}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
@@ -2586,7 +2588,7 @@ PrefabInstance:
     - target: {fileID: 5920901610762163384, guid: 689528988214a3645a74d7083dd62c64,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0.246
+      value: -0.24600005
       objectReference: {fileID: 0}
     - target: {fileID: 5920901610762163384, guid: 689528988214a3645a74d7083dd62c64,
         type: 3}
@@ -2669,7 +2671,7 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents:
-    - {fileID: 2087589598418905570, guid: 689528988214a3645a74d7083dd62c64, type: 3}
+    - {fileID: 0}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []

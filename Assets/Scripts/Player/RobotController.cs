@@ -197,6 +197,21 @@ public class RobotController : NetworkBehaviour
         }
     }
 
+    void Update()
+    {
+        if (!Enabled.Value) return;
+
+        if (IsOwner)
+        {
+            if (UnityEngine.Cursor.lockState != CursorLockMode.Locked)
+            {
+                shoot.Disable();
+            } else {
+                shoot.Enable();
+            }
+        }
+    }
+
     void FixedUpdate()
     {
         if (!Enabled.Value) return;

@@ -241,6 +241,7 @@ public class GameManager : NetworkBehaviour
         ToggleActivateArea(false);
 
         ResetCoin();
+        ResetAmmoSupply();
         ResetRemoteSupplyTimes();
 
         foreach(var _referee in RefereeControllerList.Values)
@@ -249,6 +250,7 @@ public class GameManager : NetworkBehaviour
         }
 
         if (RedSentry != null) RedSentry.Ammo0.Value = SentryInitialAmmo;
+        if (BlueSentry != null) BlueSentry.Ammo0.Value = SentryInitialAmmo;
 
         TimeLeft.Value = 420.0f;
 

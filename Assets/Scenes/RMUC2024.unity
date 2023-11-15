@@ -1475,6 +1475,7 @@ MonoBehaviour:
   EngineerPerformance: {fileID: 11400000, guid: 5662500a970bb52459ccf8a4c7aec7bd,
     type: 2}
   SentryPerformance: {fileID: 11400000, guid: 285215eca8816654d91432bdb520c13e, type: 2}
+  SentryInitialAmmo: 400
   DefaultBuff: {fileID: 11400000, guid: fd14d92e86e85b84bbfce1f876d67a14, type: 2}
   SentryDefaultBuff: {fileID: 11400000, guid: fd14d92e86e85b84bbfce1f876d67a14, type: 2}
   ReviveBuff: {fileID: 11400000, guid: 0acdb99461a10d54c814aecacc63ec07, type: 2}

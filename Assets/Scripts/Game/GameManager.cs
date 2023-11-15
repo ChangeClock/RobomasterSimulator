@@ -44,6 +44,7 @@ public class GameManager : NetworkBehaviour
     [SerializeField] private RobotPerformanceSO[] GimbalPerformance_42mm;
     [SerializeField] private RobotPerformanceSO EngineerPerformance;
     [SerializeField] private RobotPerformanceSO SentryPerformance;
+    [SerializeField] private int SentryInitialAmmo = 700;
 
     [Header("Buff")]
     [SerializeField] private BuffEffectSO DefaultBuff;
@@ -240,6 +241,7 @@ public class GameManager : NetworkBehaviour
         ToggleActivateArea(false);
 
         ResetCoin();
+        ResetAmmoSupply();
         ResetRemoteSupplyTimes();
 
         foreach(var _referee in RefereeControllerList.Values)
@@ -247,13 +249,12 @@ public class GameManager : NetworkBehaviour
             _referee.Reset();
         }
 
+        if (RedSentry != null) RedSentry.Ammo0.Value = SentryInitialAmmo;
+        if (BlueSentry != null) BlueSentry.Ammo0.Value = SentryInitialAmmo;
+
         TimeLeft.Value = 420.0f;
 
         isRunning.Value = true;
-
-        // TODO: bring robot to their spawnpoint, reset HP, EXP, Level, Ammo, Heat, Energy
-
-        // TODO: Reset bank on each side, reset mine ore status.
     }
 
     protected void AddCoin(Faction faction, int coin)

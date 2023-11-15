@@ -438,9 +438,9 @@ MonoBehaviour:
   Ammo0:
     m_InternalValue: 200
   RealAmmo0:
-    m_InternalValue: 350
+    m_InternalValue: 550
   RealAmmo0Limit:
-    m_InternalValue: 350
+    m_InternalValue: 550
   ConsumedAmmo1:
     m_InternalValue: 0
   Ammo1:
@@ -448,7 +448,7 @@ MonoBehaviour:
   RealAmmo1:
     m_InternalValue: 0
   RealAmmo1Limit:
-    m_InternalValue: 100
+    m_InternalValue: 0
   InSupplyArea:
     m_InternalValue: 0
   OccupyArea: {fileID: 0}

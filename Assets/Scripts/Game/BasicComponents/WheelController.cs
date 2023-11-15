@@ -35,7 +35,7 @@ public class WheelController : MonoBehaviour
     {
         if (collision.gameObject.tag == "Ground") 
         {
-            Debug.Log("Exit");
+            // Debug.Log("Exit");
             isCollidingCounterLock = false;
         }
     }

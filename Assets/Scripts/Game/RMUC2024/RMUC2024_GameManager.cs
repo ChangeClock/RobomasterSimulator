@@ -220,11 +220,6 @@ public class RMUC2024_GameManager : GameManager
                 area.RemoveBuff(BoostBuff);
                 area.AddBuff(BoostBuff_CD200);
             }
-
-            foreach (var area in MineBuffAreas)
-            {
-                area.Enabled.Value = false;
-            }
         }
         if (oldTime >= 330.0f && newTime < 330.0f)
         {
@@ -236,6 +231,11 @@ public class RMUC2024_GameManager : GameManager
             AddCoin(Faction.Red, 50);
             AddCoin(Faction.Blue, 50);
             ToggleBuff(true, BuffType.Small);
+
+            foreach (var area in MineBuffAreas)
+            {
+                area.enabled = false;
+            }
             // Small Buff
         }
     }

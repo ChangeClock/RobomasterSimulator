@@ -31,13 +31,21 @@ public class MenuManager : MonoBehaviour {
     [SerializeField] private TMP_Text ClientInfo;
     [SerializeField] private TMP_Text NetworkInfo;
 
+    [SerializeField] private TMP_Text FrameInfo;
+
     [SerializeField] private TMP_Text VersionInfo;
+
+    void Awake()
+    {
+        // Application.targetFrameRate = 60;
+    }
 
     void Start()
     {
         DontDestroyOnLoad(gameObject);
         
         VersionInfo.text = "Robomaster Simulater @ " + Application.version;
+        FrameInfo.text = (int)(1f / Time.unscaledDeltaTime) + "FPS";
 
         // FirstLevelMenu
         MultiplayerBtn.onClick.AddListener(() => EnterMenu(1));

@@ -11,6 +11,8 @@ public class ArmorController : MonoBehaviour
     public bool IsBlink;
     public int LightColor;
 
+    public Collider ArmorCollider;
+
     // damageType: 0 碰撞; 1 17mm; 2 42mm; 3 导弹;
     public delegate void HitAction(int damageType, float damage ,int armorID, int attackerID = 0);
     public event HitAction OnHit;
@@ -40,6 +42,16 @@ public class ArmorController : MonoBehaviour
 
     void OnCollisionEnter(Collision collision)
     {
+        if (ArmorCollider != null)
+        {
+            foreach (ContactPoint contact in collision.contacts)
+            {
+                // Debug.DrawRay(contact.point, contact.normal, Color.white);
+                // Debug.Log($"[ArmorController] Armor on Hit with {contact.thisCollider.name}");
+                if (contact.thisCollider != ArmorCollider) return;
+            }
+        }
+
         // Calculate the angle of impact between the collider and the armor
         Vector3 incomingVelocity = collision.relativeVelocity;
         Vector3 normal = collision.contacts[0].normal;

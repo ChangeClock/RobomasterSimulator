@@ -324,8 +324,8 @@ public class RMUC2024_GameManager : GameManager
             if (_referee.robotClass.Value == RobotClass.Engineer) _referee.AddBuff(EngineerInitBuff);
         }
 
-        if (RedSentry != null) RedSentry.Level.Value = 10;
-        if (BlueSentry != null) BlueSentry.Level.Value = 10;
+        if (RedSentry != null) RedSentry.Level.Value = 9;
+        if (BlueSentry != null) BlueSentry.Level.Value = 9;
 
         foreach (var area in HighLands)
         {

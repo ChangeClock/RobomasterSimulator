@@ -32,6 +32,7 @@ public class MenuManager : MonoBehaviour {
     [SerializeField] private TMP_Text NetworkInfo;
 
     [SerializeField] private TMP_Text FrameInfo;
+    public int FramesPerSec { get; protected set; }
 
     [SerializeField] private TMP_Text VersionInfo;
 
@@ -45,7 +46,6 @@ public class MenuManager : MonoBehaviour {
         DontDestroyOnLoad(gameObject);
         
         VersionInfo.text = "Robomaster Simulater @ " + Application.version;
-        FrameInfo.text = (int)(1f / Time.unscaledDeltaTime) + "FPS";
 
         // FirstLevelMenu
         MultiplayerBtn.onClick.AddListener(() => EnterMenu(1));
@@ -57,13 +57,15 @@ public class MenuManager : MonoBehaviour {
         ClientBtn.onClick.AddListener(() => StartMultiplayer(2));
     }
 
-    void Update()
+    void FixedUpdate()
     {
         if(NetworkManager.Singleton.IsClient || NetworkManager.Singleton.IsServer)
         {
             ClientInfo.text = "ClientID: " + NetworkManager.Singleton.LocalClientId;    
             // NetworkInfo.text = "Ping: " + NetworkManager.Singleton.NetworkConfig.NetworkTransport.GetCurrentRtt(NetworkManager.Singleton.LocalClientId) + "ms";
         }
+
+        FrameInfo.text = (int)(1f / Time.unscaledDeltaTime) + "FPS";
     }
 
     void EnterMenu(int index = 0)
@@ -134,4 +136,20 @@ public class MenuManager : MonoBehaviour {
     {
         MainMenu.SetActive(true);
     }
+
+    // private IEnumerator FPS()
+    // {
+    //     for (; ; )
+    //     {
+    //         int lastFrameCount = Time.frameCount;
+    //         float lastTime = Time.realtimeSinceStartup;
+    //         yield return new WaitForSeconds(frequency);
+ 
+    //         float timeSpan = Time.realtimeSinceStartup - lastTime;
+    //         int frameCount = Time.frameCount - lastFrameCount;
+ 
+    //         FramesPerSec = Mathf.RoundToInt(frameCount / timeSpan);
+    //         FrameInfo.text = FramesPerSec.ToString() + "FPS";
+    //     }
+    // }
 }

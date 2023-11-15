@@ -171,8 +171,25 @@ public class RefereeController : NetworkBehaviour
             
         FPVCamera = this.gameObject.GetComponentInChildren<FPVController>();
 
-        Armors = this.gameObject.GetComponentsInChildren<ArmorController>();
+        Armors = this.gameObject.GetComponentsInChildren<ArmorController>(false);
     
+        foreach (var armor in Armors)
+        {
+            if (armor.GetComponent<Rigidbody>() == null)
+            {
+                Rigidbody _rigidbody = armor.GetComponentInParent<Rigidbody>();
+                _rigidbody.collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;
+
+                ArmorController _armor = _rigidbody.gameObject.AddComponent<ArmorController>();
+                _armor.ArmorCollider = armor.GetComponent<Collider>();
+                
+                _armor = armor;
+                // armor.enabled = false;
+            }
+        }
+
+        Armors = this.gameObject.GetComponentsInChildren<ArmorController>(false);
+
         RFID = this.gameObject.GetComponentInChildren<RFIDController>();
     
         LightBar = this.gameObject.GetComponentInChildren<LightbarController>();

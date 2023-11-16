@@ -44,7 +44,7 @@ public class ShooterController : NetworkBehaviour
 
     void Start()
     {
-        UI.SetActive(IsOwner);
+        // UI.SetActive(IsOwner);
     }
 
     void Update()

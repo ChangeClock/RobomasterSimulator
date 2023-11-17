@@ -424,6 +424,7 @@ MonoBehaviour:
     m_InternalValue: 0
   AutoOperate:
     m_InternalValue: 0
+  printLog: 0
   Aim:
     m_Name: Aim
     m_Type: 0
@@ -505,7 +506,7 @@ MonoBehaviour:
   Yaw: {fileID: 8763282095714997651}
   Pitch: {fileID: 2924661339846520659}
   yawControllerParameters:
-  - 20
+  - 80
   - 0
   - 0.015
   pitchControllerParameters:
@@ -516,6 +517,8 @@ MonoBehaviour:
     m_InternalValue: 0
   yawTargetAngle:
     m_InternalValue: 0
+  maxYawSpeed:
+    m_InternalValue: 1800
   yawPatrolSpeed:
     m_InternalValue: 10
   pitchTargetAngle:
@@ -528,7 +531,6 @@ MonoBehaviour:
   DisplayPitch: 0
   ShooterList:
   - {fileID: 8801609716689365590}
-  - {fileID: 0}
   CurrentShooter: 0
   ShootFrequency: 20
   CameraList:
@@ -1330,7 +1332,7 @@ PrefabInstance:
     - target: {fileID: 1614908118280208390, guid: 8b3b1fc496cd355498cdc034e343b447,
         type: 3}
       propertyPath: printLog
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1614908118280208390, guid: 8b3b1fc496cd355498cdc034e343b447,
         type: 3}

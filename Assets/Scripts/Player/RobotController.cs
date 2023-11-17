@@ -13,6 +13,8 @@ public class RobotController : NetworkBehaviour
 
     public NetworkVariable<bool> AutoOperate = new NetworkVariable<bool>(false);
 
+    [SerializeField] private bool printLog = false;
+
     [Header("Action")]
     private PlayerInput Input;
     private InputAction move;
@@ -63,7 +65,9 @@ public class RobotController : NetworkBehaviour
     [SerializeField] private float[] pitchControllerParameters = {50f, 0f, 0.015f};
     public NetworkVariable<float> currentYawAngle = new NetworkVariable<float>(0);
     public NetworkVariable<float> yawTargetAngle = new NetworkVariable<float>(0);
+    public NetworkVariable<float> maxYawSpeed = new NetworkVariable<float>(1800f);
     public NetworkVariable<float> yawPatrolSpeed = new NetworkVariable<float>(60f);
+    
     public NetworkVariable<float> pitchTargetAngle = new NetworkVariable<float>(0);
     public NetworkVariable<float> currentPitchAngle = new NetworkVariable<float>(0);
 
@@ -82,7 +86,7 @@ public class RobotController : NetworkBehaviour
     [Header("Camera")]
     [SerializeField] private List<CameraController> CameraList = new List<CameraController>();
 
-    private Dictionary<int, TargetInfo> TargetList = new Dictionary<int, TargetInfo>();
+    private TargetInfo Target;
 
     public class TargetInfo
     {
@@ -91,6 +95,11 @@ public class RobotController : NetworkBehaviour
         public Vector3 Position;
         public float LastTime;
         public float LiveTime = 1.0f;
+
+        public bool IsValid
+        {
+            get { return LastTime > 0; }
+        }
 
         public TargetInfo(int id, Faction faction, Vector3 position)
         {
@@ -236,19 +245,19 @@ public class RobotController : NetworkBehaviour
                     lookDelta = Vector2.zero;
                 }
 
-                if (Aim.ReadValue<float>() <= 0 || FindClosestTarget() == Vector3.zero)
+                if (Aim.ReadValue<float>() <= 0 || Target == null)
                 {
                     yawTargetAngle.Value += lookDelta.x;
                     pitchTargetAngle.Value += lookDelta.y;
                 } else {
-                    LockTarget(FindClosestTarget());
+                    LockTarget(Target.Position);
                 }
             } else {
                 IsSpin.Value = true;
 
-                if (FindClosestTarget() != Vector3.zero)
+                if (Target != null)
                 {
-                    LockTarget(FindClosestTarget());
+                    LockTarget(Target.Position);
                     IsShoot.Value = true;
                 } else {
                     IsShoot.Value = false;
@@ -288,7 +297,7 @@ public class RobotController : NetworkBehaviour
                                             
                     JointMotor yawMotor = Yaw.GetComponent<HingeJoint>().motor;
 
-                    yawMotor.targetVelocity = yawController.Update(_yawDifference, Time.deltaTime);
+                    yawMotor.targetVelocity = Mathf.Clamp(yawController.Update(_yawDifference, Time.deltaTime), -maxYawSpeed.Value, maxYawSpeed.Value);
 
                     Yaw.transform.Rotate(new Vector3(0, yawMotor.targetVelocity * Time.deltaTime, 0), Space.World);
 
@@ -488,82 +497,67 @@ public class RobotController : NetworkBehaviour
 
         if (id == 0) return;
 
-        if (TargetList.ContainsKey(id))
+        if (printLog) Debug.DrawLine(Pitch.transform.position, position, Color.cyan);
+
+        if (Target == null)
         {
-            TargetList[id].LastTime = TargetList[id].LiveTime;
-            TargetList[id].Position = position;
+            Target = new TargetInfo(id, fac, position);
         } else {
-            TargetList.Add(id, new TargetInfo(id, fac, position));
+            Target.ID = id;
+            Target.Faction = fac;
+            Target.Position = position;
+            Target.LastTime = Target.LiveTime;
         }
     }
 
-    Vector3 FindClosestTarget()
+    bool CompareTargetDistance(Vector3 target1, Vector3 target2)
     {
-        Vector3 _position = Vector3.zero;
-        float _distance = 1000f;
+        return Vector3.Distance(Pitch.transform.position, target1) < Vector3.Distance(Pitch.transform.position, target2);
+    }
 
-        if (TargetList.Count <= 0) return _position;
-
-        foreach (var target in TargetList.Values)
-        {
-            if (target.LastTime <= 0) continue;
-
-            float _d = Vector3.Distance(Pitch.transform.position, target.Position);
-            if (_d < _distance)
-            {
-                _distance = _d;
-                _position = target.Position;
-            }
-
-            Debug.Log($"[RobotController] FindTarget {_distance}");
-        }
-
-        Debug.Log($"[RobotController] FindClosestTarget {_distance}");
-
-        return _position;
+    bool CompareTargetOffset(Vector3 target1, Vector3 target2)
+    {
+        return GetGimbalOffset(target1).magnitude < GetGimbalOffset(target2).magnitude;
     }
 
     void LockTarget(Vector3 target)
     {
         // Projectile the target position to the yaw and pitch plane
         Vector3 _target = (target - Pitch.transform.position).normalized;
-        Vector3 _yawTarget = Vector3.ProjectOnPlane(_target, Yaw.transform.up);
-        Vector3 _pitchTarget = Vector3.ProjectOnPlane(_target, Pitch.transform.forward);
-        
-        float _targetYawDifference = Vector3.SignedAngle(Yaw.transform.right, _yawTarget, Yaw.transform.up);
-        float _targetPitchDifference = Vector3.SignedAngle(Pitch.transform.right, _pitchTarget, Pitch.transform.forward);
+        Vector2 _gimbalOffset = GetGimbalOffset(_target);
 
-        yawTargetAngle.Value = currentYawAngle.Value + _targetYawDifference;
-        pitchTargetAngle.Value = currentPitchAngle.Value + _targetPitchDifference;
+        yawTargetAngle.Value = currentYawAngle.Value + _gimbalOffset.x;
+        pitchTargetAngle.Value = currentPitchAngle.Value + _gimbalOffset.y;
 
         // Debug.DrawLine(Yaw.transform.position, Yaw.transform.position + _yawTarget * 10, Color.red);
         // Debug.DrawLine(Pitch.transform.position, Pitch.transform.position + _pitchTarget * 10, Color.red);
 
-        // Debug.Log($"[RobotController] _yawDifference {_targetYawDifference} _pitchDifference {_targetPitchDifference} ");
+        if (printLog) Debug.Log($"[RobotController] _gimbalOffset {_gimbalOffset}");
         // Debug.Log($"[RobotController] currentYawAngle {currentYawAngle.Value} currentPitchAngle {currentPitchAngle.Value} ");
+    }
+
+    Vector2 GetGimbalOffset(Vector3 target)
+    {
+        Vector3 _yawTarget = Vector3.ProjectOnPlane(target, Yaw.transform.up);
+        Vector3 _pitchTarget = Vector3.ProjectOnPlane(target, Pitch.transform.forward);
+        
+        float _targetYawDifference = Vector3.SignedAngle(Yaw.transform.right, _yawTarget, Yaw.transform.up);
+        float _targetPitchDifference = Vector3.SignedAngle(Pitch.transform.right, _pitchTarget, Pitch.transform.forward);
+
+        return new Vector2(_targetYawDifference, _targetPitchDifference);
     }
 
     void TickTarget()
     {
-        if (TargetList.Count <= 0) return;
-
-        List<int> overtimeTargets = new List<int>();
-
-        foreach (var target in TargetList.Values)
+        if (Target != null)
         {
-            target.LastTime -= Time.deltaTime;
-            if (target.LastTime <= 0)
+            if (Target.IsValid)
             {
-                overtimeTargets.Add(target.ID);
+                Target.LastTime -= Time.deltaTime;
+                // Debug.DrawLine(Pitch.transform.position, Target.Position, Color.cyan);
+            } else {
+                Target = null;
             }
-            Debug.DrawLine(Pitch.transform.position, target.Position, Color.cyan);
-        }
-
-        if (overtimeTargets.Count <= 0) return;
-
-        foreach (var id in overtimeTargets)
-        {
-            TargetList.Remove(id);
         }
     }
 }

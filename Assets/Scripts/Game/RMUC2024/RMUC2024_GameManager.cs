@@ -599,7 +599,7 @@ public class RMUC2024_GameManager : GameManager
         // TODO: Balance Buff
         if (referee.robotTags.Contains(RobotTag.Balance)) _exp *= 1.5f;
 
-        Debug.Log($"[GameManager] Add {_exp} EXP");
+        // Debug.Log($"[GameManager] Add {_exp} EXP");
 
         referee.EXP.Value += Mathf.RoundToInt(_exp);
     }

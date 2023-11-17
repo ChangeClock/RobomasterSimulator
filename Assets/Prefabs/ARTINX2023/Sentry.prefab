@@ -615,6 +615,8 @@ MonoBehaviour:
     m_InternalValue: 0
   yawTargetAngle:
     m_InternalValue: 0
+  maxYawSpeed:
+    m_InternalValue: 1800
   yawPatrolSpeed:
     m_InternalValue: 10
   pitchTargetAngle:

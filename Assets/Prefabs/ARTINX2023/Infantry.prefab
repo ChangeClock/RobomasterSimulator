@@ -506,7 +506,7 @@ MonoBehaviour:
   Yaw: {fileID: 8763282095714997651}
   Pitch: {fileID: 2924661339846520659}
   yawControllerParameters:
-  - 80
+  - 100
   - 0
   - 0.015
   pitchControllerParameters:

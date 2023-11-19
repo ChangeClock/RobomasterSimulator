@@ -959,6 +959,9 @@ MonoBehaviour:
     m_InternalValue: 0
   SpeedLimit:
     m_InternalValue: 0
+  Lightbar: {fileID: -876546973899608171, guid: 7f6a72b05fd6dfb4ba17c77382e3df25,
+    type: 3}
+  LightbarObject: {fileID: 7226400317754159380}
   UI: {fileID: 2562973648400536858}
   Speed: {fileID: 4260295183282360083}
   Ammo: {fileID: 7655317275516343748}
@@ -1624,7 +1627,7 @@ PrefabInstance:
         type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
-      objectReference: {fileID: 2100000, guid: 70af8a5bc65ee4f46a6b44378d4d8d4f, type: 2}
+      objectReference: {fileID: 2100000, guid: 4e30bc66a8f1cef4fa20b620c53a9db8, type: 2}
     - target: {fileID: 919132149155446097, guid: 49367edfc719432448ed369b87667612,
         type: 3}
       propertyPath: m_Name
@@ -1641,6 +1644,12 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 49367edfc719432448ed369b87667612, type: 3}
+--- !u!1 &7226400317754159380 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 49367edfc719432448ed369b87667612,
+    type: 3}
+  m_PrefabInstance: {fileID: 7532337570140425285}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &7999101443836603310 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 49367edfc719432448ed369b87667612,

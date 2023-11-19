@@ -84,7 +84,7 @@ public class CameraController : MonoBehaviour
         }
 
         // if (printLog) Debug.DrawLine(transform.position, position, Color.red);
-        if (OnTargetDetected != null) OnTargetDetected(targets);
+        if (OnTargetDetected != null && targets.Count > 0) OnTargetDetected(targets);
     }
 
     private bool IsVisible(Camera c, GameObject target)
@@ -113,7 +113,7 @@ public class CameraController : MonoBehaviour
             if (hit.collider.gameObject == target)
             {
                 if (printLog) Debug.DrawLine(c.transform.position + Vector3.forward * c.nearClipPlane, hit.point, Color.yellow);
-                // if (printLog) Debug.Log($"[CameraController] {hit.collider.gameObject.name} detected");
+                if (printLog) Debug.Log($"[CameraController] {hit.collider.gameObject.name} detected, offset {GetRotateOffset(hit.collider.transform.position).magnitude}");
                 return true;
             }
             else
@@ -133,6 +133,6 @@ public class CameraController : MonoBehaviour
     Vector2 GetRotateOffset(Vector3 target)
     {
         Vector3 offset = target - transform.position;
-        return new Vector2(offset.x, offset.z);
+        return new Vector2(offset.y, offset.z);
     }
 }

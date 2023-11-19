@@ -89,6 +89,7 @@ public class RobotController : NetworkBehaviour
     [SerializeField] private List<CameraController> CameraList = new List<CameraController>();
 
     private TargetInfo Target;
+    [SerializeField] private float TargetOffsetThreshold = 4f;
 
     public override void OnNetworkSpawn()
     {
@@ -470,7 +471,8 @@ public class RobotController : NetworkBehaviour
 
     void TargetDetectedHandler(List<TargetInfo> targets)
     {
-        // Debug.Log($"[RobotController] TargetDetectedHandler {id} {fac} {position}");
+        if (targets.Count == 0) return;
+        
         TargetInfo _target = null;
         
         foreach (var target in targets)
@@ -511,8 +513,8 @@ public class RobotController : NetworkBehaviour
         // Debug.Log($"[RobotController] offset1 {offset1} offset2 {offset2}");
         float diff1 = new Vector2(offset1.y, offset1.z).magnitude;
         float diff2 = new Vector2(offset2.y, offset2.z).magnitude;
-        Debug.Log($"[RobotController] diff1 {diff1} diff2 {diff2}");
-        return diff1 < diff2;
+        if (printLog) Debug.Log($"[RobotController] diff1 {diff1} diff2 {diff2}");
+        return Mathf.Abs(diff1 - diff2) > TargetOffsetThreshold;
     }
 
     void LockTarget(Vector3 target)

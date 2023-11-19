@@ -38,7 +38,6 @@ public class MapController : MonoBehaviour
             _UnitPointInfo.lastTime -= Time.deltaTime;
             if (_UnitPointInfo.lastTime <= 0)
             {
-                Destroy(_UnitPointInfo.point);
                 overtimePoints.Add(_UnitPointInfo.ID);
             }
         }
@@ -47,6 +46,7 @@ public class MapController : MonoBehaviour
 
         foreach (var _id in overtimePoints)
         {
+            // Destroy(UnitPoints[_id].point);
             UnitPoints.Remove(_id);
         }
     }

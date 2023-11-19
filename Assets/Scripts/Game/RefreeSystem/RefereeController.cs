@@ -594,9 +594,9 @@ public class RefereeController : NetworkBehaviour
                 if (atkBuff > 0) _damage = _damage * (1 + atkBuff / 100);
             }
 
-            if (!robotTags.Contains(RobotTag.Building) & DEFBuff.Value > 0)
+            if (!robotTags.Contains(RobotTag.Building))
             {
-                _damage = _damage * (1 - (DEFBuff.Value + DEFDeBuff.Value) / 100);
+                _damage = (int)(_damage * (1f - (DEFBuff.Value - DEFDeBuff.Value) / 100f));
             }
             
             switch(damageType){
@@ -897,7 +897,7 @@ public class RefereeController : NetworkBehaviour
         Velocity = Quaternion.AngleAxis(Random.Range(-maxAngleDifference, maxAngleDifference), randomAxis) * Velocity;
         // Velocity = Velocity.magnitude * (Random.insideUnitSphere * MinEnclosingCircle_Raius.Value + Velocity).normalized;
 
-        Debug.Log($"[RefereeController] Velocity {Velocity}");
+        // Debug.Log($"[RefereeController] Velocity {Velocity}");
 
         OnShoot(ID, shooter.Type.Value, RobotID.Value, Position, Velocity);
     }

@@ -34,6 +34,9 @@ public class ShooterController : NetworkBehaviour
     public NetworkVariable<int> CD               = new NetworkVariable<int>(0);
     public NetworkVariable<int> SpeedLimit       = new NetworkVariable<int>(0);
 
+    private Material Lightbar;
+    [SerializeField] private GameObject LightbarObject;
+
     [SerializeField] private GameObject UI;
     [SerializeField] private TextMeshProUGUI Speed;
     [SerializeField] private TextMeshProUGUI Ammo;
@@ -45,11 +48,16 @@ public class ShooterController : NetworkBehaviour
     void Start()
     {
         // UI.SetActive(IsOwner);
+        Lightbar = LightbarObject.GetComponent<Renderer>().material;
+        Lightbar.SetFloat("_FillRate", 0f);
+        Lightbar.SetFloat("_Boarder", LightbarObject.GetComponent<MeshFilter>().mesh.bounds.size.z / 2f);
     }
 
     void Update()
     {
         // Update light effects on shooter components according to head and heatlimit
+
+        LightbarObject.GetComponent<Renderer>().material.SetFloat("_FillRate", Heat.Value / HeatLimit.Value);
 
         HeatBar.SetValue(Heat.Value);
         HeatBar.SetMaxValue(HeatLimit.Value);
@@ -83,6 +91,18 @@ public class ShooterController : NetworkBehaviour
     public void SetHeatMode(int mode)
     {
         // Round heat bar
+    }
+
+    public void SetFaction(Faction fac)
+    {
+        if (fac == Faction.Red)
+        {
+            Lightbar.SetColor("_FillColor", Color.red);
+        } else if (fac == Faction.Blue) {
+            Lightbar.SetColor("_FillColor", Color.blue);
+        } else {
+            Lightbar.SetColor("_FillColor", Color.white);
+        }
     }
 
     public void ToggleUI()

@@ -347,6 +347,8 @@ public class RefereeController : NetworkBehaviour
                         default:
                             break;
                     }
+
+                    _shooter.SetFaction(faction.Value);
                 }
 
                 FPVCamera.SetAmmo0Item(has17mmShooter, InSupplyArea.Value, gameManager.Coins[(int)faction.Value], Ammo0.Value, gameManager.Ammo0Supply[(int)faction.Value]);

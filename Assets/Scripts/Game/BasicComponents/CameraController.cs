@@ -1,8 +1,36 @@
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
+using CameraCommunication;
+
+namespace CameraCommunication
+{
+    public class TargetInfo
+    {
+        public int ID;
+        public Faction Faction;
+        public Vector3 Position;
+        public float LastTime;
+        public float LiveTime = 1.0f;
+
+        public bool IsValid
+        {
+            get { return LastTime > 0; }
+        }
+
+        public TargetInfo(int id, Faction faction, Vector3 position)
+        {
+            ID = id;
+            Faction = faction;
+            Position = position;
+            LastTime = LiveTime;
+        }
+    }
+}
 
 public class CameraController : MonoBehaviour 
 {
-    public delegate void TargetDetectAction(int robotID, Faction faction, Vector3 position);
+    public delegate void TargetDetectAction(List<TargetInfo> targets);
     public event TargetDetectAction OnTargetDetected;
 
     private Camera cam;
@@ -12,6 +40,8 @@ public class CameraController : MonoBehaviour
     [SerializeField] private bool printLog = false;
 
     [SerializeField] private Vector3 camOffset = new Vector3(0f, 0f, 0f);
+
+    List<TargetInfo> targets = new List<TargetInfo>();
 
     void Start() 
     {
@@ -27,9 +57,7 @@ public class CameraController : MonoBehaviour
         Collider[] Armors = Physics.OverlapSphere(transform.position, DetectRange, 1 << LayerMask.NameToLayer("Armor"));
         // if (printLog) Debug.Log($"[CameraController] {Armors.Length} armors detected");
 
-        int id = 0;
-        Faction faction = Faction.Neu;
-        Vector3 position = Vector3.zero;
+        targets.Clear();
 
         foreach (var armor in Armors)
         {
@@ -49,24 +77,14 @@ public class CameraController : MonoBehaviour
                     // Raise event with the target ID & the target position
                     if (referee != null)
                     {
-                        if (id == 0)
-                        {
-                            id = referee.RobotID.Value;
-                            faction = referee.faction.Value;
-                            position = armor.transform.position;
-                        } else if (CompareTargetOffset(armor.transform.position, position))
-                        {
-                            id = referee.RobotID.Value;
-                            faction = referee.faction.Value;
-                            position = armor.transform.position;
-                        }
+                        targets.Add(new TargetInfo(referee.RobotID.Value, referee.faction.Value, armor.transform.position));
                     }
                 }
             }
         }
 
-        if (printLog) Debug.DrawLine(transform.position, position, Color.red);
-        if (OnTargetDetected != null) OnTargetDetected(id, faction, position);
+        // if (printLog) Debug.DrawLine(transform.position, position, Color.red);
+        if (OnTargetDetected != null) OnTargetDetected(targets);
     }
 
     private bool IsVisible(Camera c, GameObject target)

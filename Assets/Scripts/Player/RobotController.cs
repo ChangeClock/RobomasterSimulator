@@ -5,6 +5,8 @@ using UnityEngine.InputSystem;
 using Unity.Netcode;
 using Cinemachine;
 
+using CameraCommunication;
+
 public class RobotController : NetworkBehaviour
 {
     private RefereeController referee;
@@ -87,28 +89,6 @@ public class RobotController : NetworkBehaviour
     [SerializeField] private List<CameraController> CameraList = new List<CameraController>();
 
     private TargetInfo Target;
-
-    public class TargetInfo
-    {
-        public int ID;
-        public Faction Faction;
-        public Vector3 Position;
-        public float LastTime;
-        public float LiveTime = 1.0f;
-
-        public bool IsValid
-        {
-            get { return LastTime > 0; }
-        }
-
-        public TargetInfo(int id, Faction faction, Vector3 position)
-        {
-            ID = id;
-            Faction = faction;
-            Position = position;
-            LastTime = LiveTime;
-        }
-    }
 
     public override void OnNetworkSpawn()
     {
@@ -488,25 +468,29 @@ public class RobotController : NetworkBehaviour
         return shooter.HeatLimit.Value - shooter.Heat.Value >= (shooter.Mode.Value == 0 ? 10 : 100);
     }
 
-    void TargetDetectedHandler(int id, Faction fac, Vector3 position)
+    void TargetDetectedHandler(List<TargetInfo> targets)
     {
         // Debug.Log($"[RobotController] TargetDetectedHandler {id} {fac} {position}");
-    
-        if (fac == Faction.Neu) return;
-        if (fac == referee.faction.Value) return;
-
-        if (id == 0) return;
-
-        if (printLog) Debug.DrawLine(Pitch.transform.position, position, Color.cyan);
-
-        if (Target == null)
+        TargetInfo _target = null;
+        
+        foreach (var target in targets)
         {
-            Target = new TargetInfo(id, fac, position);
-        } else {
-            Target.ID = id;
-            Target.Faction = fac;
-            Target.Position = position;
-            Target.LastTime = Target.LiveTime;
+            if (target.Faction == Faction.Neu) continue;
+            if (target.Faction == referee.faction.Value) continue;
+
+            if (_target == null)
+            {
+                _target = target;
+            } else if (CompareTargetOffset(target.Position, Target.Position) && CompareTargetDistance(target.Position, Target.Position)) {
+                _target = target;
+            }
+        }
+
+        if (_target != null)
+        {
+            Target = _target;
+            // if (printLog) Debug.Log($"[RobotController] TargetDetectedHandler {Target.ID} {Target.Faction} {Target.Position}");
+            if (printLog) Debug.DrawLine(Pitch.transform.position, Target.Position, Color.red);
         }
     }
 
@@ -515,9 +499,20 @@ public class RobotController : NetworkBehaviour
         return Vector3.Distance(Pitch.transform.position, target1) < Vector3.Distance(Pitch.transform.position, target2);
     }
 
-    bool CompareTargetOffset(Vector3 target1, Vector3 target2)
+    bool CompareRotateOffset(Vector3 target1, Vector3 target2)
     {
         return GetGimbalOffset(target1).magnitude < GetGimbalOffset(target2).magnitude;
+    }
+
+    bool CompareTargetOffset(Vector3 target1, Vector3 target2)
+    {
+        Vector3 offset1 = target1 - Pitch.transform.position;
+        Vector3 offset2 = target2 - Pitch.transform.position;
+        // Debug.Log($"[RobotController] offset1 {offset1} offset2 {offset2}");
+        float diff1 = new Vector2(offset1.y, offset1.z).magnitude;
+        float diff2 = new Vector2(offset2.y, offset2.z).magnitude;
+        Debug.Log($"[RobotController] diff1 {diff1} diff2 {diff2}");
+        return diff1 < diff2;
     }
 
     void LockTarget(Vector3 target)
@@ -532,7 +527,7 @@ public class RobotController : NetworkBehaviour
         // Debug.DrawLine(Yaw.transform.position, Yaw.transform.position + _yawTarget * 10, Color.red);
         // Debug.DrawLine(Pitch.transform.position, Pitch.transform.position + _pitchTarget * 10, Color.red);
 
-        if (printLog) Debug.Log($"[RobotController] _gimbalOffset {_gimbalOffset}");
+        // if (printLog) Debug.Log($"[RobotController] _gimbalOffset {_gimbalOffset}");
         // Debug.Log($"[RobotController] currentYawAngle {currentYawAngle.Value} currentPitchAngle {currentPitchAngle.Value} ");
     }
 

@@ -105,6 +105,10 @@ public class BuffController : RefereeController
     {
         if (!IsServer) return;
 
+        if (score <= 0) return;
+
+        Debug.Log($"[BuffController] HitHandler {id} {score}");
+
         if (id == NextTargetID.Value) 
         {
             foreach (var target in Targets)

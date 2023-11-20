@@ -40,7 +40,7 @@ public class ArmorController : MonoBehaviour
         }
     }
 
-    void OnCollisionEnter(Collision collision)
+    protected virtual void OnCollisionEnter(Collision collision)
     {
         if (ArmorCollider != null)
         {

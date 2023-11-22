@@ -85,7 +85,7 @@ GameObject:
   - component: {fileID: 8399005157140955120}
   m_Layer: 0
   m_Name: Target
-  m_TagString: Untagged
+  m_TagString: Armor
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -123,6 +123,7 @@ MonoBehaviour:
   Enabled: 0
   IsBlink: 0
   LightColor: 0
+  faction: 0
   ArmorCollider: {fileID: 4741545615838483300}
   velocityThreshold:
   - 6
@@ -134,6 +135,7 @@ MonoBehaviour:
   - 10
   - 100
   - 0
+  armorLight: {fileID: 0}
   TargetID: 0
   IsActive: 0
   IsTarget: 0

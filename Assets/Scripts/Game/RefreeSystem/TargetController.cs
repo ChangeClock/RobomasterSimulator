@@ -26,32 +26,55 @@ public class TargetController : ArmorController
     {
         if (IsActive && Score > 0)
         {
-            for (int i = 0; i < Rings.Count; i ++)
+            if (Score == Rings.Count)
             {
-                Rings[i].SetActive(Score == i);
+                Rings[Score-1].SetActive(true);
+                for (int i = Rings.Count - 2; i >= 0; i -= 2)
+                {
+                    Rings[i].SetActive(true);
+                }
             }
-            TargetIcon.SetActive(false);
+            else
+            {
+                for (int i = 0; i < Rings.Count; i ++)
+                {
+                    Rings[i].SetActive(Score == i);
+                }
+            }
+            if (TargetIcon != null) TargetIcon.SetActive(false);
         } else {           
             foreach (var ring in Rings)
             {
                 if (ring != null) ring.SetActive(false);
             }
-            TargetIcon.SetActive(IsTarget);
+            if (TargetIcon != null) TargetIcon.SetActive(IsTarget);
         }
 
-        Color color = LightColor == 1 ? Color.blue : Color.red;
+        Color color = Color.white;
+        if (faction == Faction.Red) color = Color.red;
+        if (faction == Faction.Blue) color = Color.blue;
 
         foreach (var ring in Rings)
         {
             if (ring != null) ring.GetComponent<RawImage>().color = color;
         }
 
-        TargetIcon.GetComponent<RawImage>().color = color;
+        if (TargetIcon != null) TargetIcon.GetComponent<RawImage>().color = color;
     }
 
     protected override void OnCollisionEnter(Collision collision)
     {
         base.OnCollisionEnter(collision);
+
+        if (ArmorCollider != null)
+        {
+            foreach (ContactPoint contact in collision.contacts)
+            {
+                // Debug.DrawRay(contact.point, contact.normal, Color.white);
+                // Debug.Log($"[ArmorController] Armor on Hit with {contact.thisCollider.name}");
+                if (contact.thisCollider != ArmorCollider) return;
+            }
+        }
 
         int score = 0;
         int _score = 0;
@@ -59,7 +82,7 @@ public class TargetController : ArmorController
         foreach (ContactPoint contact in collision.contacts)
         {
             Debug.DrawLine(contact.point, transform.position, Color.red);
-            Debug.Log($"[TargetController] Distance {Vector3.Distance(contact.point, transform.position)}, Radius {contact.thisCollider.bounds.size}, Score {Vector3.Distance(contact.point, contact.thisCollider.transform.position) / (contact.thisCollider.bounds.size.z / 2) * 10}");
+            // Debug.Log($"[TargetController] Distance {Vector3.Distance(contact.point, transform.position)}, Radius {contact.thisCollider.bounds.size}, Score {Vector3.Distance(contact.point, contact.thisCollider.transform.position) / (contact.thisCollider.bounds.size.z / 2) * 10}");
             
             _score = 10 - Mathf.RoundToInt(Vector3.Distance(contact.point, contact.thisCollider.transform.position) / (contact.thisCollider.bounds.size.z / 2) * 10);
 

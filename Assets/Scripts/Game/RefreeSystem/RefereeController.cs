@@ -1,3 +1,4 @@
+
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -52,14 +53,14 @@ public class RefereeController : NetworkBehaviour
     public static event LockedAction OnLocked;
 
     [Header("Referee")]
-    private ArmorController[] Armors;
+    protected ArmorController[] Armors;
     public Dictionary<int, ShooterController> ShooterControllerList = new Dictionary<int, ShooterController>();
-    private RFIDController RFID;
-    private LightbarController LightBar;
-    private UWBController UWB;
-    private FPVController FPVCamera;
+    protected RFIDController RFID;
+    protected LightbarController LightBar;
+    protected UWBController UWB;
+    protected FPVController FPVCamera;
     // private EnergyController EnergyCtl;
-    private WheelController[] Wheels;
+    protected WheelController[] Wheels;
 
     public NetworkVariable<int> RobotID = new NetworkVariable<int>(0);
     public NetworkVariable<RobotClass> robotClass = new NetworkVariable<RobotClass>(RobotClass.Infantry);
@@ -165,7 +166,7 @@ public class RefereeController : NetworkBehaviour
         }
     }
 
-    void Awake()
+    protected virtual void Awake()
     {
         gameManager = GameObject.FindAnyObjectByType<GameManager>();
             
@@ -181,10 +182,15 @@ public class RefereeController : NetworkBehaviour
                 _rigidbody.collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;
 
                 ArmorController _armor = _rigidbody.gameObject.AddComponent<ArmorController>();
-                _armor.ArmorCollider = armor.GetComponent<Collider>();
+                armor.ArmorCollider = armor.GetComponent<Collider>();
                 
-                _armor = armor;
-                // armor.enabled = false;
+                _armor.ArmorCollider = armor.ArmorCollider;
+                _armor.ArmorID = armor.ArmorID;
+                _armor.Enabled = armor.Enabled;
+                _armor.LightColor = armor.LightColor;
+
+                _armor.velocityThreshold = armor.velocityThreshold;
+                _armor.damage = armor.damage;
             }
         }
 
@@ -267,7 +273,7 @@ public class RefereeController : NetworkBehaviour
             if(_armor != null) 
             {
                 _armor.Enabled = Enabled.Value;
-                _armor.LightColor = faction.Value == Faction.Red ? 1 : 2;
+                _armor.faction = faction.Value;
             }
         }
 
@@ -401,7 +407,7 @@ public class RefereeController : NetworkBehaviour
                 DisengagedTime.Value += Time.deltaTime;
             }
 
-            TickPower();
+            if (Wheels != null) TickPower();
 
             if (Reviving.Value) TickRevive();
 
@@ -480,10 +486,13 @@ public class RefereeController : NetworkBehaviour
     {
         float realPower = 0.0f;
 
-        foreach (WheelController wheel in Wheels)
+        if (Wheels.Length > 0)
         {
-            if (!Enabled.Value) wheel.SetPower(0);
-            realPower += Mathf.Abs(wheel.GetPower());
+            foreach (WheelController wheel in Wheels)
+            {
+                if (!Enabled.Value) wheel.SetPower(0);
+                realPower += Mathf.Abs(wheel.GetPower());
+            }
         }
 
         if (PowerLimit.Value <= 0) return;
@@ -1289,26 +1298,6 @@ public class RefereeController : NetworkBehaviour
         }
     }
 
-    T FindClosestWithScript<T>(Vector3 currentPosition) where T : MonoBehaviour
-    {
-        T[] instances = GameObject.FindObjectsOfType<T>();
-        T closest = null;
-        float closestDistanceSqr = Mathf.Infinity;
-
-        foreach (T instance in instances)
-        {
-            Vector3 directionToTarget = instance.transform.position - currentPosition;
-            float dSqrToTarget = directionToTarget.sqrMagnitude;
-            if (dSqrToTarget < closestDistanceSqr)
-            {
-                closestDistanceSqr = dSqrToTarget;
-                closest = instance;
-            }
-        }
-
-        return closest;
-    }
-
     #endregion
 
     #region Buff Activate & Shoot Precision
@@ -1515,4 +1504,25 @@ public class RefereeController : NetworkBehaviour
         OccupiedArea.Value = 0;
         // Immutable value reset in override method according to game logic
     }
+
+    T FindClosestWithScript<T>(Vector3 currentPosition) where T : MonoBehaviour
+    {
+        T[] instances = GameObject.FindObjectsByType<T>(FindObjectsSortMode.None);
+        T closest = null;
+        float closestDistanceSqr = Mathf.Infinity;
+
+        foreach (T instance in instances)
+        {
+            Vector3 directionToTarget = instance.transform.position - currentPosition;
+            float dSqrToTarget = directionToTarget.sqrMagnitude;
+            if (dSqrToTarget < closestDistanceSqr)
+            {
+                closestDistanceSqr = dSqrToTarget;
+                closest = instance;
+            }
+        }
+
+        return closest;
+    }
+
 }

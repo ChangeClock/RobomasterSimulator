@@ -655,6 +655,26 @@ PrefabInstance:
       propertyPath: GlobalObjectIdHash
       value: 951099334
       objectReference: {fileID: 0}
+    - target: {fileID: 4564242056806669466, guid: 408eebe8eb2c2dc45a75688796b28740,
+        type: 3}
+      propertyPath: m_UseMotor
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4564242056806669466, guid: 408eebe8eb2c2dc45a75688796b28740,
+        type: 3}
+      propertyPath: m_Motor.force
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 4564242056806669466, guid: 408eebe8eb2c2dc45a75688796b28740,
+        type: 3}
+      propertyPath: m_ConnectedBody
+      value: 
+      objectReference: {fileID: 3829485702942272446}
+    - target: {fileID: 4564242056806669466, guid: 408eebe8eb2c2dc45a75688796b28740,
+        type: 3}
+      propertyPath: m_ConnectedAnchor.y
+      value: 23
+      objectReference: {fileID: 0}
     - target: {fileID: 4624129595265101712, guid: 408eebe8eb2c2dc45a75688796b28740,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -1056,6 +1076,31 @@ PrefabInstance:
         type: 3}
       propertyPath: GlobalObjectIdHash
       value: 951099334
+      objectReference: {fileID: 0}
+    - target: {fileID: 4564242056806669466, guid: 408eebe8eb2c2dc45a75688796b28740,
+        type: 3}
+      propertyPath: m_Axis.x
+      value: -1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4564242056806669466, guid: 408eebe8eb2c2dc45a75688796b28740,
+        type: 3}
+      propertyPath: m_UseMotor
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4564242056806669466, guid: 408eebe8eb2c2dc45a75688796b28740,
+        type: 3}
+      propertyPath: m_Motor.force
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 4564242056806669466, guid: 408eebe8eb2c2dc45a75688796b28740,
+        type: 3}
+      propertyPath: m_ConnectedBody
+      value: 
+      objectReference: {fileID: 3829485702942272446}
+    - target: {fileID: 4564242056806669466, guid: 408eebe8eb2c2dc45a75688796b28740,
+        type: 3}
+      propertyPath: m_ConnectedAnchor.y
+      value: 23
       objectReference: {fileID: 0}
     - target: {fileID: 4624129595265101712, guid: 408eebe8eb2c2dc45a75688796b28740,
         type: 3}

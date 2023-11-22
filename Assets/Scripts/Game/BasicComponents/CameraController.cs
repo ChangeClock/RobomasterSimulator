@@ -61,6 +61,7 @@ public class CameraController : MonoBehaviour
 
         foreach (var armor in Armors)
         {
+            if (printLog) Debug.DrawLine(transform.position, armor.transform.position, Color.cyan);
             RefereeController referee = armor.GetComponentInParent<RefereeController>();
 
             if (armor.GetComponent<ArmorController>() != null)
@@ -73,7 +74,7 @@ public class CameraController : MonoBehaviour
                 // Check if the target is visible
                 if (IsVisible(cam, armor.gameObject))
                 {
-                    if (printLog) Debug.Log($"[CameraController] {armor.gameObject.name} detected, offset {GetRotateOffset(armor.transform.position).magnitude}");
+                    // if (printLog) Debug.Log($"[CameraController] {armor.gameObject.name} detected, offset {GetRotateOffset(armor.transform.position).magnitude}");
                     // Raise event with the target ID & the target position
                     if (referee != null)
                     {

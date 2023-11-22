@@ -759,8 +759,10 @@ public class GameManager : NetworkBehaviour
 
     protected void ToggleBuff(bool enable, BuffType type)
     {
-        RedBuffDevice.Toggle(false, type);
-        BlueBuffDevice.Toggle(false, type);
+        int direction =  UnityEngine.Random.Range(-1,1);
+
+        RedBuffDevice.Toggle(enable, direction, type);
+        BlueBuffDevice.Toggle(enable, direction, type);
     }
 
     protected void ToggleActivateArea(bool enable)

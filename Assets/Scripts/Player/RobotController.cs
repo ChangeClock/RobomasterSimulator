@@ -477,7 +477,7 @@ public class RobotController : NetworkBehaviour
         
         foreach (var target in targets)
         {
-            if (target.Faction == Faction.Neu) continue;
+            // if (target.Faction == Faction.Neu) continue;
             if (target.Faction == referee.faction.Value) continue;
 
             if (_target == null)

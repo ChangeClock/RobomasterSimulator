@@ -4214,6 +4214,12 @@ Transform:
   m_Children: []
   m_Father: {fileID: 2114283753834967213}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!59 &1033675169 stripped
+HingeJoint:
+  m_CorrespondingSourceObject: {fileID: 7807020350858151290, guid: 924391338f032c34d8448b6fe276613f,
+    type: 3}
+  m_PrefabInstance: {fileID: 1416622038}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1112295523
 GameObject:
   m_ObjectHideFlags: 0
@@ -4338,12 +4344,6 @@ CanvasRenderer:
 --- !u!4 &1126730316 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4864221283203318978, guid: 924391338f032c34d8448b6fe276613f,
-    type: 3}
-  m_PrefabInstance: {fileID: 1416622038}
-  m_PrefabAsset: {fileID: 0}
---- !u!59 &1171367595 stripped
-HingeJoint:
-  m_CorrespondingSourceObject: {fileID: 377387456291696286, guid: 924391338f032c34d8448b6fe276613f,
     type: 3}
   m_PrefabInstance: {fileID: 1416622038}
   m_PrefabAsset: {fileID: 0}
@@ -4489,12 +4489,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!59 &1211522007 stripped
-HingeJoint:
-  m_CorrespondingSourceObject: {fileID: 6679063796231469283, guid: 924391338f032c34d8448b6fe276613f,
-    type: 3}
-  m_PrefabInstance: {fileID: 1416622038}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1252967868
 GameObject:
   m_ObjectHideFlags: 0
@@ -5690,7 +5684,7 @@ PrefabInstance:
         type: 3}
       propertyPath: Hinge
       value: 
-      objectReference: {fileID: 1171367595}
+      objectReference: {fileID: 1033675169}
     - target: {fileID: 4577800519416136637, guid: 924391338f032c34d8448b6fe276613f,
         type: 3}
       propertyPath: Targets.Array.size
@@ -5734,7 +5728,7 @@ PrefabInstance:
     - target: {fileID: 4577800519416136637, guid: 924391338f032c34d8448b6fe276613f,
         type: 3}
       propertyPath: faction.m_InternalValue
-      value: 0
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 4577800519416136637, guid: 924391338f032c34d8448b6fe276613f,
         type: 3}
@@ -5750,6 +5744,11 @@ PrefabInstance:
         type: 3}
       propertyPath: robotClass.m_InternalValue
       value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: 4577800519416136637, guid: 924391338f032c34d8448b6fe276613f,
+        type: 3}
+      propertyPath: belongFaction.m_InternalValue
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4577800519416136637, guid: 924391338f032c34d8448b6fe276613f,
         type: 3}
@@ -5827,6 +5826,11 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 11400000, guid: 39fb7dd6ff74b4f40a468259f113648e,
         type: 2}
+    - target: {fileID: 6679063796231469283, guid: 924391338f032c34d8448b6fe276613f,
+        type: 3}
+      propertyPath: m_Axis.x
+      value: -1
+      objectReference: {fileID: 0}
     - target: {fileID: 6695749312833691871, guid: 924391338f032c34d8448b6fe276613f,
         type: 3}
       propertyPath: m_Layer
@@ -5891,7 +5895,7 @@ PrefabInstance:
         type: 3}
       propertyPath: Hinge
       value: 
-      objectReference: {fileID: 1211522007}
+      objectReference: {fileID: 1773084539}
     - target: {fileID: 7353234250581005760, guid: 924391338f032c34d8448b6fe276613f,
         type: 3}
       propertyPath: Targets.Array.size
@@ -5935,7 +5939,7 @@ PrefabInstance:
     - target: {fileID: 7353234250581005760, guid: 924391338f032c34d8448b6fe276613f,
         type: 3}
       propertyPath: faction.m_InternalValue
-      value: 1
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 7353234250581005760, guid: 924391338f032c34d8448b6fe276613f,
         type: 3}
@@ -5951,6 +5955,11 @@ PrefabInstance:
         type: 3}
       propertyPath: robotClass.m_InternalValue
       value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: 7353234250581005760, guid: 924391338f032c34d8448b6fe276613f,
+        type: 3}
+      propertyPath: belongFaction.m_InternalValue
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7537706642481476527, guid: 924391338f032c34d8448b6fe276613f,
         type: 3}
@@ -8122,6 +8131,12 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: 532591105809680800, guid: fa74ef5b6bbe2904780e121fddc2a528, type: 3}
+--- !u!59 &1773084539 stripped
+HingeJoint:
+  m_CorrespondingSourceObject: {fileID: 3878841056138973959, guid: 924391338f032c34d8448b6fe276613f,
+    type: 3}
+  m_PrefabInstance: {fileID: 1416622038}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1815141180
 GameObject:
   m_ObjectHideFlags: 0

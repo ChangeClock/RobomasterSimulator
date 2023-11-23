@@ -530,6 +530,7 @@ public class RMUC2024_GameManager : GameManager
         {
             case BuffType.Small:
                 AddFactionBuff(faction, SmallBuff);
+                BuffActivatedEvent(faction, type);
                 break;
             case BuffType.Big:
                 int atk = 50;
@@ -569,17 +570,10 @@ public class RMUC2024_GameManager : GameManager
                 }
                 BuffEffectSO BigBuff = new BuffEffectSO(45000, def, atk);
                 AddFactionBuff(faction, BigBuff);
+                BuffActivatedEvent(faction, type, totalScore, BigBuff);
                 break;
             default:
                 break;
-        }
-    }
-
-    void AddFactionBuff(Faction faction, BuffEffectSO buff)
-    {
-        foreach(var referee in RefereeControllerList.Values)
-        {
-            if (referee.faction.Value == faction & !referee.robotTags.Contains(RobotTag.Building)) referee.AddBuff(buff);
         }
     }
 

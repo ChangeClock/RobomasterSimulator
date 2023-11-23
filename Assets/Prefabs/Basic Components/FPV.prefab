@@ -531,6 +531,9 @@ MonoBehaviour:
   Level: {fileID: 6130866996448915210}
   ExchangeProgress: {fileID: 2790778200803765809}
   MineProgress: {fileID: 3692544132612651222}
+  BuffIndicator: {fileID: 3860773792737815878}
+  MissleIndicator: {fileID: 0}
+  PopupText: {fileID: 1756036124430073315}
   ThirdPersonCamera: {fileID: 2680316623079226552}
   RobotSettingMenu: {fileID: 7779725992957097675}
   ShooterSettings: {fileID: 6407952850035010657}
@@ -2944,6 +2947,12 @@ GameObject:
     type: 3}
   m_PrefabInstance: {fileID: 4690917457986437831}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1756036124430073315 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6433336122270400292, guid: a320c4d18d384e443a9bc130e7f7a5ee,
+    type: 3}
+  m_PrefabInstance: {fileID: 4690917457986437831}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1762761852825703344 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 6444626894099632503, guid: a320c4d18d384e443a9bc130e7f7a5ee,
@@ -3178,6 +3187,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!1 &3860773792737815878 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8398445692312596353, guid: a320c4d18d384e443a9bc130e7f7a5ee,
+    type: 3}
+  m_PrefabInstance: {fileID: 4690917457986437831}
+  m_PrefabAsset: {fileID: 0}
 --- !u!114 &3938318512379996267 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 8628557417047976620, guid: a320c4d18d384e443a9bc130e7f7a5ee,

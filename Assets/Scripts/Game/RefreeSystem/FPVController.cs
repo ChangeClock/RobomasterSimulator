@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -88,6 +89,8 @@ public class FPVController : MonoBehaviour
 
         Ammo0PurchaseAction.Enable();
         Ammo1PurchaseAction.Enable();
+
+        GameManager.OnBuffActived += BuffActivatePopup;
     }
 
     void OnDisable()
@@ -100,6 +103,8 @@ public class FPVController : MonoBehaviour
 
         Ammo0PurchaseAction.Disable();
         Ammo1PurchaseAction.Disable();
+
+        GameManager.OnBuffActived -= BuffActivatePopup;
     }
 
     // Update is called once per frame
@@ -838,6 +843,59 @@ public class FPVController : MonoBehaviour
     void CancelExchange()
     {
         referee.ChooseExchangeLevel(false);
+    }
+
+    #endregion
+
+    #region Buff
+
+    [SerializeField] private GameObject BuffIndicator;
+    [SerializeField] private GameObject MissleIndicator;
+    [SerializeField] private GameObject PopupText;
+
+    public void BuffActivatePopup(Faction faction, BuffType type, int totalScore, BuffEffectSO effect)
+    {
+        StartCoroutine(BuffActivatePopupCoroutine(type));
+
+        // String text = $"{faction.ToString()} activate {type.ToString()} buff {type == BuffType.Big ? "with score: " totalScore.ToString() + "\br " : ""}";
+        String text = "";
+        if (type == BuffType.Big)
+        {
+            text = $"{faction.ToString()} activated {type.ToString()} buff with score: {totalScore.ToString()}";
+        } else {
+            text = $"{faction.ToString()} activated {type.ToString()} buff";
+        }
+        
+        if (effect != null)
+        {
+            text += $"\n Gained ";
+            if (effect.ATKBuff > 0)
+            {
+                text += $"{effect.ATKBuff.ToString()}% ATK ";
+            }
+            if (effect.DEFBuff > 0)
+            {
+                text += $"{effect.DEFBuff.ToString()}% DEF";
+            }
+        }
+        
+        StartCoroutine(PopupTextCoroutine(text));
+    }
+
+    public IEnumerator BuffActivatePopupCoroutine(BuffType type)
+    {
+        BuffIndicator.GetComponent<RawImage>().color = (referee.faction.Value == Faction.Red) ? Color.red : Color.blue;
+        BuffIndicator.SetActive(true);
+        yield return new WaitForSeconds(3f);
+        BuffIndicator.SetActive(false);
+    }
+
+    public IEnumerator PopupTextCoroutine(String text)
+    {
+        PopupText.GetComponentInChildren<TextMeshProUGUI>().text = text;
+        PopupText.SetActive(true);
+        yield return new WaitForSeconds(3f);
+        PopupText.SetActive(false);
     }
 
     #endregion

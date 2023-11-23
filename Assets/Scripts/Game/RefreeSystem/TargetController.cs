@@ -24,6 +24,8 @@ public class TargetController : ArmorController
 
     void Update()
     {
+        if (!Enabled) return;
+
         if (IsActive && Score > 0)
         {
             if (Score == Rings.Count)

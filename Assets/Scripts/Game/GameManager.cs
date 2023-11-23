@@ -753,6 +753,9 @@ public class GameManager : NetworkBehaviour
     }
 
     #region Buff Devices
+
+    public delegate void BuffActivedAction(Faction faction, BuffType type, int totalScore = 0, BuffEffectSO effect = null);
+    public static event BuffActivedAction OnBuffActived;
     
     public BuffController RedBuffDevice;
     public BuffController BlueBuffDevice;
@@ -771,6 +774,19 @@ public class GameManager : NetworkBehaviour
         BlueActivateArea.Reset();
         RedActivateArea.Enabled.Value = enable;
         BlueActivateArea.Enabled.Value = enable;
+    }
+
+    protected void AddFactionBuff(Faction faction, BuffEffectSO buff)
+    {
+        foreach(var referee in RefereeControllerList.Values)
+        {
+            if (referee.faction.Value == faction & !referee.robotTags.Contains(RobotTag.Building)) referee.AddBuff(buff);
+        }
+    }
+
+    protected void BuffActivatedEvent(Faction faction, BuffType type, int totalScore = 0, BuffEffectSO effect = null)
+    {
+        if (OnBuffActived != null) OnBuffActived(faction, type, totalScore, effect);
     }
 
     #endregion

@@ -1353,12 +1353,17 @@ public class RefereeController : NetworkBehaviour
         // Get max shootspeed
         // Get distance
         // Get distance / shootspeed = activatefrequency
+        if (Ammo0.Value <= 0) return;
+
+        float hitRandom = Random.Range(0.0f,1.0f);
+        // Debug.Log($"[RefereeController] hitRandom {hitRandom}");
+
         switch (BuffDevice.Type.Value)
         {
             case BuffType.Small:
                 if (!CanActivateSmallBuff.Value) return;
                 // Simulate Activate
-                if (Random.Range(0,1) > SmallBuffHitRate.Value)
+                if (hitRandom > SmallBuffHitRate.Value)
                 {
                     Debug.Log("[RefereeController] Activate Failed");
                     BuffDevice.Reset();
@@ -1366,12 +1371,13 @@ public class RefereeController : NetworkBehaviour
                     // Debug.Log("[RefereeController] Activate Success");
                     BuffDevice.HitHandler(BuffDevice.NextTargetID.Value);
                 }
+                Ammo0.Value --;
                 ActivateIdelTime.Value = 0;
                 break;
             case BuffType.Big:
                 if (!CanActivateBigBuff.Value) return;
                 // Simulate Activate
-                if (Random.Range(0,1) > BigBuffHitRate.Value)
+                if (hitRandom > BigBuffHitRate.Value)
                 {
                     Debug.Log("[RefereeController] Activate Failed");
                     BuffDevice.Reset();
@@ -1380,6 +1386,7 @@ public class RefereeController : NetworkBehaviour
                     Debug.Log($"[RefereeController] Activate Success with Score {score}");
                     BuffDevice.HitHandler(BuffDevice.NextTargetID.Value, score);
                 }
+                Ammo0.Value --;
                 ActivateIdelTime.Value = 0;
                 break;
             default:

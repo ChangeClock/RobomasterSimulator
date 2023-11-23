@@ -165,10 +165,8 @@ public class BuffController : RefereeController
                     if (Type.Value == BuffType.Small)
                     {
                         target.Score = 1;
-                        Scores.Add(target.Score);
                     } else {
                         target.Score = score;
-                        Scores.Add(target.Score);
                     }
 
                     Scores.Add(target.Score);
@@ -184,7 +182,7 @@ public class BuffController : RefereeController
                 }
                 
                 Reset();
-                OnActive(faction.Value, Type.Value, totalScore);
+                if (OnActive != null) OnActive(belongFaction.Value, Type.Value, totalScore);
             } else {
                 GetNewTarget();
                 IdelTime.Value = 0;

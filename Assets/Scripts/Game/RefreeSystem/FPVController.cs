@@ -916,6 +916,7 @@ public class FPVController : MonoBehaviour
     [SerializeField] private TMP_InputField MinEnclosingCircleRaiusInput;
 
     [SerializeField] private GameObject BuffActivateSettings;
+    [SerializeField] private Toggle UseSimulationActivationCheck;
     [SerializeField] private TMP_InputField SmallBuffHitRateInput;
     [SerializeField] private TMP_InputField BigBuffHitRateInput;
     [SerializeField] private TMP_InputField BigBuffHighestScoreInput;
@@ -932,10 +933,20 @@ public class FPVController : MonoBehaviour
         if (referee.ShooterControllerList.Count > 0)
         {
             ShooterSettings.SetActive(true);
-            BuffActivateSettings.SetActive(true);
             RealAmmo0Input.text = referee.RealAmmo0Limit.Value.ToString();
             RealAmmo1Input.text = referee.RealAmmo1Limit.Value.ToString();
             MinEnclosingCircleRaiusInput.text = referee.MinEnclosingCircle_Raius.Value.ToString();
+
+            if (referee.has17mmShooter())
+            {
+                BuffActivateSettings.SetActive(true);
+                UseSimulationActivationCheck.isOn = referee.UseSimulationActivation.Value;
+                SmallBuffHitRateInput.text = referee.SmallBuffHitRate.Value.ToString();
+                BigBuffHitRateInput.text = referee.BigBuffHitRate.Value.ToString();
+                BigBuffHighestScoreInput.text = referee.BigBuffHighestScore.Value.ToString();
+            } else {
+                BuffActivateSettings.SetActive(false);
+            }
         } else {
             ShooterSettings.SetActive(false);
             BuffActivateSettings.SetActive(false);
@@ -963,6 +974,7 @@ public class FPVController : MonoBehaviour
         referee.RealAmmo0Limit.Value = int.Parse(RealAmmo0Input.text);
         referee.RealAmmo1Limit.Value = int.Parse(RealAmmo1Input.text);
         referee.MinEnclosingCircle_Raius.Value = float.Parse(MinEnclosingCircleRaiusInput.text);
+        referee.UseSimulationActivation.Value = UseSimulationActivationCheck.isOn;
         referee.SmallBuffHitRate.Value = float.Parse(SmallBuffHitRateInput.text);
         referee.BigBuffHitRate.Value = float.Parse(BigBuffHitRateInput.text);
         referee.BigBuffHighestScore.Value = int.Parse(BigBuffHighestScoreInput.text);

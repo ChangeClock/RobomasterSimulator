@@ -67,6 +67,24 @@ public class RefereeController : NetworkBehaviour
     public List<RobotTag> robotTags = new List<RobotTag>();
     public NetworkVariable<Faction> faction = new NetworkVariable<Faction>(Faction.Neu);
     
+    public bool has17mmShooter ()
+    {
+        foreach (var _shooter in ShooterControllerList.Values)
+        {
+            if (_shooter.Type.Value == 0) return true;
+        }
+        return false;
+    }
+
+    public bool has42mmShooter ()
+    {
+        foreach (var _shooter in ShooterControllerList.Values)
+        {
+            if (_shooter.Type.Value == 1) return true;
+        }
+        return false;
+    }
+
     [Header("Player")]
     public Transform spawnPoint;
     private RobotController robotController;
@@ -333,9 +351,6 @@ public class RefereeController : NetworkBehaviour
 
                 FPVCamera.SetFreeRevive(CurrentReviveProgress.Value >= MaxReviveProgress.Value);
 
-                bool has17mmShooter = false;
-                bool has42mmShooter = false;
-
                 foreach (var _shooter in ShooterControllerList.Values)
                 {
                     if (!_shooter.Enabled.Value) continue;
@@ -343,11 +358,9 @@ public class RefereeController : NetworkBehaviour
                     switch (_shooter.Type.Value)
                     {
                         case 0:
-                            has17mmShooter = true;
                             _shooter.SetAmmo(ConsumedAmmo0.Value, Ammo0.Value);
                             break;
                         case 1:
-                            has42mmShooter = true;
                             _shooter.SetAmmo(ConsumedAmmo1.Value, Ammo1.Value);
                             break;
                         default:
@@ -357,10 +370,10 @@ public class RefereeController : NetworkBehaviour
                     _shooter.SetFaction(faction.Value);
                 }
 
-                FPVCamera.SetAmmo0Item(has17mmShooter, InSupplyArea.Value, gameManager.Coins[(int)faction.Value], Ammo0.Value, gameManager.Ammo0Supply[(int)faction.Value]);
-                FPVCamera.SetAmmo1Item(has42mmShooter, InSupplyArea.Value, gameManager.Coins[(int)faction.Value], Ammo1.Value, gameManager.Ammo1Supply[(int)faction.Value]);
+                FPVCamera.SetAmmo0Item(has17mmShooter(), InSupplyArea.Value, gameManager.Coins[(int)faction.Value], Ammo0.Value, gameManager.Ammo0Supply[(int)faction.Value]);
+                FPVCamera.SetAmmo1Item(has42mmShooter(), InSupplyArea.Value, gameManager.Coins[(int)faction.Value], Ammo1.Value, gameManager.Ammo1Supply[(int)faction.Value]);
 
-                FPVCamera.SetPurchaseItem(robotTags.Contains(RobotTag.GroundUnit), gameManager.RemoteHPTimes[(int)faction.Value], has17mmShooter, gameManager.RemoteAmmo0Times[(int)faction.Value], has42mmShooter, gameManager.RemoteAmmo1Times[(int)faction.Value]);
+                FPVCamera.SetPurchaseItem(robotTags.Contains(RobotTag.GroundUnit), gameManager.RemoteHPTimes[(int)faction.Value], has17mmShooter(), gameManager.RemoteAmmo0Times[(int)faction.Value], has42mmShooter(), gameManager.RemoteAmmo1Times[(int)faction.Value]);
 
                 FPVCamera.SetHealBuff(HealBuff.Value > 0, HealBuff.Value);
                 FPVCamera.SetDEFBuff(DEFBuff.Value > 0, DEFBuff.Value);

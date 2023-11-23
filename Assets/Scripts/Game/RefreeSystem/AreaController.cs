@@ -5,14 +5,15 @@ using UnityEngine;
 
 public class AreaController : NetworkBehaviour
 {
-    public NetworkVariable<int> ID = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+    public NetworkVariable<int> ID = new NetworkVariable<int>(0);
     // 0: not occupied 1: Blue 2: Red
-    public NetworkVariable<bool> Enabled = new NetworkVariable<bool>(false, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+    public NetworkVariable<bool> Enabled = new NetworkVariable<bool>(false);
     public bool printLog = false;
 
     public NetworkVariable<Faction> belongFaction = new NetworkVariable<Faction>(Faction.Neu);
-    public NetworkVariable<bool> isControlPoint = new NetworkVariable<bool>(false, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
-    public NetworkVariable<bool> Occupied = new NetworkVariable<bool>(false, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+    public NetworkVariable<bool> isControlPoint = new NetworkVariable<bool>(false);
+    public NetworkVariable<bool> LastOccupyStatus = new NetworkVariable<bool>(false);
+    public NetworkVariable<bool> Occupied = new NetworkVariable<bool>(false);
     public NetworkVariable<Faction> controllingFaction = new NetworkVariable<Faction>(Faction.Neu);
 
     public NetworkVariable<float> MaxCaptureProgress = new NetworkVariable<float>(100.0f);
@@ -33,8 +34,14 @@ public class AreaController : NetworkBehaviour
 
     public List<BuffEffectSO> BuffList = new List<BuffEffectSO>();
 
-    public delegate void CaptureAction(RefereeController robot = null);
+    public delegate void CaptureAction(Faction faction, RefereeController robot = null);
     public event CaptureAction OnCaptured;
+
+    public delegate void ControlledAction(Faction faction);
+    public event ControlledAction OnControlled;
+
+    public delegate void LoseControlAction(Faction faction);
+    public event LoseControlAction OnControlLoss;
 
     protected Dictionary<int, RefereeController> RobotsInArea = new Dictionary<int, RefereeController>();
 
@@ -42,6 +49,7 @@ public class AreaController : NetworkBehaviour
     {
         if (!IsServer) return;
 
+        LastOccupyStatus.Value = Occupied.Value;
         // gameObject.GetComponent<NetworkObject>().Spawn();
     }
 
@@ -84,6 +92,18 @@ public class AreaController : NetworkBehaviour
         } else {
             Occupied.Value = false;
         }
+
+        if (LastOccupyStatus.Value != Occupied.Value)
+        {
+            if (Occupied.Value)
+            {
+                if (OnControlled != null) OnControlled(belongFaction.Value);
+            } else {
+                if (OnControlLoss != null) OnControlLoss(belongFaction.Value);
+            }
+        }
+
+        LastOccupyStatus.Value = Occupied.Value;
 
         if (ResetProgress.Value >= MaxResetProgress.Value)
         {
@@ -191,10 +211,10 @@ public class AreaController : NetworkBehaviour
     {
         if (referee == null)
         { 
-            if(OnCaptured != null) OnCaptured();
+            if(OnCaptured != null) OnCaptured(belongFaction.Value);
             return;
         }
-        if(OnCaptured != null) OnCaptured(referee);
+        if(OnCaptured != null) OnCaptured(belongFaction.Value, referee);
     }
 
     public void AddBuff(BuffEffectSO buff)
@@ -216,7 +236,9 @@ public class AreaController : NetworkBehaviour
 
     public virtual void Reset()
     {
-
+        ResetCaptureProgress();
+        controllingFaction.Value = Faction.Neu;
+        Occupied.Value = false;
     }
 
 }

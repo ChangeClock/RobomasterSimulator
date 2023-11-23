@@ -104,6 +104,11 @@ public class GameManager : NetworkBehaviour
         RefereeController.OnPurchase += PurchaseUpload;
 
         ExchangePoint.OnExchanged += ExchangeUpload;
+
+        RedActivateArea.OnCaptured += ActivateAreaCapturedHandler;
+        BlueActivateArea.OnCaptured += ActivateAreaCapturedHandler;
+        RedActivateArea.OnControlLoss += ActivateAreaLostControlHandler;
+        BlueActivateArea.OnControlLoss += ActivateAreaLostControlHandler;
     }
 
     protected virtual void OnDisable()
@@ -120,6 +125,11 @@ public class GameManager : NetworkBehaviour
         RefereeController.OnPurchase -= PurchaseUpload;
 
         ExchangePoint.OnExchanged -= ExchangeUpload;
+
+        RedActivateArea.OnCaptured -= ActivateAreaCapturedHandler;
+        BlueActivateArea.OnCaptured -= ActivateAreaCapturedHandler;
+        RedActivateArea.OnControlLoss -= ActivateAreaLostControlHandler;
+        BlueActivateArea.OnControlLoss -= ActivateAreaLostControlHandler;
     }
 
     protected virtual void Start() 
@@ -756,6 +766,8 @@ public class GameManager : NetworkBehaviour
 
     public delegate void BuffActivedAction(Faction faction, BuffType type, int totalScore = 0, BuffEffectSO effect = null);
     public static event BuffActivedAction OnBuffActived;
+
+    public BuffEffectSO BuffPointBuff;
     
     public BuffController RedBuffDevice;
     public BuffController BlueBuffDevice;
@@ -774,6 +786,32 @@ public class GameManager : NetworkBehaviour
         BlueActivateArea.Reset();
         RedActivateArea.Enabled.Value = enable;
         BlueActivateArea.Enabled.Value = enable;
+    }
+
+    protected void ActivateAreaCapturedHandler(Faction fac, RefereeController robot = null)
+    {
+        if (fac == Faction.Red)
+        {
+            RedBuffDevice.CanActivate.Value = true;
+            RedActivateArea.AddBuff(BuffPointBuff);
+        } else {
+            BlueBuffDevice.CanActivate.Value = true;
+            BlueActivateArea.AddBuff(BuffPointBuff);
+        }
+    }
+
+    protected void ActivateAreaLostControlHandler(Faction fac)
+    {
+        if (fac == Faction.Red)
+        {
+            RedBuffDevice.CanActivate.Value = false;
+            RedBuffDevice.Reset();
+            RedActivateArea.RemoveBuff(BuffPointBuff);
+        } else {
+            BlueBuffDevice.CanActivate.Value = false;
+            BlueBuffDevice.Reset();
+            BlueActivateArea.RemoveBuff(BuffPointBuff);
+        }
     }
 
     protected void AddFactionBuff(Faction faction, BuffEffectSO buff)

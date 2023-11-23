@@ -13,6 +13,10 @@ public class TargetController : ArmorController
 
     public List<GameObject> Rings = new List<GameObject>();
     public GameObject TargetIcon;
+    public GameObject TargetRing;
+
+    public GameObject TargetArm;
+    public GameObject ActiveArm;
 
     public delegate void ScoreAction(int id, int score);
     public event ScoreAction OnScore;
@@ -44,12 +48,18 @@ public class TargetController : ArmorController
                 }
             }
             if (TargetIcon != null) TargetIcon.SetActive(false);
+            if (TargetRing != null) TargetRing.SetActive(true);
+            if (TargetArm != null) TargetArm.SetActive(false);
+            if (ActiveArm != null) ActiveArm.SetActive(true);
         } else {           
             foreach (var ring in Rings)
             {
                 if (ring != null) ring.SetActive(false);
             }
             if (TargetIcon != null) TargetIcon.SetActive(IsTarget);
+            if (TargetRing != null) TargetRing.SetActive(IsTarget);
+            if (TargetArm != null) TargetArm.SetActive(IsTarget);
+            if (ActiveArm != null) ActiveArm.SetActive(false);
         }
 
         Color color = Color.white;
@@ -62,6 +72,9 @@ public class TargetController : ArmorController
         }
 
         if (TargetIcon != null) TargetIcon.GetComponent<RawImage>().color = color;
+        if (TargetRing != null) TargetRing.GetComponent<RawImage>().color = color;
+        if (TargetArm != null) TargetArm.GetComponent<RawImage>().color = color;
+        if (ActiveArm != null) ActiveArm.GetComponent<RawImage>().color = color;
     }
 
     protected override void OnCollisionEnter(Collision collision)

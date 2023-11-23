@@ -8,6 +8,8 @@ public class BuffController : RefereeController
 {
     [SerializeField] private HingeJoint Hinge;
 
+    public NetworkVariable<bool> CanActivate = new NetworkVariable<bool>(false);
+
     public NetworkVariable<Faction> belongFaction = new NetworkVariable<Faction>(Faction.Neu);
 
     public NetworkVariable<BuffType> Type = new NetworkVariable<BuffType>(BuffType.Small);
@@ -126,22 +128,22 @@ public class BuffController : RefereeController
         foreach (var target in targets)
         {
             if (target == null) continue;
+            
+            target.Enabled = Enabled.Value;
+            target.faction = belongFaction.Value;
 
-            if (target.TargetID == NextTargetID.Value)
+            if (target.TargetID == NextTargetID.Value && CanActivate.Value)
             {
                 target.IsTarget = true;
             } else {
                 target.IsTarget = false;
             }
-
-            target.Enabled = Enabled.Value;
-            target.faction = belongFaction.Value;
         }
 
         if (RLight != null)
         {
             RLight.color = (belongFaction.Value == Faction.Red) ? Color.red : Color.blue;
-            RLight.gameObject.SetActive(Enabled.Value);
+            RLight.gameObject.SetActive(Enabled.Value && CanActivate.Value);
         }
 
     }

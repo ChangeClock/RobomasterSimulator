@@ -61,12 +61,15 @@ public class CameraController : MonoBehaviour
 
         foreach (var armor in Armors)
         {
-            if (printLog) Debug.DrawLine(transform.position, armor.transform.position, Color.cyan);
             RefereeController referee = armor.GetComponentInParent<RefereeController>();
 
-            if (armor.GetComponent<ArmorController>() != null)
+            ArmorController armorController = armor.GetComponent<ArmorController>();
+            if (armorController == null) armorController = armor.GetComponentInParent<ArmorController>();
+
+            if (armorController != null)
             {
-                ArmorController armorController = armor.GetComponent<ArmorController>();
+                if (printLog) Debug.DrawLine(transform.position, armor.transform.position, Color.cyan);
+                
                 if (armorController.Enabled == false) continue;
                 
                 // if (printLog) Debug.Log($"[CameraController] {referee.RobotID.Value} detected {IsVisible(cam, armor.gameObject)}");

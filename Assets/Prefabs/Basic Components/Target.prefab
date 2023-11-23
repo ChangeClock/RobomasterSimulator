@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 8837173680705748839}
   - component: {fileID: 595056944170431983}
   - component: {fileID: 3979946031388296403}
-  m_Layer: 5
+  m_Layer: 10
   m_Name: Ring6
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -83,7 +83,7 @@ GameObject:
   - component: {fileID: 5754123314511976524}
   - component: {fileID: 9122960616965414610}
   - component: {fileID: 8399005157140955120}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Target
   m_TagString: Armor
   m_Icon: {fileID: 0}
@@ -190,7 +190,7 @@ GameObject:
   - component: {fileID: 32489114164236965}
   - component: {fileID: 5208258298847049262}
   - component: {fileID: 1319314652928793593}
-  m_Layer: 5
+  m_Layer: 10
   m_Name: Ring2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -262,7 +262,7 @@ GameObject:
   - component: {fileID: 5946236537330948378}
   - component: {fileID: 5876838020856621615}
   - component: {fileID: 8350761936938372435}
-  m_Layer: 5
+  m_Layer: 10
   m_Name: Ring3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -334,7 +334,7 @@ GameObject:
   - component: {fileID: 597964249226310156}
   - component: {fileID: 8743481389140413597}
   - component: {fileID: 8140700940761664606}
-  m_Layer: 5
+  m_Layer: 10
   m_Name: Ring1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -407,7 +407,7 @@ GameObject:
   - component: {fileID: 2538481107720827486}
   - component: {fileID: 5592603024812435788}
   - component: {fileID: 507281861621876503}
-  m_Layer: 5
+  m_Layer: 10
   m_Name: Canvas
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -518,7 +518,7 @@ GameObject:
   - component: {fileID: 5776946839020328640}
   - component: {fileID: 6223293083465008347}
   - component: {fileID: 5405117204837643139}
-  m_Layer: 5
+  m_Layer: 10
   m_Name: Ring7
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -590,7 +590,7 @@ GameObject:
   - component: {fileID: 4005900975113359220}
   - component: {fileID: 1078665851317904352}
   - component: {fileID: 8806391405251758094}
-  m_Layer: 5
+  m_Layer: 10
   m_Name: Ring9
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -662,7 +662,7 @@ GameObject:
   - component: {fileID: 6681551784634275619}
   - component: {fileID: 7859430484812496334}
   - component: {fileID: 1848860739482721493}
-  m_Layer: 5
+  m_Layer: 10
   m_Name: Ring4
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -734,7 +734,7 @@ GameObject:
   - component: {fileID: 8793731195832052057}
   - component: {fileID: 4011924948745128829}
   - component: {fileID: 3250249930678098956}
-  m_Layer: 5
+  m_Layer: 10
   m_Name: Ring10
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -806,7 +806,7 @@ GameObject:
   - component: {fileID: 8029379878036643632}
   - component: {fileID: 7761850185179210738}
   - component: {fileID: 1200862225601212014}
-  m_Layer: 5
+  m_Layer: 10
   m_Name: Ring8
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -878,7 +878,7 @@ GameObject:
   - component: {fileID: 1320513905395340548}
   - component: {fileID: 4432605821836339766}
   - component: {fileID: 7849054031234415752}
-  m_Layer: 5
+  m_Layer: 10
   m_Name: TargetIcon
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -950,7 +950,7 @@ GameObject:
   - component: {fileID: 5956758510480947450}
   - component: {fileID: 6684204075977736696}
   - component: {fileID: 6138471392013868737}
-  m_Layer: 5
+  m_Layer: 10
   m_Name: Ring5
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1093,6 +1093,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: target
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: e922d388a2d4a2043aff9695a60c8604,
+        type: 3}
+      propertyPath: m_Layer
+      value: 10
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

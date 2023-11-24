@@ -547,6 +547,7 @@ MonoBehaviour:
     m_InternalValue: 0
   AutoOperate:
     m_InternalValue: 1
+  printLog: 0
   Aim:
     m_Name: Aim
     m_Type: 0
@@ -634,6 +635,7 @@ MonoBehaviour:
   CameraList:
   - {fileID: 5055031558995803929}
   - {fileID: 1364106929173629357}
+  TargetOffsetThreshold: 4
 --- !u!1 &8413717783539453555
 GameObject:
   m_ObjectHideFlags: 0
@@ -963,7 +965,7 @@ HingeJoint:
   m_AutoConfigureConnectedAnchor: 1
   m_ConnectedAnchor: {x: 0, y: 1.848, z: 0}
   serializedVersion: 2
-  m_UseSpring: 0
+  m_UseSpring: 1
   m_Spring:
     spring: 0
     damper: 10

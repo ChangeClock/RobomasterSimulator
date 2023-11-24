@@ -16,6 +16,7 @@ public class TargetController : ArmorController
     public GameObject TargetRing;
 
     public GameObject TargetArm;
+    public float targetArmOffset = 0.0f;
     public GameObject ActiveArm;
 
     public delegate void ScoreAction(int id, int score);
@@ -71,9 +72,19 @@ public class TargetController : ArmorController
             if (ring != null) ring.GetComponent<RawImage>().color = color;
         }
 
+        if (TargetArm != null)
+        {
+            TargetArm.GetComponent<RawImage>().color = color;
+
+            targetArmOffset -= Time.deltaTime;
+            if (targetArmOffset < -1.0f) targetArmOffset += 1.0f;
+
+            Rect rect = TargetArm.GetComponent<RawImage>().uvRect;
+            TargetArm.GetComponent<RawImage>().uvRect = new Rect(rect.x, targetArmOffset, rect.width, rect.height); 
+        }
+
         if (TargetIcon != null) TargetIcon.GetComponent<RawImage>().color = color;
         if (TargetRing != null) TargetRing.GetComponent<RawImage>().color = color;
-        if (TargetArm != null) TargetArm.GetComponent<RawImage>().color = color;
         if (ActiveArm != null) ActiveArm.GetComponent<RawImage>().color = color;
     }
 

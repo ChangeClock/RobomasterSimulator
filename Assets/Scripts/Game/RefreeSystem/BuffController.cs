@@ -143,7 +143,7 @@ public class BuffController : RefereeController
         if (RLight != null)
         {
             RLight.color = (belongFaction.Value == Faction.Red) ? Color.red : Color.blue;
-            RLight.gameObject.SetActive(Enabled.Value && CanActivate.Value);
+            RLight.gameObject.SetActive(Enabled.Value);
         }
 
     }

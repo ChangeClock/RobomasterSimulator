@@ -474,16 +474,16 @@ public class RobotController : NetworkBehaviour
         if (targets.Count == 0) return;
         
         TargetInfo _target = null;
-
-        if (Target == null)
-        {
-            _target = targets[0];
-        }
         
         foreach (var target in targets)
         {
             if (target.Faction == Faction.Neu) continue;
             if (target.Faction == referee.faction.Value) continue;
+
+            if (Target == null)
+            {
+                Target = target;
+            }
 
             if (_target == null)
             {

@@ -778,6 +778,14 @@ public class GameManager : NetworkBehaviour
 
         RedBuffDevice.Toggle(enable, direction, type);
         BlueBuffDevice.Toggle(enable, direction, type);
+
+        if (!enable)
+        {
+            RedBuffDevice.CanActivate.Value = false;
+            BlueBuffDevice.CanActivate.Value = false;
+        }
+
+        ToggleActivateArea(enable);
     }
 
     protected void ToggleActivateArea(bool enable)
@@ -786,6 +794,12 @@ public class GameManager : NetworkBehaviour
         BlueActivateArea.Reset();
         RedActivateArea.Enabled.Value = enable;
         BlueActivateArea.Enabled.Value = enable;
+
+        if (!enable)
+        {
+            RedActivateArea.RemoveBuff(BuffPointBuff);
+            BlueActivateArea.RemoveBuff(BuffPointBuff);
+        }
     }
 
     protected void ActivateAreaCapturedHandler(Faction fac, RefereeController robot = null)
@@ -807,10 +821,12 @@ public class GameManager : NetworkBehaviour
             RedBuffDevice.CanActivate.Value = false;
             RedBuffDevice.Reset();
             RedActivateArea.RemoveBuff(BuffPointBuff);
+            RedActivateArea.Reset();
         } else {
             BlueBuffDevice.CanActivate.Value = false;
             BlueBuffDevice.Reset();
             BlueActivateArea.RemoveBuff(BuffPointBuff);
+            BlueActivateArea.Reset();
         }
     }
 

@@ -535,6 +535,7 @@ MonoBehaviour:
   ShootFrequency: 20
   CameraList:
   - {fileID: 2611525189120350315}
+  TargetOffsetThreshold: 4
 --- !u!114 &2516057975928682575
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -928,7 +929,7 @@ HingeJoint:
   m_AutoConfigureConnectedAnchor: 1
   m_ConnectedAnchor: {x: 0, y: 1.49, z: 0}
   serializedVersion: 2
-  m_UseSpring: 0
+  m_UseSpring: 1
   m_Spring:
     spring: 0
     damper: 10

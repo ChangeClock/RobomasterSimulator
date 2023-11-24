@@ -1611,9 +1611,9 @@ MonoBehaviour:
   m_Value: 0
   m_Options:
     m_Options:
-    - m_Text: Power
-      m_Image: {fileID: 0}
     - m_Text: Health
+      m_Image: {fileID: 0}
+    - m_Text: Power
       m_Image: {fileID: 0}
     - m_Text: Balance
       m_Image: {fileID: 0}

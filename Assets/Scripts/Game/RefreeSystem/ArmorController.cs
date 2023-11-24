@@ -10,6 +10,7 @@ public class ArmorController : MonoBehaviour
     public bool Enabled;
     public bool IsBlink;
     public int LightColor;
+    public Faction faction;
 
     public Collider ArmorCollider;
 
@@ -20,7 +21,7 @@ public class ArmorController : MonoBehaviour
     public float[] velocityThreshold = {6f, 12f, 8f, 6f};
     public float[] damage = {2.0f, 10.0f, 100.0f, 0.0f};
 
-    private LightController armorLight;
+    public LightController armorLight;
     private Color purple = new Color(0.57f,0.25f,1f,1f);
 
     void Start() 
@@ -36,11 +37,18 @@ public class ArmorController : MonoBehaviour
         if (armorLight != null){
             if (IsBlink) return;
             armorLight.Enabled = Enabled;
-            armorLight.LightColor = LightColor;
+
+            if (faction == Faction.Red){
+                armorLight.LightColor = 1;
+            } else if (faction == Faction.Blue){
+                armorLight.LightColor = 2;
+            } else {
+                armorLight.LightColor = 0;
+            }
         }
     }
 
-    void OnCollisionEnter(Collision collision)
+    protected virtual void OnCollisionEnter(Collision collision)
     {
         if (ArmorCollider != null)
         {

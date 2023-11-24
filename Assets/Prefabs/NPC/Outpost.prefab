@@ -629,6 +629,11 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5920901610762163388, guid: 689528988214a3645a74d7083dd62c64,
+        type: 3}
+      propertyPath: 'damage.Array.data[2]'
+      value: 200
+      objectReference: {fileID: 0}
     - target: {fileID: 5920901610762163391, guid: 689528988214a3645a74d7083dd62c64,
         type: 3}
       propertyPath: m_Name
@@ -877,6 +882,11 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5920901610762163388, guid: 689528988214a3645a74d7083dd62c64,
+        type: 3}
+      propertyPath: 'damage.Array.data[2]'
+      value: 200
+      objectReference: {fileID: 0}
     - target: {fileID: 5920901610762163391, guid: 689528988214a3645a74d7083dd62c64,
         type: 3}
       propertyPath: m_Name
@@ -917,6 +927,26 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Armor-Small (without stand)
+      objectReference: {fileID: 0}
+    - target: {fileID: 4389355960283839330, guid: c2e9a63499f3a4d58bcc5fb63079bc35,
+        type: 3}
+      propertyPath: 'damage.Array.data[0]'
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4389355960283839330, guid: c2e9a63499f3a4d58bcc5fb63079bc35,
+        type: 3}
+      propertyPath: 'damage.Array.data[1]'
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4389355960283839330, guid: c2e9a63499f3a4d58bcc5fb63079bc35,
+        type: 3}
+      propertyPath: 'damage.Array.data[2]'
+      value: 200
+      objectReference: {fileID: 0}
+    - target: {fileID: 4389355960283839330, guid: c2e9a63499f3a4d58bcc5fb63079bc35,
+        type: 3}
+      propertyPath: 'damage.Array.data[3]'
+      value: 750
       objectReference: {fileID: 0}
     - target: {fileID: 4389355960283839334, guid: c2e9a63499f3a4d58bcc5fb63079bc35,
         type: 3}
@@ -1049,6 +1079,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5920901610762163388, guid: 689528988214a3645a74d7083dd62c64,
+        type: 3}
+      propertyPath: 'damage.Array.data[2]'
+      value: 200
       objectReference: {fileID: 0}
     - target: {fileID: 5920901610762163391, guid: 689528988214a3645a74d7083dd62c64,
         type: 3}
@@ -1263,6 +1298,21 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Armor-Triangle
+      objectReference: {fileID: 0}
+    - target: {fileID: 1140953694546532179, guid: 10906340bd5614ab1a7ab81faec9e1ce,
+        type: 3}
+      propertyPath: 'damage.Array.data[0]'
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1140953694546532179, guid: 10906340bd5614ab1a7ab81faec9e1ce,
+        type: 3}
+      propertyPath: 'damage.Array.data[1]'
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1140953694546532179, guid: 10906340bd5614ab1a7ab81faec9e1ce,
+        type: 3}
+      propertyPath: 'damage.Array.data[2]'
+      value: 300
       objectReference: {fileID: 0}
     - target: {fileID: 1140953694546532183, guid: 10906340bd5614ab1a7ab81faec9e1ce,
         type: 3}

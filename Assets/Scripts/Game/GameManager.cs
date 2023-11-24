@@ -104,6 +104,11 @@ public class GameManager : NetworkBehaviour
         RefereeController.OnPurchase += PurchaseUpload;
 
         ExchangePoint.OnExchanged += ExchangeUpload;
+
+        RedActivateArea.OnCaptured += ActivateAreaCapturedHandler;
+        BlueActivateArea.OnCaptured += ActivateAreaCapturedHandler;
+        RedActivateArea.OnControlLoss += ActivateAreaLostControlHandler;
+        BlueActivateArea.OnControlLoss += ActivateAreaLostControlHandler;
     }
 
     protected virtual void OnDisable()
@@ -120,6 +125,11 @@ public class GameManager : NetworkBehaviour
         RefereeController.OnPurchase -= PurchaseUpload;
 
         ExchangePoint.OnExchanged -= ExchangeUpload;
+
+        RedActivateArea.OnCaptured -= ActivateAreaCapturedHandler;
+        BlueActivateArea.OnCaptured -= ActivateAreaCapturedHandler;
+        RedActivateArea.OnControlLoss -= ActivateAreaLostControlHandler;
+        BlueActivateArea.OnControlLoss -= ActivateAreaLostControlHandler;
     }
 
     protected virtual void Start() 
@@ -753,14 +763,29 @@ public class GameManager : NetworkBehaviour
     }
 
     #region Buff Devices
+
+    public delegate void BuffActivedAction(Faction faction, BuffType type, int totalScore = 0, BuffEffectSO effect = null);
+    public static event BuffActivedAction OnBuffActived;
+
+    public BuffEffectSO BuffPointBuff;
     
     public BuffController RedBuffDevice;
     public BuffController BlueBuffDevice;
 
     protected void ToggleBuff(bool enable, BuffType type)
     {
-        RedBuffDevice.Toggle(false, type);
-        BlueBuffDevice.Toggle(false, type);
+        int direction =  UnityEngine.Random.Range(-1,1);
+
+        RedBuffDevice.Toggle(enable, direction, type);
+        BlueBuffDevice.Toggle(enable, direction, type);
+
+        if (!enable)
+        {
+            RedBuffDevice.CanActivate.Value = false;
+            BlueBuffDevice.CanActivate.Value = false;
+        }
+
+        ToggleActivateArea(enable);
     }
 
     protected void ToggleActivateArea(bool enable)
@@ -769,6 +794,53 @@ public class GameManager : NetworkBehaviour
         BlueActivateArea.Reset();
         RedActivateArea.Enabled.Value = enable;
         BlueActivateArea.Enabled.Value = enable;
+
+        if (!enable)
+        {
+            RedActivateArea.RemoveBuff(BuffPointBuff);
+            BlueActivateArea.RemoveBuff(BuffPointBuff);
+        }
+    }
+
+    protected void ActivateAreaCapturedHandler(Faction fac, RefereeController robot = null)
+    {
+        if (fac == Faction.Red)
+        {
+            RedBuffDevice.CanActivate.Value = true;
+            RedActivateArea.AddBuff(BuffPointBuff);
+        } else {
+            BlueBuffDevice.CanActivate.Value = true;
+            BlueActivateArea.AddBuff(BuffPointBuff);
+        }
+    }
+
+    protected void ActivateAreaLostControlHandler(Faction fac)
+    {
+        if (fac == Faction.Red)
+        {
+            RedBuffDevice.CanActivate.Value = false;
+            RedBuffDevice.Reset();
+            RedActivateArea.RemoveBuff(BuffPointBuff);
+            RedActivateArea.Reset();
+        } else {
+            BlueBuffDevice.CanActivate.Value = false;
+            BlueBuffDevice.Reset();
+            BlueActivateArea.RemoveBuff(BuffPointBuff);
+            BlueActivateArea.Reset();
+        }
+    }
+
+    protected void AddFactionBuff(Faction faction, BuffEffectSO buff)
+    {
+        foreach(var referee in RefereeControllerList.Values)
+        {
+            if (referee.faction.Value == faction & !referee.robotTags.Contains(RobotTag.Building)) referee.AddBuff(buff);
+        }
+    }
+
+    protected void BuffActivatedEvent(Faction faction, BuffType type, int totalScore = 0, BuffEffectSO effect = null)
+    {
+        if (OnBuffActived != null) OnBuffActived(faction, type, totalScore, effect);
     }
 
     #endregion

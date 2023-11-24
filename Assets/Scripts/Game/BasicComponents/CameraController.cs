@@ -63,9 +63,13 @@ public class CameraController : MonoBehaviour
         {
             RefereeController referee = armor.GetComponentInParent<RefereeController>();
 
-            if (armor.GetComponent<ArmorController>() != null)
+            ArmorController armorController = armor.GetComponent<ArmorController>();
+            if (armorController == null) armorController = armor.GetComponentInParent<ArmorController>();
+
+            if (armorController != null)
             {
-                ArmorController armorController = armor.GetComponent<ArmorController>();
+                if (printLog) Debug.DrawLine(transform.position, armor.transform.position, Color.cyan);
+                
                 if (armorController.Enabled == false) continue;
                 
                 // if (printLog) Debug.Log($"[CameraController] {referee.RobotID.Value} detected {IsVisible(cam, armor.gameObject)}");
@@ -73,7 +77,7 @@ public class CameraController : MonoBehaviour
                 // Check if the target is visible
                 if (IsVisible(cam, armor.gameObject))
                 {
-                    if (printLog) Debug.Log($"[CameraController] {armor.gameObject.name} detected, offset {GetRotateOffset(armor.transform.position).magnitude}");
+                    // if (printLog) Debug.Log($"[CameraController] {armor.gameObject.name} detected, offset {GetRotateOffset(armor.transform.position).magnitude}");
                     // Raise event with the target ID & the target position
                     if (referee != null)
                     {

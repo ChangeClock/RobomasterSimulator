@@ -59,7 +59,7 @@ public class RMUC2023_MineMountain : NetworkBehaviour
 
     }
 
-    void Mined(RefereeController robot)
+    void Mined(Faction faction, RefereeController robot)
     {
         // Debug.Log($"[MineArea] Ore {OreList.Count}");
 

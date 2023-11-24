@@ -1,3 +1,4 @@
+
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -52,20 +53,38 @@ public class RefereeController : NetworkBehaviour
     public static event LockedAction OnLocked;
 
     [Header("Referee")]
-    private ArmorController[] Armors;
+    protected ArmorController[] Armors;
     public Dictionary<int, ShooterController> ShooterControllerList = new Dictionary<int, ShooterController>();
-    private RFIDController RFID;
-    private LightbarController LightBar;
-    private UWBController UWB;
-    private FPVController FPVCamera;
+    protected RFIDController RFID;
+    protected LightbarController LightBar;
+    protected UWBController UWB;
+    protected FPVController FPVCamera;
     // private EnergyController EnergyCtl;
-    private WheelController[] Wheels;
+    protected WheelController[] Wheels;
 
     public NetworkVariable<int> RobotID = new NetworkVariable<int>(0);
     public NetworkVariable<RobotClass> robotClass = new NetworkVariable<RobotClass>(RobotClass.Infantry);
     public List<RobotTag> robotTags = new List<RobotTag>();
     public NetworkVariable<Faction> faction = new NetworkVariable<Faction>(Faction.Neu);
     
+    public bool has17mmShooter ()
+    {
+        foreach (var _shooter in ShooterControllerList.Values)
+        {
+            if (_shooter.Type.Value == 0) return true;
+        }
+        return false;
+    }
+
+    public bool has42mmShooter ()
+    {
+        foreach (var _shooter in ShooterControllerList.Values)
+        {
+            if (_shooter.Type.Value == 1) return true;
+        }
+        return false;
+    }
+
     [Header("Player")]
     public Transform spawnPoint;
     private RobotController robotController;
@@ -165,7 +184,7 @@ public class RefereeController : NetworkBehaviour
         }
     }
 
-    void Awake()
+    protected virtual void Awake()
     {
         gameManager = GameObject.FindAnyObjectByType<GameManager>();
             
@@ -181,10 +200,15 @@ public class RefereeController : NetworkBehaviour
                 _rigidbody.collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;
 
                 ArmorController _armor = _rigidbody.gameObject.AddComponent<ArmorController>();
-                _armor.ArmorCollider = armor.GetComponent<Collider>();
+                armor.ArmorCollider = armor.GetComponent<Collider>();
                 
-                _armor = armor;
-                // armor.enabled = false;
+                _armor.ArmorCollider = armor.ArmorCollider;
+                _armor.ArmorID = armor.ArmorID;
+                _armor.Enabled = armor.Enabled;
+                _armor.LightColor = armor.LightColor;
+
+                _armor.velocityThreshold = armor.velocityThreshold;
+                _armor.damage = armor.damage;
             }
         }
 
@@ -267,7 +291,7 @@ public class RefereeController : NetworkBehaviour
             if(_armor != null) 
             {
                 _armor.Enabled = Enabled.Value;
-                _armor.LightColor = faction.Value == Faction.Red ? 1 : 2;
+                _armor.faction = faction.Value;
             }
         }
 
@@ -327,9 +351,6 @@ public class RefereeController : NetworkBehaviour
 
                 FPVCamera.SetFreeRevive(CurrentReviveProgress.Value >= MaxReviveProgress.Value);
 
-                bool has17mmShooter = false;
-                bool has42mmShooter = false;
-
                 foreach (var _shooter in ShooterControllerList.Values)
                 {
                     if (!_shooter.Enabled.Value) continue;
@@ -337,11 +358,9 @@ public class RefereeController : NetworkBehaviour
                     switch (_shooter.Type.Value)
                     {
                         case 0:
-                            has17mmShooter = true;
                             _shooter.SetAmmo(ConsumedAmmo0.Value, Ammo0.Value);
                             break;
                         case 1:
-                            has42mmShooter = true;
                             _shooter.SetAmmo(ConsumedAmmo1.Value, Ammo1.Value);
                             break;
                         default:
@@ -351,10 +370,10 @@ public class RefereeController : NetworkBehaviour
                     _shooter.SetFaction(faction.Value);
                 }
 
-                FPVCamera.SetAmmo0Item(has17mmShooter, InSupplyArea.Value, gameManager.Coins[(int)faction.Value], Ammo0.Value, gameManager.Ammo0Supply[(int)faction.Value]);
-                FPVCamera.SetAmmo1Item(has42mmShooter, InSupplyArea.Value, gameManager.Coins[(int)faction.Value], Ammo1.Value, gameManager.Ammo1Supply[(int)faction.Value]);
+                FPVCamera.SetAmmo0Item(has17mmShooter(), InSupplyArea.Value, gameManager.Coins[(int)faction.Value], Ammo0.Value, gameManager.Ammo0Supply[(int)faction.Value]);
+                FPVCamera.SetAmmo1Item(has42mmShooter(), InSupplyArea.Value, gameManager.Coins[(int)faction.Value], Ammo1.Value, gameManager.Ammo1Supply[(int)faction.Value]);
 
-                FPVCamera.SetPurchaseItem(robotTags.Contains(RobotTag.GroundUnit), gameManager.RemoteHPTimes[(int)faction.Value], has17mmShooter, gameManager.RemoteAmmo0Times[(int)faction.Value], has42mmShooter, gameManager.RemoteAmmo1Times[(int)faction.Value]);
+                FPVCamera.SetPurchaseItem(robotTags.Contains(RobotTag.GroundUnit), gameManager.RemoteHPTimes[(int)faction.Value], has17mmShooter(), gameManager.RemoteAmmo0Times[(int)faction.Value], has42mmShooter(), gameManager.RemoteAmmo1Times[(int)faction.Value]);
 
                 FPVCamera.SetHealBuff(HealBuff.Value > 0, HealBuff.Value);
                 FPVCamera.SetDEFBuff(DEFBuff.Value > 0, DEFBuff.Value);
@@ -401,7 +420,7 @@ public class RefereeController : NetworkBehaviour
                 DisengagedTime.Value += Time.deltaTime;
             }
 
-            TickPower();
+            if (Wheels != null) TickPower();
 
             if (Reviving.Value) TickRevive();
 
@@ -480,10 +499,13 @@ public class RefereeController : NetworkBehaviour
     {
         float realPower = 0.0f;
 
-        foreach (WheelController wheel in Wheels)
+        if (Wheels.Length > 0)
         {
-            if (!Enabled.Value) wheel.SetPower(0);
-            realPower += Mathf.Abs(wheel.GetPower());
+            foreach (WheelController wheel in Wheels)
+            {
+                if (!Enabled.Value) wheel.SetPower(0);
+                realPower += Mathf.Abs(wheel.GetPower());
+            }
         }
 
         if (PowerLimit.Value <= 0) return;
@@ -1289,26 +1311,6 @@ public class RefereeController : NetworkBehaviour
         }
     }
 
-    T FindClosestWithScript<T>(Vector3 currentPosition) where T : MonoBehaviour
-    {
-        T[] instances = GameObject.FindObjectsOfType<T>();
-        T closest = null;
-        float closestDistanceSqr = Mathf.Infinity;
-
-        foreach (T instance in instances)
-        {
-            Vector3 directionToTarget = instance.transform.position - currentPosition;
-            float dSqrToTarget = directionToTarget.sqrMagnitude;
-            if (dSqrToTarget < closestDistanceSqr)
-            {
-                closestDistanceSqr = dSqrToTarget;
-                closest = instance;
-            }
-        }
-
-        return closest;
-    }
-
     #endregion
 
     #region Buff Activate & Shoot Precision
@@ -1364,12 +1366,17 @@ public class RefereeController : NetworkBehaviour
         // Get max shootspeed
         // Get distance
         // Get distance / shootspeed = activatefrequency
+        if (Ammo0.Value <= 0) return;
+
+        float hitRandom = Random.Range(0.0f,1.0f);
+        // Debug.Log($"[RefereeController] hitRandom {hitRandom}");
+
         switch (BuffDevice.Type.Value)
         {
             case BuffType.Small:
                 if (!CanActivateSmallBuff.Value) return;
                 // Simulate Activate
-                if (Random.Range(0,1) > SmallBuffHitRate.Value)
+                if (hitRandom > SmallBuffHitRate.Value)
                 {
                     Debug.Log("[RefereeController] Activate Failed");
                     BuffDevice.Reset();
@@ -1377,12 +1384,13 @@ public class RefereeController : NetworkBehaviour
                     // Debug.Log("[RefereeController] Activate Success");
                     BuffDevice.HitHandler(BuffDevice.NextTargetID.Value);
                 }
+                Ammo0.Value --;
                 ActivateIdelTime.Value = 0;
                 break;
             case BuffType.Big:
                 if (!CanActivateBigBuff.Value) return;
                 // Simulate Activate
-                if (Random.Range(0,1) > BigBuffHitRate.Value)
+                if (hitRandom > BigBuffHitRate.Value)
                 {
                     Debug.Log("[RefereeController] Activate Failed");
                     BuffDevice.Reset();
@@ -1391,6 +1399,7 @@ public class RefereeController : NetworkBehaviour
                     Debug.Log($"[RefereeController] Activate Success with Score {score}");
                     BuffDevice.HitHandler(BuffDevice.NextTargetID.Value, score);
                 }
+                Ammo0.Value --;
                 ActivateIdelTime.Value = 0;
                 break;
             default:
@@ -1515,4 +1524,25 @@ public class RefereeController : NetworkBehaviour
         OccupiedArea.Value = 0;
         // Immutable value reset in override method according to game logic
     }
+
+    T FindClosestWithScript<T>(Vector3 currentPosition) where T : MonoBehaviour
+    {
+        T[] instances = GameObject.FindObjectsByType<T>(FindObjectsSortMode.None);
+        T closest = null;
+        float closestDistanceSqr = Mathf.Infinity;
+
+        foreach (T instance in instances)
+        {
+            Vector3 directionToTarget = instance.transform.position - currentPosition;
+            float dSqrToTarget = directionToTarget.sqrMagnitude;
+            if (dSqrToTarget < closestDistanceSqr)
+            {
+                closestDistanceSqr = dSqrToTarget;
+                closest = instance;
+            }
+        }
+
+        return closest;
+    }
+
 }

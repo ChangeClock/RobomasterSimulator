@@ -1,15 +1,23 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using Unity.Netcode;
 
 public class BuffController : RefereeController 
 {
     [SerializeField] private HingeJoint Hinge;
 
+    public NetworkVariable<bool> CanActivate = new NetworkVariable<bool>(false);
+
+    public NetworkVariable<Faction> belongFaction = new NetworkVariable<Faction>(Faction.Neu);
+
     public NetworkVariable<BuffType> Type = new NetworkVariable<BuffType>(BuffType.Small);
     public NetworkList<int> Scores = new NetworkList<int>();
     [SerializeField] private List<TargetController> Targets = new List<TargetController>();
+    private TargetController[] targets;
+
+    [SerializeField] private RawImage RLight;
 
     public NetworkVariable<float> IdelTime            = new NetworkVariable<float>(0);
     public NetworkVariable<float> TimeoutThreshold            = new NetworkVariable<float>(2.5f);
@@ -31,11 +39,39 @@ public class BuffController : RefereeController
         if (IsServer) Hinge.useMotor = true;
     }
 
+    protected override void Awake()
+    {
+        foreach (var target in Targets)
+        {
+            if (target.GetComponent<Rigidbody>() == null)
+            {
+                Rigidbody _rigidbody = target.GetComponentInParent<Rigidbody>();
+                _rigidbody.collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;
+
+                TargetController _target = _rigidbody.gameObject.AddComponent<TargetController>();
+                target.ArmorCollider = target.GetComponentInChildren<Collider>();
+
+                _target.TargetID = target.TargetID;
+                _target.ArmorID = target.ArmorID;
+                _target.ArmorCollider = target.ArmorCollider;
+                _target.Enabled = target.Enabled;
+                _target.LightColor = target.LightColor;
+                _target.velocityThreshold = target.velocityThreshold;
+
+                // target.enabled = false;
+                // removeTargets.Add(target);
+                // addTargets.Add(_target);
+            }
+        }
+        
+        targets = this.gameObject.GetComponentsInChildren<TargetController>(false);
+    }
+
     protected override void Start()
     {
         base.Start();
 
-        foreach(var target in Targets)
+        foreach(var target in targets)
         {
             Scores.Add(target.Score);
         }
@@ -43,7 +79,7 @@ public class BuffController : RefereeController
 
     protected override void OnEnable()
     {
-        foreach(var target in Targets)
+        foreach(var target in targets)
         {
             target.OnScore += HitHandler;
         }
@@ -51,7 +87,7 @@ public class BuffController : RefereeController
 
     protected override void OnDisable()
     {
-        foreach(var target in Targets)
+        foreach(var target in targets)
         {
             target.OnScore -= HitHandler;
         }
@@ -67,7 +103,6 @@ public class BuffController : RefereeController
         {
             motor.targetVelocity = 0;
             Hinge.motor = motor;
-            return;
         } else {
             switch(Type.Value)
             {
@@ -90,20 +125,36 @@ public class BuffController : RefereeController
             Reset();
         }
 
-        foreach (var target in Targets)
+        foreach (var target in targets)
         {
-            if (target.TargetID == NextTargetID.Value)
+            if (target == null) continue;
+            
+            target.Enabled = Enabled.Value;
+            target.faction = belongFaction.Value;
+
+            if (target.TargetID == NextTargetID.Value && CanActivate.Value)
             {
                 target.IsTarget = true;
             } else {
                 target.IsTarget = false;
             }
         }
+
+        if (RLight != null)
+        {
+            RLight.color = (belongFaction.Value == Faction.Red) ? Color.red : Color.blue;
+            RLight.gameObject.SetActive(Enabled.Value);
+        }
+
     }
 
     public void HitHandler(int id, int score = 1)
     {
         if (!IsServer) return;
+
+        if (score <= 0) return;
+
+        Debug.Log($"[BuffController] HitHandler {id} {score}");
 
         if (id == NextTargetID.Value) 
         {
@@ -112,7 +163,14 @@ public class BuffController : RefereeController
                 if (target.TargetID == id)
                 {
                     target.IsActive = true;
-                    target.Score = score;
+
+                    if (Type.Value == BuffType.Small)
+                    {
+                        target.Score = 1;
+                    } else {
+                        target.Score = score;
+                    }
+
                     Scores.Add(target.Score);
                 }
             }
@@ -126,7 +184,7 @@ public class BuffController : RefereeController
                 }
                 
                 Reset();
-                OnActive(faction.Value, Type.Value, totalScore);
+                if (OnActive != null) OnActive(belongFaction.Value, Type.Value, totalScore);
             } else {
                 GetNewTarget();
                 IdelTime.Value = 0;
@@ -152,7 +210,7 @@ public class BuffController : RefereeController
         // Debug.Log($"[BuffController] NextTarget {NextTargetID.Value}");
     }
 
-    public void Toggle(bool enable, BuffType type = BuffType.Small)
+    public void Toggle(bool enable, int direction, BuffType type = BuffType.Small)
     {
         Enabled.Value = enable;
 
@@ -166,7 +224,7 @@ public class BuffController : RefereeController
         fa = Random.Range(faRange[0], faRange[1]);
         fw = Random.Range(fwRange[0], fwRange[1]);
 
-        SpinDirection = (Random.Range(-1,1) < 0) ? -1 : 1;
+        SpinDirection = (direction < 0) ? -1 : 1;
 
         if (enable) Reset();
     }

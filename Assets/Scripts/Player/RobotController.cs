@@ -480,6 +480,11 @@ public class RobotController : NetworkBehaviour
             if (target.Faction == Faction.Neu) continue;
             if (target.Faction == referee.faction.Value) continue;
 
+            if (Target == null)
+            {
+                Target = target;
+            }
+
             if (_target == null)
             {
                 _target = target;

@@ -10,7 +10,7 @@ using Cinemachine;
 
 public class RefereeController : NetworkBehaviour
 {
-    protected GameManager gameManager;
+    public GameManager gameManager;
 
     public delegate void SpawnAction(int robotID);
     public static event SpawnAction OnSpawn;
@@ -91,6 +91,8 @@ public class RefereeController : NetworkBehaviour
 
     public override void OnNetworkSpawn()
     {
+        gameManager = GameObject.FindAnyObjectByType<GameManager>();
+
         if (IsServer)
         {
             OnSpawn(RobotID.Value);
@@ -120,10 +122,10 @@ public class RefereeController : NetworkBehaviour
                 FPVCamera.SetRoleInfo(faction.Value, RobotID.Value, robotClass.Value);
             }
 
-            // InitSettingMenu();
-            
             robotController = this.gameObject.GetComponent<RobotController>();
-            if (robotController != null) robotController.Enabled.Value = true;  
+            if (robotController != null) robotController.Enabled.Value = true; 
+
+            // InitSettingMenu(); 
 
             ShooterController[] Shooters = this.gameObject.GetComponentsInChildren<ShooterController>();
             int shooter1Mode = 0;
@@ -185,9 +187,7 @@ public class RefereeController : NetworkBehaviour
     }
 
     protected virtual void Awake()
-    {
-        gameManager = GameObject.FindAnyObjectByType<GameManager>();
-            
+    {            
         FPVCamera = this.gameObject.GetComponentInChildren<FPVController>();
 
         Armors = this.gameObject.GetComponentsInChildren<ArmorController>(false);
@@ -320,12 +320,7 @@ public class RefereeController : NetworkBehaviour
     private void FixedUpdate() 
     {
         if (IsOwner)
-        {
-            if (robotController != null)
-            {
-                robotController.Enabled.Value = Enabled.Value;
-            }
-                
+        {                
             if (FPVCamera != null)
             {
                 int state;
@@ -396,10 +391,12 @@ public class RefereeController : NetworkBehaviour
                 FPVCamera.SetBuffer(Buffer.Value, BufferLimit.Value);
                 FPVCamera.SetEnergy(Energy.Value, EnergyLimit.Value);
             
-                FPVCamera.SetExchangeMenu(gameManager.PriceInfo, ExchangeStation.GetLeastLevel());
-                
-                FPVCamera.SetExchangeStatus(ExchangeStation.Level.Value, ExchangeStation.Status.Value, ExchangeStation.CaptureProgress.Value, ExchangeStation.MaxCaptureProgress.Value, ExchangeStation.LossRatio.Value);
-            
+                if (robotTags.Contains(RobotTag.Miner))
+                {
+                    FPVCamera.SetExchangeMenu(gameManager.PriceInfo, ExchangeStation.GetLeastLevel());
+                    FPVCamera.SetExchangeStatus(ExchangeStation.Level.Value, ExchangeStation.Status.Value, ExchangeStation.CaptureProgress.Value, ExchangeStation.MaxCaptureProgress.Value, ExchangeStation.LossRatio.Value);
+                }
+
                 // if (IsMining.Value)
                 // {
                 //     FPVCamera.SetMiningStatus(OreType.Silver, OccupyArea.CaptureProgress.Value, OccupyArea.MaxCaptureProgress.Value);
@@ -411,6 +408,11 @@ public class RefereeController : NetworkBehaviour
         if (IsServer)
         {
             // Debug.Log($"[RefereeController] Disengaged? {Disengaged.Value}, DisengagedTime: {DisengagedTime.Value}/{DisengagedTimeLimit.Value}");
+
+            if (robotController != null)
+            {
+                robotController.Enabled.Value = Enabled.Value;
+            }
 
             if (DisengagedTime.Value >= DisengagedTimeLimit.Value)
             {

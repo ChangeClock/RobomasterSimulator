@@ -16,8 +16,8 @@ public class GameManager : NetworkBehaviour
 
     public RefereeController RedBase;
     public RefereeController BlueBase;
-    public RefereeController RedOutpost;
-    public RefereeController BlueOutpost;
+    public RMUC2023_OutPostController RedOutpost;
+    public RMUC2023_OutPostController BlueOutpost;
     public RefereeController RedSentry;
     public RefereeController BlueSentry;
     public RefereeController RedLidar;
@@ -132,6 +132,30 @@ public class GameManager : NetworkBehaviour
         BlueActivateArea.OnControlLoss -= ActivateAreaLostControlHandler;
     }
 
+    protected virtual void OnNetworkSpawn()
+    {
+        if (!IsServer) return;
+
+        InitializeResource();
+    }
+
+    protected void InitializeResource()
+    {
+        foreach(var fac in Factions)
+        {
+            Coins.Add(InitialCoin);
+            CoinsTotal.Add(InitialCoin);
+            RealAmmo0Supply.Add(RealAmmo0SupplyLimit);
+            Ammo0Supply.Add(Ammo0SupplyLimit);
+            Ammo1Supply.Add(Ammo1SupplyLimit);
+            RemoteHPTimes.Add(RemoteHPTimesLimit);
+            RemoteAmmo0Times.Add(RemoteAmmo0TimesLimit);
+            RemoteAmmo1Times.Add(RemoteAmmo1TimesLimit);
+
+            Debug.Log($"[GameManager] {fac} resources initialized");
+        }
+    }
+
     protected virtual void Start() 
     {
         RedExchangeStation.PriceInfo = PriceInfo;
@@ -139,10 +163,10 @@ public class GameManager : NetworkBehaviour
 
         if (!IsServer) return;
 
-        RefereeControllerList.Add(RedBase.RobotID.Value, RedBase);
-        RefereeControllerList.Add(BlueBase.RobotID.Value, BlueBase);
-        RefereeControllerList.Add(RedOutpost.RobotID.Value, RedOutpost);
-        RefereeControllerList.Add(BlueOutpost.RobotID.Value, BlueOutpost);
+        if (!ContainsRobot(RedBase.RobotID.Value)) RefereeControllerList.Add(RedBase.RobotID.Value, RedBase);
+        if (!ContainsRobot(BlueBase.RobotID.Value)) RefereeControllerList.Add(BlueBase.RobotID.Value, BlueBase);
+        if (!ContainsRobot(RedOutpost.RobotID.Value)) RefereeControllerList.Add(RedOutpost.RobotID.Value, RedOutpost);
+        if (!ContainsRobot(BlueOutpost.RobotID.Value)) RefereeControllerList.Add(BlueOutpost.RobotID.Value, BlueOutpost);
         if (RedSentry != null) SpawnUpload(RedSentry.RobotID.Value);
         if (BlueSentry != null) SpawnUpload(BlueSentry.RobotID.Value);
         if (RedLidar != null) RefereeControllerList.Add(RedLidar.RobotID.Value, RedLidar);
@@ -167,23 +191,21 @@ public class GameManager : NetworkBehaviour
             SetUnitEXPInfo(RedSentry, SentryExpInfo);
             SetUnitEXPInfo(BlueSentry, SentryExpInfo);
         }
+    }
 
-        foreach(var fac in Factions)
-        {
-            Coins.Add(InitialCoin);
-            CoinsTotal.Add(InitialCoin);
-            RealAmmo0Supply.Add(RealAmmo0SupplyLimit);
-            Ammo0Supply.Add(Ammo0SupplyLimit);
-            Ammo1Supply.Add(Ammo1SupplyLimit);
-            RemoteHPTimes.Add(RemoteHPTimesLimit);
-            RemoteAmmo0Times.Add(RemoteAmmo0TimesLimit);
-            RemoteAmmo1Times.Add(RemoteAmmo1TimesLimit);
-        }
+    protected bool ContainsRobot(int robotID)
+    {
+        return RefereeControllerList.ContainsKey(robotID);
     }
 
     protected virtual void Update()
     {
         if (!IsServer) return;
+
+        if (Coins.Count != Factions.Count)
+        {
+            InitializeResource();
+        }
     }
 
     protected virtual void FixedUpdate()

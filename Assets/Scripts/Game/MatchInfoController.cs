@@ -5,7 +5,7 @@ using TMPro;
 
 public class MatchInfoController : NetworkBehaviour
 {
-    private GameManager gameManager;
+    [SerializeField] private GameManager gameManager;
 
     [SerializeField] private TMP_Text Time;
     [SerializeField] private TMP_Text RedBaseHP;
@@ -39,7 +39,7 @@ public class MatchInfoController : NetworkBehaviour
 
     void Start()
     {
-        gameManager = GameObject.FindFirstObjectByType<GameManager>();
+        if (gameManager == null) gameManager = GameObject.FindFirstObjectByType<GameManager>();
     }
 
     void Update()

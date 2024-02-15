@@ -15,6 +15,9 @@ EditorBuildSettings:
     path: Assets/Scenes/Welcome.unity
     guid: 479c8a1a7d91a31428ddf46d7f158fd0
   - enabled: 1
+    path: Assets/Scenes/Training Ground.unity
+    guid: 6994fcb715fb5bf40a57816538d985ca
+  - enabled: 1
     path: Assets/Scenes/RMUC2024.unity
     guid: 23e1da9ce339d2a47a2a7f94c0d8c1be
   - enabled: 1

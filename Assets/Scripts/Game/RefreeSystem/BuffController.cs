@@ -71,6 +71,8 @@ public class BuffController : RefereeController
     {
         base.Start();
 
+        if (!IsServer) return;
+
         foreach(var target in targets)
         {
             Scores.Add(target.Score);
@@ -95,36 +97,6 @@ public class BuffController : RefereeController
 
     protected override void Update()
     {
-        if (!IsServer) return;
-
-        var motor = Hinge.motor;
-
-        if (!Enabled.Value)
-        {
-            motor.targetVelocity = 0;
-            Hinge.motor = motor;
-        } else {
-            switch(Type.Value)
-            {
-                case BuffType.Small:
-                    motor.targetVelocity = SpinDirection * 60;
-                    break;
-                case BuffType.Big:
-                    motor.targetVelocity = SpinDirection * (fa * Mathf.Sin(fw * SpinTime) + 2.09f - fa) * 60;
-                    break;
-                default:
-                    break;
-            }
-            Hinge.motor = motor;
-            SpinTime += Time.deltaTime;
-        }
-
-        IdelTime.Value += Time.deltaTime;
-        if (IdelTime.Value > TimeoutThreshold.Value)
-        {
-            Reset();
-        }
-
         foreach (var target in targets)
         {
             if (target == null) continue;
@@ -145,6 +117,39 @@ public class BuffController : RefereeController
             RLight.color = (belongFaction.Value == Faction.Red) ? Color.red : Color.blue;
             RLight.gameObject.SetActive(Enabled.Value);
         }
+        
+        if (IsServer)
+        {
+            var motor = Hinge.motor;
+
+            if (!Enabled.Value)
+            {
+                motor.targetVelocity = 0;
+                Hinge.motor = motor;
+            } else {
+                switch(Type.Value)
+                {
+                    case BuffType.Small:
+                        motor.targetVelocity = SpinDirection * 60;
+                        break;
+                    case BuffType.Big:
+                        motor.targetVelocity = SpinDirection * (fa * Mathf.Sin(fw * SpinTime) + 2.09f - fa) * 60;
+                        break;
+                    default:
+                        break;
+                }
+                Hinge.motor = motor;
+                SpinTime += Time.deltaTime;
+            }
+
+            IdelTime.Value += Time.deltaTime;
+            if (IdelTime.Value > TimeoutThreshold.Value)
+            {
+                Reset();
+            }
+        }
+
+        
 
     }
 

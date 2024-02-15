@@ -11,7 +11,7 @@ public class RobotController : NetworkBehaviour
 {
     private RefereeController referee;
 
-    public NetworkVariable<bool> Enabled = new NetworkVariable<bool>(false);
+    public NetworkVariable<bool> Enabled = new NetworkVariable<bool>(false, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
 
     public NetworkVariable<bool> AutoOperate = new NetworkVariable<bool>(false);
 
@@ -66,11 +66,11 @@ public class RobotController : NetworkBehaviour
     [SerializeField] private float[] yawControllerParameters = {80f, 0f, 0.015f};
     [SerializeField] private float[] pitchControllerParameters = {50f, 0f, 0.015f};
     public NetworkVariable<float> currentYawAngle = new NetworkVariable<float>(0);
-    public NetworkVariable<float> yawTargetAngle = new NetworkVariable<float>(0);
+    public NetworkVariable<float> yawTargetAngle = new NetworkVariable<float>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
     public NetworkVariable<float> maxYawSpeed = new NetworkVariable<float>(1800f);
     public NetworkVariable<float> yawPatrolSpeed = new NetworkVariable<float>(60f);
     
-    public NetworkVariable<float> pitchTargetAngle = new NetworkVariable<float>(0);
+    public NetworkVariable<float> pitchTargetAngle = new NetworkVariable<float>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
     public NetworkVariable<float> currentPitchAngle = new NetworkVariable<float>(0);
 
     [SerializeField] private float pitchMax;

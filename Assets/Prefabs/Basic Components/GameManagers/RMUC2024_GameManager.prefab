@@ -1,0 +1,182 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &8248632555323435385
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 66038183972649360}
+  - component: {fileID: 6571525903670855811}
+  - component: {fileID: 2612591826947339981}
+  m_Layer: 0
+  m_Name: RMUC2024_GameManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &66038183972649360
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8248632555323435385}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &6571525903670855811
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8248632555323435385}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  GlobalObjectIdHash: 1868592069
+  AlwaysReplicateAsRoot: 0
+  SynchronizeTransform: 1
+  ActiveSceneSynchronization: 0
+  SceneMigrationSynchronization: 1
+  SpawnWithObservers: 1
+  DontDestroyWithOwner: 0
+  AutoObjectParentSync: 1
+--- !u!114 &2612591826947339981
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8248632555323435385}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4c836c2e20b87b4419780c79078dbc17, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  GameStatus:
+    m_InternalValue: 0
+  TimeLeft:
+    m_InternalValue: 420
+  isRunning:
+    m_InternalValue: 0
+  Factions: 0000000001000000
+  RedBase: {fileID: 0}
+  BlueBase: {fileID: 0}
+  RedOutpost: {fileID: 0}
+  BlueOutpost: {fileID: 0}
+  RedSentry: {fileID: 0}
+  BlueSentry: {fileID: 0}
+  RedLidar: {fileID: 0}
+  BlueLidar: {fileID: 0}
+  GroundUnit: 01000000020000000000000003000000
+  GrowingUnit: 0100000000000000
+  HasFirstBlood:
+    m_InternalValue: 0
+  HeroExpInfo: {fileID: 11400000, guid: dc6ca3f605a9e994fb06f4518ee4ef8e, type: 2}
+  InfantryExpInfo: {fileID: 11400000, guid: dc6ca3f605a9e994fb06f4518ee4ef8e, type: 2}
+  EngineerExpInfo: {fileID: 11400000, guid: dc6ca3f605a9e994fb06f4518ee4ef8e, type: 2}
+  SentryExpInfo: {fileID: 11400000, guid: dc6ca3f605a9e994fb06f4518ee4ef8e, type: 2}
+  HeroChassisPerformance:
+  - {fileID: 11400000, guid: f379dcdd8ef9f1a43825867c554b9b74, type: 2}
+  - {fileID: 11400000, guid: a402748e84819d74abdc3839dad16681, type: 2}
+  GimbalPerformance_17mm:
+  - {fileID: 11400000, guid: 64b34955c98ecf44b8b3f557646eacc6, type: 2}
+  - {fileID: 11400000, guid: cee0dd8c964ff9e43b5b758758a9fae9, type: 2}
+  InfantryChassisPerformance:
+  - {fileID: 11400000, guid: 293f0a10c72970f43b8f27779cd124bd, type: 2}
+  - {fileID: 11400000, guid: dd297e3e069bd474f95266a05049ae8c, type: 2}
+  GimbalPerformance_42mm:
+  - {fileID: 11400000, guid: 9a942dd0919dc7c48ad6ad3ad1ec3a98, type: 2}
+  EngineerPerformance: {fileID: 11400000, guid: 5662500a970bb52459ccf8a4c7aec7bd,
+    type: 2}
+  SentryPerformance: {fileID: 11400000, guid: 285215eca8816654d91432bdb520c13e, type: 2}
+  SentryInitialAmmo: 400
+  DefaultBuff: {fileID: 11400000, guid: fd14d92e86e85b84bbfce1f876d67a14, type: 2}
+  SentryDefaultBuff: {fileID: 11400000, guid: fd14d92e86e85b84bbfce1f876d67a14, type: 2}
+  ReviveBuff: {fileID: 11400000, guid: 0acdb99461a10d54c814aecacc63ec07, type: 2}
+  PurchaseReviveBuff: {fileID: 11400000, guid: 16f998a02a4f5a8488dc44bac5eaca03, type: 2}
+  RedPatrolPoints:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  BluePatrolPoints:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  RedRepairStation: {fileID: 0}
+  BlueRepairStation: {fileID: 0}
+  RedActivateArea: {fileID: 0}
+  BlueActivateArea: {fileID: 0}
+  InitialCoin: 400
+  HasFirstGold:
+    m_InternalValue: 0
+  RealAmmo0SupplyLimit: 400
+  Ammo0SupplyLimit: 1500
+  Ammo1SupplyLimit: 100
+  RemoteSupplyApplyInterval: 6
+  RemoteHPTimesLimit: -1
+  RemoteHPSupplyAmount: 0.6
+  RemoteAmmo0TimesLimit: -1
+  RemoteAmmo0SupplyAmount: 100
+  RemoteAmmo1TimesLimit: -1
+  RemoteAmmo1SupplyAmount: 10
+  BuffPointBuff: {fileID: 11400000, guid: 7f4fff37bc3b7b841956d0f56309f60a, type: 2}
+  RedBuffDevice: {fileID: 0}
+  BlueBuffDevice: {fileID: 0}
+  PriceInfo: {fileID: 11400000, guid: 286d1f82da7212544bf5dbe894c186a1, type: 2}
+  RedExchangeStation: {fileID: 0}
+  BlueExchangeStation: {fileID: 0}
+  RedOutpost: {fileID: 0}
+  BlueOutpost: {fileID: 0}
+  Mines:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  MineBuffAreas:
+  - {fileID: 0}
+  - {fileID: 0}
+  HighLands:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  BaseAreas:
+  - {fileID: 0}
+  - {fileID: 0}
+  BoostPoints:
+  - {fileID: 0}
+  - {fileID: 0}
+  HighLandBuff_CD200: {fileID: 11400000, guid: 1c496dc9a366b4e45846361398fdbb5c, type: 2}
+  HighLandBuff_CD300: {fileID: 11400000, guid: 4a781fd5a402c004a844fe9a129e8e25, type: 2}
+  HighLandBuff_CD500: {fileID: 11400000, guid: 09eea0c9c51c3c74aa7c04097634b2bf, type: 2}
+  BaseBuff: {fileID: 11400000, guid: b6cb9a220c163f84bb20e8c6d6203b87, type: 2}
+  BaseBuff_CD200: {fileID: 11400000, guid: 1e6ad58f7bbdb294e9476a73d87adb29, type: 2}
+  BaseBuff_CD300: {fileID: 11400000, guid: ccfc207081ef19e468413063bfc84f5c, type: 2}
+  BaseBuff_CD500: {fileID: 11400000, guid: cc61fef8d6945934a8c361b2b6e0198f, type: 2}
+  BoostBuff: {fileID: 11400000, guid: e12ef6c93b82a1841ba53c82a18015aa, type: 2}
+  BoostBuff_CD200: {fileID: 11400000, guid: 58a661b4a86d7974581c763d5c12fdd2, type: 2}
+  BoostBuff_CD300: {fileID: 11400000, guid: ccfc207081ef19e468413063bfc84f5c, type: 2}
+  BoostBuff_CD500: {fileID: 11400000, guid: 3e9327d471d55d3419ca45c878d34810, type: 2}
+  HeroSnipeBuff: {fileID: 11400000, guid: 70afeb7413626164d863fea5dd570831, type: 2}
+  EngineerInitBuff: {fileID: 11400000, guid: 107ac562863da1340bcbf27d9e08aa2f, type: 2}
+  SmallBuff: {fileID: 11400000, guid: 5100c4153eedc404ab551eb7c2715142, type: 2}
+  BigBuff: {fileID: 0}
+  MarkedBuff: {fileID: 11400000, guid: 6c60eaf07548c3547ab6b02efbddd9cd, type: 2}

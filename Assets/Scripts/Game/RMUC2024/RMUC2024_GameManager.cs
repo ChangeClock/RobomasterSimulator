@@ -6,17 +6,23 @@ using UnityEngine;
 
 public class RMUC2024_GameManager : GameManager 
 {
-    [SerializeField] public new RMUC2023_OutPostController RedOutpost;
-    [SerializeField] public new RMUC2023_OutPostController BlueOutpost;
-
-    protected override void Start()
+    protected override void OnNetworkSpawn()
     {
-        base.Start();
+        // base.OnNetworkSpawn();
+        
+        if (!IsServer) return;
+
+        InitializeResource();
 
         foreach(var fac in Factions)
         {
             SmallBuffAdditionalEXP.Add(0);
         }
+    }
+
+    protected override void Start()
+    {
+        base.Start();
     }
 
     protected override void OnEnable()

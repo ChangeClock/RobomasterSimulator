@@ -158,8 +158,8 @@ public class GameManager : NetworkBehaviour
 
     protected virtual void Start() 
     {
-        RedExchangeStation.PriceInfo = PriceInfo;
-        BlueExchangeStation.PriceInfo = PriceInfo;
+        if (RedExchangeStation != null) RedExchangeStation.PriceInfo = PriceInfo;
+        if (BlueExchangeStation != null) BlueExchangeStation.PriceInfo = PriceInfo;
 
         if (!IsServer) return;
 

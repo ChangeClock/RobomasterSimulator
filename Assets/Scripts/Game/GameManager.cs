@@ -105,10 +105,16 @@ public class GameManager : NetworkBehaviour
 
         ExchangePoint.OnExchanged += ExchangeUpload;
 
-        RedActivateArea.OnCaptured += ActivateAreaCapturedHandler;
-        BlueActivateArea.OnCaptured += ActivateAreaCapturedHandler;
-        RedActivateArea.OnControlLoss += ActivateAreaLostControlHandler;
-        BlueActivateArea.OnControlLoss += ActivateAreaLostControlHandler;
+        if (RedActivateArea != null) 
+        {
+            RedActivateArea.OnCaptured += ActivateAreaCapturedHandler;
+            RedActivateArea.OnControlLoss += ActivateAreaLostControlHandler;
+        }
+        if (BlueActivateArea != null) 
+        {
+            BlueActivateArea.OnCaptured += ActivateAreaCapturedHandler;
+            BlueActivateArea.OnControlLoss += ActivateAreaLostControlHandler;
+        }
     }
 
     protected virtual void OnDisable()
@@ -126,10 +132,16 @@ public class GameManager : NetworkBehaviour
 
         ExchangePoint.OnExchanged -= ExchangeUpload;
 
-        RedActivateArea.OnCaptured -= ActivateAreaCapturedHandler;
-        BlueActivateArea.OnCaptured -= ActivateAreaCapturedHandler;
-        RedActivateArea.OnControlLoss -= ActivateAreaLostControlHandler;
-        BlueActivateArea.OnControlLoss -= ActivateAreaLostControlHandler;
+        if (RedActivateArea != null) 
+        {
+            RedActivateArea.OnCaptured -= ActivateAreaCapturedHandler;
+            RedActivateArea.OnControlLoss -= ActivateAreaLostControlHandler;
+        }
+        if (BlueActivateArea != null) 
+        {
+            BlueActivateArea.OnCaptured -= ActivateAreaCapturedHandler;
+            BlueActivateArea.OnControlLoss -= ActivateAreaLostControlHandler;
+        }
     }
 
     protected virtual void OnNetworkSpawn()
@@ -167,30 +179,28 @@ public class GameManager : NetworkBehaviour
         if (!ContainsRobot(BlueBase.RobotID.Value)) RefereeControllerList.Add(BlueBase.RobotID.Value, BlueBase);
         if (!ContainsRobot(RedOutpost.RobotID.Value)) RefereeControllerList.Add(RedOutpost.RobotID.Value, RedOutpost);
         if (!ContainsRobot(BlueOutpost.RobotID.Value)) RefereeControllerList.Add(BlueOutpost.RobotID.Value, BlueOutpost);
-        if (RedSentry != null) SpawnUpload(RedSentry.RobotID.Value);
-        if (BlueSentry != null) SpawnUpload(BlueSentry.RobotID.Value);
+        
+        if (RedSentry != null) InitializeSentry(RedSentry);
+        if (BlueSentry != null) InitializeSentry(BlueSentry);
+        
         if (RedLidar != null) RefereeControllerList.Add(RedLidar.RobotID.Value, RedLidar);
         if (BlueLidar != null) RefereeControllerList.Add(BlueLidar.RobotID.Value, BlueLidar);
+    }
+
+    protected void InitializeSentry(RefereeController sentry)
+    {
+        SpawnUpload(sentry.RobotID.Value);
 
         if (SentryPerformance != null)
         {
-            SetUnitPerformance(RedSentry, 0, SentryPerformance);
-            foreach (var _shooter in RedSentry.ShooterControllerList.Values)
-            {
-                SetShooterPerformance(_shooter, 0, SentryPerformance);
-            }
-            SetUnitPerformance(BlueSentry, 0, SentryPerformance);
-            foreach (var _shooter in BlueSentry.ShooterControllerList.Values)
+            SetUnitPerformance(sentry, 0, SentryPerformance);
+            foreach (var _shooter in sentry.ShooterControllerList.Values)
             {
                 SetShooterPerformance(_shooter, 0, SentryPerformance);
             }
         }
 
-        if (SentryExpInfo != null)
-        {
-            SetUnitEXPInfo(RedSentry, SentryExpInfo);
-            SetUnitEXPInfo(BlueSentry, SentryExpInfo);
-        }
+        if (SentryExpInfo != null) SetUnitEXPInfo(sentry, SentryExpInfo);
     }
 
     protected bool ContainsRobot(int robotID)

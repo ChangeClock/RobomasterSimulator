@@ -59,7 +59,6 @@
     <Analyzer Include="C:\Program Files\Unity\Hub\Editor\2022.3.28f1\Editor\Data\Tools\Unity.SourceGenerators\Unity.Properties.SourceGenerator.dll" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Assets\Scripts\Tools\DebugLogOnScreen.cs" />
     <Compile Include="Assets\Scripts\Config\ExpInfoSO.cs" />
     <Compile Include="Assets\Scripts\Game\RefreeSystem\ArmorController.cs" />
     <Compile Include="Assets\Scripts\Game\RefreeSystem\LidarController.cs" />
@@ -1328,6 +1327,26 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="Assembly-CSharp-firstpass.csproj">
+      <Project>{4F35B16F-85AE-03EB-ABB8-A1B6886F7EE1}</Project>
+      <Name>Assembly-CSharp-firstpass</Name>
+    </ProjectReference>
+    <ProjectReference Include="IngameDebugConsole.Runtime.csproj">
+      <Project>{07CCFDFE-9D2B-4FF0-D408-F08164E85DD0}</Project>
+      <Name>IngameDebugConsole.Runtime</Name>
+    </ProjectReference>
+    <ProjectReference Include="Tayx.Graphy.Editor.csproj">
+      <Project>{F3CF5CAF-AAC0-BD30-8931-9FE6FB6CCBA4}</Project>
+      <Name>Tayx.Graphy.Editor</Name>
+    </ProjectReference>
+    <ProjectReference Include="Tayx.Graphy.csproj">
+      <Project>{A80E6561-8E80-8D32-10EC-D41A50B92743}</Project>
+      <Name>Tayx.Graphy</Name>
+    </ProjectReference>
+    <ProjectReference Include="IngameDebugConsole.Editor.csproj">
+      <Project>{B79563BF-853D-64BB-03F1-F73C16883AC0}</Project>
+      <Name>IngameDebugConsole.Editor</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="GenerateTargetFrameworkMonikerAttribute" />

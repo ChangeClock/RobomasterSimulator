@@ -91,6 +91,9 @@ public class RobotController : NetworkBehaviour
     private TargetInfo Target;
     [SerializeField] private float TargetOffsetThreshold = 4f;
 
+    [Header("Debug")]
+    [SerializeField] private bool DebugMode = true;
+
     public override void OnNetworkSpawn()
     {
         if (IsOwner)
@@ -251,6 +254,11 @@ public class RobotController : NetworkBehaviour
             // Debug.Log($"[RobotController] yawTargetAngle {yawTargetAngle.Value} pitchTargetAngle {pitchTargetAngle.Value}");
 
             TickTarget();
+
+            if (Yaw != null)
+            {
+                GraphDbg.Log("Yaw", Yaw.transform.eulerAngles.y);
+            }
         }
 
         if (IsServer)

@@ -31,9 +31,6 @@ public class MenuManager : MonoBehaviour {
     [SerializeField] private TMP_Text ClientInfo;
     [SerializeField] private TMP_Text NetworkInfo;
 
-    [SerializeField] private TMP_Text FrameInfo;
-    public int FramesPerSec { get; protected set; }
-
     [SerializeField] private TMP_Text VersionInfo;
 
     void Awake()
@@ -64,8 +61,6 @@ public class MenuManager : MonoBehaviour {
             ClientInfo.text = "ClientID: " + NetworkManager.Singleton.LocalClientId;    
             // NetworkInfo.text = "Ping: " + NetworkManager.Singleton.NetworkConfig.NetworkTransport.GetCurrentRtt(NetworkManager.Singleton.LocalClientId) + "ms";
         }
-
-        FrameInfo.text = (int)(1f / Time.unscaledDeltaTime) + "FPS";
     }
 
     void EnterMenu(int index = 0)

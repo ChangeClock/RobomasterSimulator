@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
 
+using IngameDebugConsole;
+
 public class GameManager : NetworkBehaviour
 {
     [Header("Game Status")]
@@ -175,10 +177,22 @@ public class GameManager : NetworkBehaviour
 
         if (!IsServer) return;
 
-        if (!ContainsRobot(RedBase.RobotID.Value)) RefereeControllerList.Add(RedBase.RobotID.Value, RedBase);
-        if (!ContainsRobot(BlueBase.RobotID.Value)) RefereeControllerList.Add(BlueBase.RobotID.Value, BlueBase);
-        if (!ContainsRobot(RedOutpost.RobotID.Value)) RefereeControllerList.Add(RedOutpost.RobotID.Value, RedOutpost);
-        if (!ContainsRobot(BlueOutpost.RobotID.Value)) RefereeControllerList.Add(BlueOutpost.RobotID.Value, BlueOutpost);
+        if (RedBase != null) 
+        {
+            if (!ContainsRobot(RedBase.RobotID.Value)) RefereeControllerList.Add(RedBase.RobotID.Value, RedBase);
+        }
+        if (BlueBase != null) 
+        {
+            if (!ContainsRobot(BlueBase.RobotID.Value)) RefereeControllerList.Add(BlueBase.RobotID.Value, BlueBase);
+        }
+        if (RedOutpost != null) 
+        {
+            if (!ContainsRobot(RedOutpost.RobotID.Value)) RefereeControllerList.Add(RedOutpost.RobotID.Value, RedOutpost);
+        }
+        if (BlueOutpost != null) 
+        {
+            if (!ContainsRobot(BlueOutpost.RobotID.Value)) RefereeControllerList.Add(BlueOutpost.RobotID.Value, BlueOutpost);
+        }
         
         if (RedSentry != null) InitializeSentry(RedSentry);
         if (BlueSentry != null) InitializeSentry(BlueSentry);
@@ -903,6 +917,10 @@ public class GameManager : NetworkBehaviour
 
         AddCoin(faction, coin);
     }
+
+    #endregion
+
+    #region Debug
 
     #endregion
 }

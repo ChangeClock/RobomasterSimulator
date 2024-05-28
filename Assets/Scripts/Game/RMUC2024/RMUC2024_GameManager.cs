@@ -257,6 +257,9 @@ public class RMUC2024_GameManager : GameManager
     {
         RefereeController referee = RefereeControllerList[robotID];
 
+        Debug.Log($"[GameManager] ShootHandlerServerRpc / {shooterID} {shooterType} {robotID} {referee.robotClass.Value}");
+        Debug.Log($"[GameManager] ShootHandlerServerRpc / Has Snipe Buff: {referee.HasBuff(HeroSnipeBuff)}");
+
         if (referee.robotClass.Value == RobotClass.Hero & referee.HasBuff(HeroSnipeBuff))
         {
             AddCoin(referee.faction.Value, 10);
@@ -282,7 +285,8 @@ public class RMUC2024_GameManager : GameManager
     [ServerRpc]
     protected override void DamageHandlerServerRpc(int damageType, float damage, int armorID, int attackerID, int robotID, ServerRpcParams serverRpcParams = default)
     {
-        base.DamageHandlerServerRpc(damageType, damage, armorID, attackerID, robotID);
+        // Causing stackoverflow!!!
+        // base.DamageHandlerServerRpc(damageType, damage, armorID, attackerID, robotID);
         
         // Debug.Log($"[GameManager] AttackerID {attackerID} {RefereeControllerList.ContainsKey(attackerID)}");
         // Debug.Log($"[GameManager] VictimID {robotID} {RefereeControllerList.ContainsKey(robotID)}");
@@ -588,7 +592,7 @@ public class RMUC2024_GameManager : GameManager
         float _exp = exp;
 
         // TODO: Small Buff
-        if (referee.HasBuff(SmallBuff) & SmallBuffAdditionalEXP[(int)referee.faction.Value] < 800) 
+        if (referee.HasBuff(SmallBuff) && SmallBuffAdditionalEXP[(int)referee.faction.Value] < 800) 
         {
             SmallBuffAdditionalEXP[(int)referee.faction.Value] += _exp;
             _exp *= 2;

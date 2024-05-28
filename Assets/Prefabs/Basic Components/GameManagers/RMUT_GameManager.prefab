@@ -27,7 +27,7 @@ Transform:
   m_GameObject: {fileID: 3639002466966969908}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -163.39903, y: -278.58533, z: -181.78842}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -45,7 +45,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GlobalObjectIdHash: 2043608401
+  GlobalObjectIdHash: 2504995292
+  InScenePlacedSourceGlobalObjectIdHash: 0
   AlwaysReplicateAsRoot: 0
   SynchronizeTransform: 1
   ActiveSceneSynchronization: 0
@@ -88,12 +89,20 @@ MonoBehaviour:
   InfantryExpInfo: {fileID: 0}
   EngineerExpInfo: {fileID: 0}
   SentryExpInfo: {fileID: 0}
-  HeroChassisPerformance: []
-  GimbalPerformance_17mm: []
-  InfantryChassisPerformance: []
-  GimbalPerformance_42mm: []
-  EngineerPerformance: {fileID: 0}
-  SentryPerformance: {fileID: 0}
+  HeroChassisPerformance:
+  - {fileID: 11400000, guid: f379dcdd8ef9f1a43825867c554b9b74, type: 2}
+  - {fileID: 11400000, guid: a402748e84819d74abdc3839dad16681, type: 2}
+  GimbalPerformance_17mm:
+  - {fileID: 11400000, guid: 64b34955c98ecf44b8b3f557646eacc6, type: 2}
+  - {fileID: 11400000, guid: cee0dd8c964ff9e43b5b758758a9fae9, type: 2}
+  InfantryChassisPerformance:
+  - {fileID: 11400000, guid: 293f0a10c72970f43b8f27779cd124bd, type: 2}
+  - {fileID: 11400000, guid: dd297e3e069bd474f95266a05049ae8c, type: 2}
+  GimbalPerformance_42mm:
+  - {fileID: 11400000, guid: 9a942dd0919dc7c48ad6ad3ad1ec3a98, type: 2}
+  EngineerPerformance: {fileID: 11400000, guid: 5662500a970bb52459ccf8a4c7aec7bd,
+    type: 2}
+  SentryPerformance: {fileID: 11400000, guid: 285215eca8816654d91432bdb520c13e, type: 2}
   SentryInitialAmmo: 700
   DefaultBuff: {fileID: 0}
   SentryDefaultBuff: {fileID: 0}

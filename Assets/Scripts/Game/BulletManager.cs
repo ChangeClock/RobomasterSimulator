@@ -43,7 +43,7 @@ public class BulletManager : NetworkBehaviour
         }
 
         _bullet.GetComponent<Rigidbody>().isKinematic = false;
-        _bullet.GetComponent<Rigidbody>().velocity = shootVelocity;
+        _bullet.GetComponent<Rigidbody>().linearVelocity = shootVelocity;
         _bullet.SetActive(true);
         _bullet.GetComponent<NetworkObject>().Spawn();
         _bullet.GetComponent<BulletController>().attackerID.Value = robotID;

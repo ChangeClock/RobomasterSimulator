@@ -148,6 +148,17 @@ public class GameManager : NetworkBehaviour
 
     protected virtual void OnNetworkSpawn()
     {
+        base.OnNetworkSpawn();
+
+        Coins = new NetworkList<int>();
+        CoinsTotal = new NetworkList<int>();
+        RealAmmo0Supply = new NetworkList<int>();
+        Ammo0Supply = new NetworkList<int>();
+        Ammo1Supply = new NetworkList<int>();
+        RemoteHPTimes = new NetworkList<int>();
+        RemoteAmmo0Times = new NetworkList<int>();
+        RemoteAmmo1Times = new NetworkList<int>();
+
         if (!IsServer) return;
 
         InitializeResource();

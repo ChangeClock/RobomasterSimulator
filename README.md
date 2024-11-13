@@ -28,6 +28,5 @@ This is a simulator built with unity aim to provide a tool for the Robomaster Te
 
 ## Requirements
 
-- Unity Editor 2023.1.0b15 (Mainly to use the [MPPM](https://docs-multiplayer.unity3d.com/tools/current/mppm/index.html) to accelerate the development)
-- Smooth Sync 3.41
+- Unity Editor 6000.0.26f1
 - PATCH - Updating System Basic V2.6.7

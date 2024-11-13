@@ -11,6 +11,6 @@ public class BulletController : NetworkBehaviour
     void FixedUpdate()
     {
         lastTime += Time.deltaTime;
-        if (lastTime >= liveTime & GetComponent<Rigidbody>().velocity.magnitude == 0.0f) Destroy(this.gameObject); 
+        if (lastTime >= liveTime & GetComponent<Rigidbody>().linearVelocity.magnitude == 0.0f) Destroy(this.gameObject); 
     }
 }

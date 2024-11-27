@@ -43,8 +43,8 @@ public class SpawnManager : NetworkBehaviour
                 referee.RobotID.Value = id + 21;
                 referee.faction.Value = Faction.Blue;
                 break;
-            case 0:
             case 3:
+            case 0:
             default:
                 player = Instantiate(prefabList[0], Vector3.right * -110 + Vector3.up * 5, Quaternion.identity);
                 break;

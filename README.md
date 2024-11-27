@@ -6,25 +6,36 @@ This is a simulator built with unity aim to provide a tool for the Robomaster Te
 
 ## Project Structure
 
+Need a new wiki to explain all of these.
+
 ![project structure](/Doc/project-structure.png)
 
-## RoadMap
+## Features
 
-### 1. Strategy Simulation
-- Match
-- Replay
+### 1. Game Simulation
 
-### 2. Robot Customization
-- Customize Model
-- Customize Performance
-- Customize Control
+## Match
+  - RMUC2023 (95%)
+  - RMUC2024 (80%)
+  - RMUC2025 (WIP)
 
-### 3. Control Simulation
-- Replace RobotController logic with embedded code
+## Mine & Exchange
 
-### 4. Algorithm Simulation
-- Replace AutoAimController logic with custome code
-- Output Image Source to ROS2
+## Activate Buff
+
+### 2. Control Simulation
+
+## Different Wheel
+  - Mecanum wheel
+  - Omni wheel
+  - Steering wheel
+
+## Power Consumption
+
+### 3. Algorithm Test
+
+## Camera Stream for ROS
+
 
 ## Requirements
 
